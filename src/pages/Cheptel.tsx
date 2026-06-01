@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cheptelData } from '../data/mockData';
-import { Search, PlusCircle, PawPrint, CheckCircle, Info, Repeat, Plus } from 'lucide-react';
+import { Search, PlusCircle, CheckCircle, Info, Repeat, PawPrint } from 'lucide-react';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');

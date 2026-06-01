@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings, WifiOff, Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
+import { ArrowLeft, Settings,  Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
 import { cheptelData } from '../data/mockData';
 
 export const FicheReproducteur = () => {
@@ -7,9 +7,9 @@ export const FicheReproducteur = () => {
   const navigate = useNavigate();
 
   // Find animal or fallback to a default mock for the demo
-  const animalInfo = cheptelData.animaux.find(a => a.id === id) || {
+  const animalInfo = (cheptelData.animals.find((a: any) => a.id === id) || {
     id: 'F-012', name: 'Blanchette', gender: 'F', race: 'Néo-Zélandais', age: '14 mois', weight: '4.2', status: 'Gestante', statusColor: 'primary', cage: 'A3'
-  };
+  }) as any;
 
   return (
     <div className="pb-24">

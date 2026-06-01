@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Save, ArrowLeft, Pill, Syringe } from 'lucide-react';
+import {  Save,  Pill, Syringe } from 'lucide-react';
 
 export const ProgrammerTraitement: React.FC = () => {
   const navigate = useNavigate();

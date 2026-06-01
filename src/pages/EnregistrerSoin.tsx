@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, ArrowLeft, Thermometer, Info } from 'lucide-react';
+import { CheckCircle,  Thermometer, Info } from 'lucide-react';
 
 export const EnregistrerSoin: React.FC = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Settings, CloudOff, Notes, Pill, CheckCircle, Output } from 'lucide-react';
+import { ArrowLeft, Settings,   Pill, CheckCircle, LogOut } from 'lucide-react';
 
 export const FichePortee: React.FC = () => {
   const navigate = useNavigate();
@@ -179,7 +179,7 @@ export const FichePortee: React.FC = () => {
         {/* Actions */}
         <section className="grid grid-cols-1 gap-3 py-4">
           <button className="bg-primary text-background font-bold py-4 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-            <Output className="w-5 h-5" />
+            <LogOut className="w-5 h-5" />
             Déclarer sevrage
           </button>
           <div className="grid grid-cols-2 gap-3">

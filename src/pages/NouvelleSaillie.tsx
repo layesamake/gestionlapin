@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, CalendarClock, Save } from 'lucide-react';
+import { Calendar,  Save } from 'lucide-react';
 
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();

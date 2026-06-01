@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { santeData } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle } from 'lucide-react';

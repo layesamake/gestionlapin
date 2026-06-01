@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Settings, Syringe, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Settings, Syringe, CheckCircle } from 'lucide-react';
 
 export const FicheTraitement: React.FC = () => {
   const navigate = useNavigate();

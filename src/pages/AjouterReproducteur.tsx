@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CloudDone, ChevronDown } from 'lucide-react';
+import { CheckCircle, ChevronDown } from 'lucide-react';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const AjouterReproducteur: React.FC = () => {
       <main className="pt-20 px-4 max-w-2xl mx-auto">
         {/* Offline Indicator */}
         <div className="flex items-center justify-center gap-2 mb-6 py-2 px-4 bg-surface rounded-lg border border-border w-fit mx-auto">
-          <CloudDone className="w-4 h-4 text-primary" />
+          <CheckCircle className="w-4 h-4 text-primary" />
           <span className="text-[11px] text-muted font-medium">Fonctionne sans Internet • Données locales</span>
         </div>
 
