@@ -66,7 +66,7 @@ export const ProgrammerTraitement: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-muted">Date prévue *</label>
             <input 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none [color-scheme:dark]" 
+              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none [color-scheme:light]" 
               type="date" 
               required
             />

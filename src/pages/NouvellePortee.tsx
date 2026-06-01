@@ -69,7 +69,7 @@ export const NouvellePortee: React.FC = () => {
             <label className="block text-[13px] font-medium text-muted ml-1">Date de la mise bas *</label>
             <div className="relative">
               <input 
-                className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary focus:border-primary font-mono outline-none [color-scheme:dark]" 
+                className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary focus:border-primary font-mono outline-none [color-scheme:light]" 
                 type="date" 
                 defaultValue="2026-06-17"
                 required

@@ -156,7 +156,7 @@ export const AjouterReproducteur: React.FC = () => {
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="naissance">Date de naissance</label>
               <input 
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all [color-scheme:dark]" 
+                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all [color-scheme:light]" 
                 id="naissance" type="date" 
               />
             </div>
