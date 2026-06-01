@@ -1,11 +1,30 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { CalendarX, Calendar, Activity, Database, Leaf, Shield, HeartPulse, CheckCircle } from 'lucide-react';
 
 export const Alertes: React.FC = () => {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("Toutes");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const alertes = useStore(state => state.alertes);
+  const removeAlerte = useStore(state => state.removeAlerte);
+
+  const handleAction = (action: string, id: number) => {
+    if (action.includes('Enregistrer mise bas')) {
+      navigate('/reproduction/portee/nouvelle');
+    } else if (action.includes('Sauvegarder')) {
+      navigate('/parametres');
+    } else {
+      // Pour les autres (Confirmer gestation, Marquer comme fait, etc.), on valide simplement l'alerte
+      removeAlerte(id);
+    }
+  };
+
+  const handleSecondaryAction = (_action: string, id: number) => {
+    // "Reporter", "Échec saillie" etc.
+    removeAlerte(id);
+  };
 
   const filters = ["Aujourd'hui", "En retard", "Cette semaine", "Toutes"];
 
@@ -113,17 +132,23 @@ export const Alertes: React.FC = () => {
             )}
 
             <div className={`gap-2 ${alerte.secondaryAction ? 'grid grid-cols-2' : ''}`}>
-              <button className={`w-full text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 flex items-center justify-center gap-2 ${
-                alerte.primaryColor === 'surface' 
-                  ? 'bg-border text-foreground border border-gray-700' 
-                  : `bg-${alerte.primaryColor || 'primary'} text-background`
-              }`}>
+              <button 
+                onClick={() => handleAction(alerte.primaryAction, alerte.id)}
+                className={`w-full text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 flex items-center justify-center gap-2 ${
+                  alerte.primaryColor === 'surface' 
+                    ? 'bg-border text-foreground border border-gray-700' 
+                    : `bg-${alerte.primaryColor || 'primary'} text-background`
+                }`}
+              >
                 {alerte.icon === 'backup' && <Database className="w-5 h-5" />}
                 {alerte.primaryAction}
               </button>
               
               {alerte.secondaryAction && (
-                <button className="border border-border text-muted text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 hover:bg-surface">
+                <button 
+                  onClick={() => handleSecondaryAction(alerte.secondaryAction, alerte.id)}
+                  className="border border-border text-muted text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 hover:bg-surface"
+                >
                   {alerte.secondaryAction}
                 </button>
               )}

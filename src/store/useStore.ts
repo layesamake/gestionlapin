@@ -28,6 +28,7 @@ interface AppState {
   alertes: any[];
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
+  removeAlerte: (id: number) => void;
   importData: (data: string) => boolean;
   exportData: () => string;
 }
@@ -45,6 +46,10 @@ export const useStore = create<AppState>()(
       
       updateAnimal: (id, updatedAnimal) => set((state) => ({
         animals: state.animals.map((a) => a.id === id ? { ...a, ...updatedAnimal } : a)
+      })),
+
+      removeAlerte: (id) => set((state) => ({
+        alertes: state.alertes.filter((a) => a.id !== id)
       })),
 
       importData: (jsonData) => {
