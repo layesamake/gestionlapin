@@ -7,13 +7,26 @@ export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
   const { addAnimal } = useStore();
   const [sexe, setSexe] = useState<'male' | 'female'>('male');
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const target = e.target as any;
     
-    // Simulate photo upload url
-    const imageUrl = 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800';
+    // Use the uploaded photo Base64 or fallback to default
+    const imageUrl = photoPreview || 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800';
 
     addAnimal({
       id: target.code?.value || 'N-001',
@@ -60,10 +73,25 @@ export const AjouterReproducteur: React.FC = () => {
           {/* Photo du lapin */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted uppercase tracking-wider">Photo</label>
-            <div className="w-full h-32 bg-surface border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all">
-              <Camera className="w-8 h-8 text-muted" />
-              <span className="text-sm font-medium text-muted">Ajouter une photo</span>
-              <input type="file" className="hidden" accept="image/*" />
+            <div 
+              className="w-full h-32 bg-surface border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all overflow-hidden relative"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {photoPreview ? (
+                <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <>
+                  <Camera className="w-8 h-8 text-muted" />
+                  <span className="text-sm font-medium text-muted">Ajouter une photo</span>
+                </>
+              )}
+              <input 
+                type="file" 
+                className="hidden" 
+                accept="image/*" 
+                ref={fileInputRef}
+                onChange={handlePhotoChange}
+              />
             </div>
           </div>
 
