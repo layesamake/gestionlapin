@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { dashboardData } from '../data/mockData';
 import { PawPrint, Plus, Heart, MonitorSmartphone, Syringe } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { indicators, alerts } = dashboardData;
 
   return (
@@ -75,16 +77,28 @@ export const Dashboard: React.FC = () => {
           <h2 className="text-foreground font-bold text-sm uppercase tracking-widest">Actions Rapides</h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <button className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all">
+          <button 
+            onClick={() => navigate('/cheptel/nouveau')}
+            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
+          >
             <Plus className="w-4 h-4" /> Nouveau reproducteur
           </button>
-          <button className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary text-background text-sm font-bold active:scale-95 transition-all">
+          <button 
+            onClick={() => navigate('/reproduction/saillie/nouvelle')}
+            className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary text-background text-sm font-bold active:scale-95 transition-all"
+          >
             <Heart className="w-4 h-4 fill-current" /> Nouvelle saillie
           </button>
-          <button className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all">
+          <button 
+            onClick={() => navigate('/reproduction/portee/nouvelle')}
+            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
+          >
             <MonitorSmartphone className="w-4 h-4" /> Nouvelle portée
           </button>
-          <button className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all">
+          <button 
+            onClick={() => navigate('/sante/traitement/nouveau')}
+            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
+          >
             <Syringe className="w-4 h-4" /> Nouveau traitement
           </button>
         </div>
