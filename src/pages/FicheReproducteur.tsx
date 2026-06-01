@@ -52,11 +52,15 @@ export const FicheReproducteur = () => {
           </div>
           <div className="bg-surface/70 backdrop-blur-md border border-border rounded-xl overflow-hidden">
             <div className="h-48 relative overflow-hidden bg-surface">
-              {/* Using a placeholder gradient since we don't have the image file */}
-              <div className="w-full h-full bg-gradient-to-br from-border to-surface flex items-center justify-center">
-                 <Baby className="w-20 h-20 text-muted/30" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background to-transparent">
+              {animalInfo.image ? (
+                <img src={animalInfo.image} alt={animalInfo.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-border to-surface flex items-center justify-center">
+                   <Baby className="w-20 h-20 text-muted/30" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-xl font-bold text-foreground">{animalInfo.name}</h3>
                 <p className="text-sm text-muted">{animalInfo.gender === 'F' ? 'Femelle' : 'Mâle'} • {animalInfo.race}</p>
               </div>

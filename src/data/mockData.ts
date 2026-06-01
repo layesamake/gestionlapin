@@ -54,7 +54,8 @@ export const cheptelData = {
       badgeColor: 'brand-primary',
       infoIcon: 'check_circle',
       infoText: 'Traitement à jour',
-      infoColor: 'brand-primary'
+      infoColor: 'brand-primary',
+      image: 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: 'M-004',
@@ -64,7 +65,8 @@ export const cheptelData = {
       badgeColor: 'brand-secondary',
       infoIcon: 'info',
       infoText: 'Aucun traitement en cours',
-      infoColor: 'brand-muted'
+      infoColor: 'brand-muted',
+      image: 'https://images.unsplash.com/photo-1518796745738-41048802f99a?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: 'F-021',
@@ -75,14 +77,16 @@ export const cheptelData = {
       infoIcon: 'event_repeat',
       infoText: 'Alerte: Rappel vitamine demain',
       infoColor: 'brand-warning',
-      isWarning: true
+      isWarning: true,
+      image: 'https://images.unsplash.com/photo-1591561582301-7ce6588cc286?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: 'F-008',
       status: 'Au repos',
       type: 'Femelle • Géant des Flandres',
       location: 'Cage D1',
-      badgeColor: 'brand-neutral'
+      badgeColor: 'brand-neutral',
+      image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&q=80&w=800'
     }
   ]
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, ChevronDown } from 'lucide-react';
+import { CheckCircle, ChevronDown, Camera } from 'lucide-react';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +31,16 @@ export const AjouterReproducteur: React.FC = () => {
         </div>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          {/* Photo du lapin */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted uppercase tracking-wider">Photo</label>
+            <div className="w-full h-32 bg-surface border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all">
+              <Camera className="w-8 h-8 text-muted" />
+              <span className="text-sm font-medium text-muted">Ajouter une photo</span>
+              <input type="file" className="hidden" accept="image/*" />
+            </div>
+          </div>
+
           {/* Code du lapin & Nom */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
