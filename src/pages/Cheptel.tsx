@@ -10,6 +10,13 @@ export const Cheptel: React.FC = () => {
 
   const filters = ['Tous', 'Mâles', 'Femelles', 'Gestantes', 'Allaitantes', 'Au repos'];
 
+  const filteredAnimals = animals.filter((animal: any) => {
+    if (activeFilter === 'Tous') return true;
+    if (activeFilter === 'Mâles') return animal.type.includes('Mâle');
+    if (activeFilter === 'Femelles') return animal.type.includes('Femelle');
+    return animal.status === activeFilter;
+  });
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'check_circle': return <CheckCircle className="w-5 h-5 text-brand-primary" />;
@@ -49,7 +56,7 @@ export const Cheptel: React.FC = () => {
       </section>
 
       <section className="space-y-3 mt-6">
-        {animals.map((animal) => (
+        {filteredAnimals.map((animal: any) => (
           <div 
             key={animal.id} 
             onClick={() => navigate(`/cheptel/${animal.id}`)}
