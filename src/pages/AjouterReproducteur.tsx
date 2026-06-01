@@ -1,10 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, ChevronDown, Camera } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
+  const { addAnimal } = useStore();
   const [sexe, setSexe] = useState<'male' | 'female'>('male');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const target = e.target as any;
+    
+    // Simulate photo upload url
+    const imageUrl = 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800';
+
+    addAnimal({
+      id: target.code?.value || 'N-001',
+      name: target.nom?.value || 'Sans nom',
+      status: target.statut?.value || 'Disponible',
+      type: `${sexe === 'female' ? 'Femelle' : 'Mâle'} • ${target.race?.value || 'Race locale'}`,
+      location: target.cage?.value || 'Cage par défaut',
+      badgeColor: 'brand-neutral',
+      image: imageUrl,
+      gender: sexe === 'female' ? 'F' : 'M',
+      race: target.race?.value,
+      age: 'Nouveau',
+      weight: target.poids?.value
+    });
+    
+    navigate('/cheptel');
+  };
 
   return (
     <div className="pb-24">
@@ -30,7 +56,7 @@ export const AjouterReproducteur: React.FC = () => {
           <span className="text-[11px] text-muted font-medium">Fonctionne sans Internet • Données locales</span>
         </div>
 
-        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Photo du lapin */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted uppercase tracking-wider">Photo</label>

@@ -1,9 +1,61 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, RotateCcw, Save } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
+  const { exportData, importData } = useStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = () => {
+    const data = exportData();
+    const blob = new Blob([data], { type: 'application/json' });
+    const fileName = `gestion-lapins-backup-${new Date().toISOString().split('T')[0]}.json`;
+
+    if (navigator.share) {
+      const file = new File([blob], fileName, { type: 'application/json' });
+      navigator.share({
+        title: 'Sauvegarde Gestion Lapins',
+        files: [file]
+      }).catch((err) => {
+        console.error("Erreur de partage:", err);
+        fallbackDownload(blob, fileName);
+      });
+    } else {
+      fallbackDownload(blob, fileName);
+    }
+  };
+
+  const fallbackDownload = (blob: Blob, fileName: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (typeof event.target?.result === 'string') {
+          const success = importData(event.target.result);
+          if (success) {
+            alert('Données restaurées avec succès !');
+          } else {
+            alert('Erreur lors de la restauration du fichier.');
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
 
   return (
     <div className="pb-24">
@@ -43,13 +95,26 @@ export const Parametres: React.FC = () => {
             <span className="font-mono text-[10px] text-muted">Dernière : 28/05/2026</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex flex-col items-center justify-center p-4 bg-surface border border-border rounded-xl active:scale-[0.98] transition-all hover:bg-border/50">
+            <button 
+              onClick={handleExport}
+              className="flex flex-col items-center justify-center p-4 bg-surface border border-border rounded-xl active:scale-[0.98] transition-all hover:bg-border/50"
+            >
               <CloudUpload className="w-6 h-6 text-warning mb-2" />
               <span className="text-xs font-medium">Sauvegarder</span>
             </button>
-            <button className="flex flex-col items-center justify-center p-4 bg-surface border border-border rounded-xl active:scale-[0.98] transition-all hover:bg-border/50">
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-center justify-center p-4 bg-surface border border-border rounded-xl active:scale-[0.98] transition-all hover:bg-border/50"
+            >
               <CloudDownload className="w-6 h-6 text-warning mb-2" />
               <span className="text-xs font-medium">Restaurer</span>
+              <input 
+                type="file" 
+                className="hidden" 
+                ref={fileInputRef} 
+                accept=".json" 
+                onChange={handleImport} 
+              />
             </button>
           </div>
         </section>

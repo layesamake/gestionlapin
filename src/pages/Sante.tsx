@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { santeData } from '../data/mockData';
+import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export const Sante: React.FC = () => {
+  const santeStats = useStore(s => s.santeStats);
+  const soins = useStore(s => s.soins);
   const [activeFilter, setActiveFilter] = useState('Tous');
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ export const Sante: React.FC = () => {
             <span className="text-muted text-xs font-medium">À faire</span>
             <span className="bg-warning/10 text-warning text-[10px] font-bold px-2 py-0.5 rounded-full">Auj.</span>
           </div>
-          <p className="text-3xl font-extrabold text-foreground">{santeData.stats.aFaire}</p>
+          <p className="text-3xl font-extrabold text-foreground">{santeStats.aFaire}</p>
           <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Action urgente</p>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-border">
@@ -35,7 +37,7 @@ export const Sante: React.FC = () => {
             <span className="text-muted text-xs font-medium">En retard</span>
             <span className="bg-danger/10 text-danger text-[10px] font-bold px-2 py-0.5 rounded-full">Retard</span>
           </div>
-          <p className="text-3xl font-extrabold text-foreground">{santeData.stats.enRetard}</p>
+          <p className="text-3xl font-extrabold text-foreground">{santeStats.enRetard}</p>
           <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">À régulariser</p>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-border">
@@ -43,7 +45,7 @@ export const Sante: React.FC = () => {
             <span className="text-muted text-xs font-medium">En cours</span>
             <span className="bg-secondary/10 text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full">Suivi</span>
           </div>
-          <p className="text-3xl font-extrabold text-foreground">{santeData.stats.enCours}</p>
+          <p className="text-3xl font-extrabold text-foreground">{santeStats.enCours}</p>
           <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Traitements</p>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-border">
@@ -51,7 +53,7 @@ export const Sante: React.FC = () => {
             <span className="text-muted text-xs font-medium">Faits</span>
             <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">Mois</span>
           </div>
-          <p className="text-3xl font-extrabold text-foreground">{santeData.stats.faits}</p>
+          <p className="text-3xl font-extrabold text-foreground">{santeStats.faits}</p>
           <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Interventions</p>
         </div>
       </section>
@@ -88,7 +90,7 @@ export const Sante: React.FC = () => {
       </section>
 
       <section className="space-y-4">
-        {santeData.soins.map(soin => (
+        {soins.map(soin => (
           <div key={soin.id} className={`bg-surface rounded-xl border p-4 shadow-sm transition-opacity ${
             soin.isLate ? 'border-danger/30 border-l-4 border-l-danger' : 'border-border'
           } ${soin.status === 'Fait' ? 'opacity-80' : ''}`}>

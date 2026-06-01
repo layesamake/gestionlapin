@@ -1,13 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings,  Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
-import { cheptelData } from '../data/mockData';
+import { ArrowLeft, Settings, Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const FicheReproducteur = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const animals = useStore(state => state.animals);
 
   // Find animal or fallback to a default mock for the demo
-  const animalInfo = (cheptelData.animals.find((a: any) => a.id === id) || {
+  const animalInfo = (animals.find((a: any) => a.id === id) || {
     id: 'F-012', name: 'Blanchette', gender: 'F', race: 'Néo-Zélandais', age: '14 mois', weight: '4.2', status: 'Gestante', statusColor: 'primary', cage: 'A3'
   }) as any;
 

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cheptelData } from '../data/mockData';
+import { useStore } from '../store/useStore';
 import { Search, PlusCircle, CheckCircle, Info, Repeat, PawPrint } from 'lucide-react';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
   const navigate = useNavigate();
+  const animals = useStore(state => state.animals);
 
   const filters = ['Tous', 'Mâles', 'Femelles', 'Gestantes', 'Allaitantes', 'Au repos'];
 
@@ -48,7 +49,7 @@ export const Cheptel: React.FC = () => {
       </section>
 
       <section className="space-y-3 mt-6">
-        {cheptelData.animals.map((animal) => (
+        {animals.map((animal) => (
           <div 
             key={animal.id} 
             onClick={() => navigate(`/cheptel/${animal.id}`)}
