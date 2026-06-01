@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar,  Save } from 'lucide-react';
+import { Calendar, Save, ChevronDown } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
+  const animals = useStore(state => state.animals);
+  
+  const femelles = animals.filter(a => a.gender === 'F');
+  const males = animals.filter(a => a.gender === 'M');
+
   const [typeSaillie, setTypeSaillie] = useState('Naturelle');
   const [dateSaillie, setDateSaillie] = useState(new Date().toISOString().split('T')[0]);
 
@@ -59,12 +65,17 @@ export const NouvelleSaillie: React.FC = () => {
             <label className="block text-sm font-medium text-muted">Sélection de la femelle *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-lg font-bold">♀</span>
-              <input 
-                className="w-full bg-surface border border-border rounded-lg pl-10 pr-4 py-3 text-foreground font-mono placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
-                placeholder="ex: F-012" 
-                type="text" 
+              <select 
+                className="w-full bg-surface border border-border rounded-lg pl-10 pr-10 py-3 text-foreground font-mono appearance-none focus:ring-1 focus:ring-primary outline-none" 
                 required
-              />
+                defaultValue=""
+              >
+                <option value="" disabled>Sélectionner une femelle</option>
+                {femelles.map(f => (
+                  <option key={f.id} value={f.id}>{f.id} - {f.name}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
             </div>
           </div>
 
@@ -73,11 +84,17 @@ export const NouvelleSaillie: React.FC = () => {
             <label className="block text-sm font-medium text-muted">Sélection du/des mâle(s)</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-lg font-bold">♂</span>
-              <input 
-                className="w-full bg-surface border border-border rounded-lg pl-10 pr-4 py-3 text-foreground font-mono placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
-                placeholder="ex: M-004, M-002" 
-                type="text" 
-              />
+              <select 
+                className="w-full bg-surface border border-border rounded-lg pl-10 pr-10 py-3 text-foreground font-mono appearance-none focus:ring-1 focus:ring-primary outline-none" 
+                required
+                defaultValue=""
+              >
+                <option value="" disabled>Sélectionner un mâle</option>
+                {males.map(m => (
+                  <option key={m.id} value={m.id}>{m.id} - {m.name}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
             </div>
           </div>
 
