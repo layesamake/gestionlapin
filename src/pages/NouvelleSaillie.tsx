@@ -5,6 +5,21 @@ import { Calendar,  Save } from 'lucide-react';
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
   const [typeSaillie, setTypeSaillie] = useState('Naturelle');
+  const [dateSaillie, setDateSaillie] = useState(new Date().toISOString().split('T')[0]);
+
+  const dateObj = new Date(dateSaillie);
+  const controleGestation = new Date(dateObj); controleGestation.setDate(dateObj.getDate() + 14);
+  const prepMiseBas = new Date(dateObj); prepMiseBas.setDate(dateObj.getDate() + 27);
+  const miseBas = new Date(dateObj); miseBas.setDate(dateObj.getDate() + 31);
+
+  const formatDate = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  
+  const formatCalendarDate = (d: Date) => {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  };
+  const calDateStr = formatCalendarDate(miseBas);
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mise+bas+prévue+(Gestion+Lapins)&dates=${calDateStr}T080000Z/${calDateStr}T100000Z&details=Vérifier+la+mise+bas+de+la+lapine`;
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +88,8 @@ export const NouvelleSaillie: React.FC = () => {
               <input 
                 className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none [color-scheme:dark]" 
                 type="date" 
-                defaultValue="2026-05-16"
+                value={dateSaillie}
+                onChange={(e) => setDateSaillie(e.target.value)}
                 required
               />
             </div>
@@ -126,7 +142,7 @@ export const NouvelleSaillie: React.FC = () => {
               <div className="flex justify-between items-center">
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted">Contrôle de gestation</p>
-                  <p className="text-sm font-mono font-medium text-foreground">30/05/2026</p>
+                  <p className="text-sm font-mono font-medium text-foreground">{formatDate(controleGestation)}</p>
                 </div>
                 <span className="px-2 py-1 bg-secondary/10 text-secondary text-[10px] font-bold rounded uppercase">Dans 14j</span>
               </div>
@@ -135,18 +151,28 @@ export const NouvelleSaillie: React.FC = () => {
               <div className="flex justify-between items-center">
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted">Préparation mise bas</p>
-                  <p className="text-sm font-mono font-medium text-foreground">12/06/2026</p>
+                  <p className="text-sm font-mono font-medium text-foreground">{formatDate(prepMiseBas)}</p>
                 </div>
                 <span className="px-2 py-1 bg-warning/10 text-warning text-[10px] font-bold rounded uppercase">Dans 27j</span>
               </div>
               <div className="h-px bg-border"></div>
               
-              <div className="flex justify-between items-center">
-                <div className="space-y-0.5">
-                  <p className="text-xs text-muted">Mise bas prévue</p>
-                  <p className="text-sm font-mono font-medium text-foreground">16/06/2026</p>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-0.5">
+                    <p className="text-xs text-muted">Mise bas prévue</p>
+                    <p className="text-sm font-mono font-medium text-foreground">{formatDate(miseBas)}</p>
+                  </div>
+                  <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Dans 31j</span>
                 </div>
-                <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Dans 31j</span>
+                <a 
+                  href={googleCalendarUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 w-full flex items-center justify-center gap-2 bg-[#1a73e8]/10 text-[#1a73e8] border border-[#1a73e8]/30 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#1a73e8]/20 transition-colors"
+                >
+                  <Calendar className="w-4 h-4" /> Ajouter à Google Agenda
+                </a>
               </div>
             </div>
           </div>
