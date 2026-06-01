@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lapin Manager - Santé</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: "#0B0F19",
+                            card: "#161B26",
+                            border: "#242B3B",
+                            white: "#F3F4F6",
+                            muted: "#9CA3AF",
+                            green: "#10B981",
+                            cyan: "#06B6D4",
+                            orange: "#F59E0B",
+                            red: "#EF4444",
+                            neutral: "#6B7280"
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Outfit", "sans-serif"],
+                        label: ["Outfit", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="pb-24">
+<!-- TopAppBar -->
+<header class="bg-[#0B0F19] flex justify-between items-center px-4 h-16 w-full z-50 fixed top-0 border-b border-[#242B3B]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#10B981]" data-icon="cloud_off">cloud_off</span>
+<span class="text-[10px] font-mono text-[#9CA3AF] uppercase tracking-wider">Données locales</span>
+</div>
+<h1 class="font-display font-bold text-[#F3F4F6] text-lg">Santé</h1>
+<button class="active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#9CA3AF]" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="mt-20 px-4 space-y-6">
+<!-- Statistiques Sanitaires (Bento Grid) -->
+<section class="grid grid-cols-2 gap-3">
+<div class="bg-brand-card p-4 rounded-xl border border-brand-border">
+<div class="flex justify-between items-start mb-2">
+<span class="text-brand-muted text-xs font-medium">À faire</span>
+<span class="bg-brand-orange/10 text-brand-orange text-[10px] font-bold px-2 py-0.5 rounded-full">Auj.</span>
+</div>
+<p class="text-3xl font-extrabold text-brand-white">1</p>
+<p class="text-[10px] text-brand-muted mt-1 uppercase tracking-tighter">Action urgente</p>
+</div>
+<div class="bg-brand-card p-4 rounded-xl border border-brand-border">
+<div class="flex justify-between items-start mb-2">
+<span class="text-brand-muted text-xs font-medium">En retard</span>
+<span class="bg-brand-red/10 text-brand-red text-[10px] font-bold px-2 py-0.5 rounded-full">Retard</span>
+</div>
+<p class="text-3xl font-extrabold text-brand-white">1</p>
+<p class="text-[10px] text-brand-muted mt-1 uppercase tracking-tighter">À régulariser</p>
+</div>
+<div class="bg-brand-card p-4 rounded-xl border border-brand-border">
+<div class="flex justify-between items-start mb-2">
+<span class="text-brand-muted text-xs font-medium">En cours</span>
+<span class="bg-brand-cyan/10 text-brand-cyan text-[10px] font-bold px-2 py-0.5 rounded-full">Suivi</span>
+</div>
+<p class="text-3xl font-extrabold text-brand-white">2</p>
+<p class="text-[10px] text-brand-muted mt-1 uppercase tracking-tighter">Traitements</p>
+</div>
+<div class="bg-brand-card p-4 rounded-xl border border-brand-border">
+<div class="flex justify-between items-start mb-2">
+<span class="text-brand-muted text-xs font-medium">Faits</span>
+<span class="bg-brand-green/10 text-brand-green text-[10px] font-bold px-2 py-0.5 rounded-full">Mois</span>
+</div>
+<p class="text-3xl font-extrabold text-brand-white">12</p>
+<p class="text-[10px] text-brand-muted mt-1 uppercase tracking-tighter">Interventions</p>
+</div>
+</section>
+<!-- Boutons d'Action Rapide -->
+<section class="space-y-3">
+<button class="w-full bg-brand-green text-brand-bg font-bold py-4 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                Nouveau traitement prévu
+            </button>
+<button class="w-full bg-transparent border border-brand-border text-brand-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-brand-muted" data-icon="history">history</span>
+                Enregistrer un traitement fait
+            </button>
+</section>
+<!-- Filtres (Chips) -->
+<section class="no-scrollbar overflow-x-auto flex gap-2 -mx-4 px-4 pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-green text-brand-bg text-sm font-bold shadow-lg shadow-brand-green/10">Tous</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-card border border-brand-border text-brand-muted text-sm font-medium">À faire</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-card border border-brand-border text-brand-muted text-sm font-medium">En cours</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-card border border-brand-border text-brand-muted text-sm font-medium">Faits</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-card border border-brand-border text-brand-muted text-sm font-medium">En retard</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-brand-card border border-brand-border text-brand-muted text-sm font-medium">Prophylaxie</button>
+</section>
+<!-- Liste des Soins -->
+<section class="space-y-4">
+<!-- Carte 1: À faire -->
+<div class="bg-brand-card rounded-xl border border-brand-border p-4 shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-mono text-sm text-brand-cyan bg-brand-cyan/5 px-2 py-0.5 rounded border border-brand-cyan/20">F-012</span>
+<h3 class="mt-2 font-bold text-brand-white text-lg leading-tight">Déparasitage interne</h3>
+<p class="text-xs text-brand-muted font-medium">Prophylaxie</p>
+</div>
+<span class="bg-brand-orange/10 text-brand-orange text-[10px] font-bold px-2 py-1 rounded uppercase">À faire</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-brand-muted mb-4">
+<span class="material-symbols-outlined text-base" data-icon="calendar_today">calendar_today</span>
+<span>Prévu le 01/06/2026 <span class="text-brand-orange">(Aujourd'hui)</span></span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="bg-brand-green/10 text-brand-green font-bold py-2.5 rounded text-xs active:scale-95 transition-all">Marquer comme fait</button>
+<button class="bg-brand-border text-brand-muted font-bold py-2.5 rounded text-xs active:scale-95 transition-all">Reporter</button>
+</div>
+</div>
+<!-- Carte 2: En cours -->
+<div class="bg-brand-card rounded-xl border border-brand-border p-4 shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-mono text-sm text-brand-cyan bg-brand-cyan/5 px-2 py-0.5 rounded border border-brand-cyan/20">P-014</span>
+<h3 class="mt-2 font-bold text-brand-white text-lg leading-tight">Vitamine Adec</h3>
+<p class="text-xs text-brand-muted font-medium">Renforcement</p>
+</div>
+<span class="bg-brand-cyan/10 text-brand-cyan text-[10px] font-bold px-2 py-1 rounded uppercase">En cours</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-brand-muted mb-4">
+<span class="material-symbols-outlined text-base" data-icon="date_range">date_range</span>
+<span>Du 01/06/2026 au 05/06/2026</span>
+</div>
+<button class="w-full bg-brand-cyan/10 text-brand-cyan font-bold py-2.5 rounded text-xs active:scale-95 transition-all">Enregistrer dose</button>
+</div>
+<!-- Carte 3: Fait -->
+<div class="bg-brand-card rounded-xl border border-brand-border p-4 shadow-sm opacity-80">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-mono text-sm text-brand-muted bg-brand-muted/5 px-2 py-0.5 rounded border border-brand-muted/20">M-004</span>
+<h3 class="mt-2 font-bold text-brand-white text-lg leading-tight">Soin blessure</h3>
+<p class="text-xs text-brand-muted font-medium">Traitement curatif</p>
+</div>
+<span class="bg-brand-green/10 text-brand-green text-[10px] font-bold px-2 py-1 rounded uppercase">Fait</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-brand-muted mb-4">
+<span class="material-symbols-outlined text-base" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Fait le 18/05/2026 • Terminé</span>
+</div>
+<button class="w-full bg-brand-border text-brand-white font-bold py-2.5 rounded text-xs active:scale-95 transition-all">Voir détails</button>
+</div>
+<!-- Carte 4: En retard -->
+<div class="bg-brand-card rounded-xl border border-brand-border p-4 shadow-sm border-l-4 border-l-brand-red">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-mono text-sm text-brand-red bg-brand-red/5 px-2 py-0.5 rounded border border-brand-red/20">F-021</span>
+<h3 class="mt-2 font-bold text-brand-white text-lg leading-tight">Rappel vaccin</h3>
+<p class="text-xs text-brand-muted font-medium">Vaccination</p>
+</div>
+<span class="bg-brand-red/10 text-brand-red text-[10px] font-bold px-2 py-1 rounded uppercase">En retard</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-brand-red mb-4">
+<span class="material-symbols-outlined text-base" data-icon="warning">warning</span>
+<span class="font-bold">Prévu le 28/05/2026 (Il y a 4 jours)</span>
+</div>
+<button class="w-full bg-brand-red text-white font-bold py-3 rounded text-sm active:scale-95 transition-all shadow-lg shadow-brand-red/20">Marquer comme fait</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-[#161B26] border-t border-[#242B3B] rounded-t-xl shadow-2xl">
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] py-1 w-full active:scale-90 transition-all duration-150 hover:text-[#F3F4F6]" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label text-xs font-medium">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] py-1 w-full active:scale-90 transition-all duration-150 hover:text-[#F3F4F6]" href="#">
+<span class="material-symbols-outlined" data-icon="pets">pets</span>
+<span class="font-label text-xs font-medium">Cheptel</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] py-1 w-full active:scale-90 transition-all duration-150 hover:text-[#F3F4F6]" href="#">
+<span class="material-symbols-outlined" data-icon="reproduction">fertile</span>
+<span class="font-label text-xs font-medium">Reproduction</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#10B981] bg-[#10B981]/10 rounded-lg py-1 w-full active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="health_and_safety" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+<span class="font-label text-xs font-medium">Santé</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] py-1 w-full active:scale-90 transition-all duration-150 hover:text-[#F3F4F6]" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label text-xs font-medium">Alertes</span>
+</a>
+</nav>
+<script>
+        // Haptic feedback simulation for buttons
+        const buttons = document.querySelectorAll('button, a');
+        buttons.forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+
+        // Filter chips active state simulation
+        const chips = document.querySelectorAll('.no-scrollbar button');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    c.classList.remove('bg-brand-green', 'text-brand-bg', 'shadow-lg', 'shadow-brand-green/10');
+                    c.classList.add('bg-brand-card', 'border', 'border-brand-border', 'text-brand-muted');
+                });
+                chip.classList.remove('bg-brand-card', 'border', 'border-brand-border', 'text-brand-muted');
+                chip.classList.add('bg-brand-green', 'text-brand-bg', 'shadow-lg', 'shadow-brand-green/10');
+            });
+        });
+    </script>
+</body></html>

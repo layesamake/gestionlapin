@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lapin Manager - Tableau de Bord</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "anthracite": "#0B0F19",
+                        "card-bg": "#161B26",
+                        "border-gray": "#242B3B",
+                        "pure-white": "#F3F4F6",
+                        "muted-gray": "#9CA3AF",
+                        "modern-green": "#10B981",
+                        "cyan-blue": "#06B6D4",
+                        "copper-orange": "#F59E0B",
+                        "alert-red": "#EF4444",
+                        "neutral-gray": "#6B7280"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Outfit", "sans-serif"],
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Outfit", "sans-serif"],
+                        "label": ["Outfit", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 w-full bg-[#0B0F19] border-b border-[#242B3B]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#10B981]">cloud_off</span>
+<h1 class="text-[#F3F4F6] font-display font-bold tracking-tight text-lg">Lapin Manager</h1>
+</div>
+<button class="text-[#9CA3AF] active:scale-95 transition-transform p-2 hover:bg-[#161B26] rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<main class="pt-20 pb-24 px-4 max-w-md mx-auto">
+<!-- Connectivity Indicator -->
+<div class="mb-6 flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-modern-green/10 border border-modern-green/20">
+<div class="w-2 h-2 rounded-full bg-modern-green animate-pulse"></div>
+<span class="text-modern-green text-[11px] font-medium uppercase tracking-wider">Mode hors connexion disponible • Données sur ce téléphone</span>
+</div>
+<!-- Key Indicators Grid -->
+<section class="grid grid-cols-2 gap-3 mb-8">
+<!-- Large Card Total -->
+<div class="col-span-2 bg-card-bg border border-border-gray p-4 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Total Lapins</p>
+<p class="text-4xl font-bold font-display text-pure-white leading-none mt-1">48</p>
+</div>
+<div class="p-3 bg-white/5 rounded-lg">
+<span class="material-symbols-outlined text-modern-green text-3xl">pets</span>
+</div>
+</div>
+<div class="bg-card-bg border border-border-gray p-4 rounded-xl">
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Mâles Actifs</p>
+<p class="text-2xl font-bold text-pure-white mt-1">6</p>
+</div>
+<div class="bg-card-bg border border-border-gray p-4 rounded-xl">
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Femelles Repr.</p>
+<p class="text-2xl font-bold text-pure-white mt-1">12</p>
+</div>
+<div class="bg-card-bg border border-border-gray p-4 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 h-full w-1 bg-modern-green"></div>
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Femelles Gestantes</p>
+<div class="flex items-baseline gap-2 mt-1">
+<p class="text-2xl font-bold text-pure-white leading-none">4</p>
+<span class="px-1.5 py-0.5 rounded bg-modern-green/10 text-modern-green text-[10px] font-bold">STABLE</span>
+</div>
+</div>
+<div class="bg-card-bg border border-border-gray p-4 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 h-full w-1 bg-cyan-blue"></div>
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Portées en cours</p>
+<div class="flex items-baseline gap-2 mt-1">
+<p class="text-2xl font-bold text-pure-white leading-none">5</p>
+<span class="px-1.5 py-0.5 rounded bg-cyan-blue/10 text-cyan-blue text-[10px] font-bold">ACTIF</span>
+</div>
+</div>
+<div class="bg-card-bg border border-border-gray p-4 rounded-xl">
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Lapereaux</p>
+<p class="text-2xl font-bold text-pure-white mt-1">32</p>
+<p class="text-[10px] text-muted-gray mt-1">Non sevrés</p>
+</div>
+<div class="bg-card-bg border border-alert-red/30 p-4 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 h-full w-1 bg-alert-red"></div>
+<p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Alertes</p>
+<div class="flex items-baseline gap-2 mt-1">
+<p class="text-2xl font-bold text-alert-red leading-none">2</p>
+<span class="px-1.5 py-0.5 rounded bg-alert-red/10 text-alert-red text-[10px] font-bold">URGENT</span>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-pure-white font-bold text-sm uppercase tracking-widest">Actions Rapides</h2>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-2 p-3 rounded-lg border border-border-gray text-pure-white text-sm font-medium hover:bg-card-bg active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Nouveau reproducteur
+                </button>
+<button class="flex items-center justify-center gap-2 p-3 rounded-lg bg-modern-green text-anthracite text-sm font-bold active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                    Nouvelle saillie
+                </button>
+<button class="flex items-center justify-center gap-2 p-3 rounded-lg border border-border-gray text-pure-white text-sm font-medium hover:bg-card-bg active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">nest_cam_wired_stand</span>
+                    Nouvelle portée
+                </button>
+<button class="flex items-center justify-center gap-2 p-3 rounded-lg border border-border-gray text-pure-white text-sm font-medium hover:bg-card-bg active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">vaccines</span>
+                    Nouveau traitement
+                </button>
+</div>
+</section>
+<!-- Daily Alerts -->
+<section class="mb-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-pure-white font-bold text-sm uppercase tracking-widest">Alertes du Jour</h2>
+<span class="text-[10px] text-muted-gray font-mono uppercase">Mise à jour 08:45</span>
+</div>
+<div class="space-y-3">
+<!-- Alert 1: Gestation Orange -->
+<div class="bg-card-bg border-l-4 border-copper-orange rounded-r-xl p-4 shadow-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-copper-orange text-[10px] font-bold uppercase tracking-tighter bg-copper-orange/10 px-2 py-0.5 rounded">À surveiller</span>
+<span class="text-muted-gray font-mono text-[10px]">Aujourd'hui</span>
+</div>
+<p class="text-pure-white text-sm leading-tight mb-3">
+                        Contrôler la gestation de <span class="font-mono text-copper-orange">F-012</span> (Cage <span class="font-mono">A3</span>)
+                    </p>
+<button class="w-full py-2.5 bg-copper-orange/10 border border-copper-orange/30 text-copper-orange text-xs font-bold rounded-lg hover:bg-copper-orange/20 active:scale-[0.98] transition-all">
+                        Confirmer
+                    </button>
+</div>
+<!-- Alert 2: Birth Delay Red -->
+<div class="bg-card-bg border-l-4 border-alert-red rounded-r-xl p-4 shadow-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-alert-red text-[10px] font-bold uppercase tracking-tighter bg-alert-red/10 px-2 py-0.5 rounded">Retard critique</span>
+<span class="text-alert-red font-mono text-[10px] font-bold">+2 jours</span>
+</div>
+<p class="text-pure-white text-sm leading-tight mb-3">
+                        Mise bas prévue pour <span class="font-mono text-alert-red">F-021</span> (Cage <span class="font-mono">C2</span>)
+                    </p>
+<button class="w-full py-2.5 bg-alert-red text-pure-white text-xs font-bold rounded-lg hover:bg-alert-red/90 active:scale-[0.98] transition-all shadow-lg shadow-alert-red/10">
+                        Enregistrer mise bas
+                    </button>
+</div>
+<!-- Alert 3: Treatment Orange -->
+<div class="bg-card-bg border-l-4 border-copper-orange rounded-r-xl p-4 shadow-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-copper-orange text-[10px] font-bold uppercase tracking-tighter bg-copper-orange/10 px-2 py-0.5 rounded">Traitement</span>
+<span class="text-muted-gray font-mono text-[10px]">Prévu</span>
+</div>
+<p class="text-pure-white text-sm leading-tight mb-3">
+                        Déparasitage de <span class="font-mono text-copper-orange">F-016</span>
+</p>
+<button class="w-full py-2.5 border border-border-gray text-muted-gray text-xs font-bold rounded-lg hover:bg-[#1C2331] active:scale-[0.98] transition-all">
+                        Marquer fait
+                    </button>
+</div>
+</div>
+</section>
+<!-- Decorative Image Contextual for Farming -->
+<div class="mt-8 rounded-2xl overflow-hidden relative h-32 border border-border-gray shadow-inner">
+<img alt="Rabbit farm view" class="w-full h-full object-cover opacity-40 grayscale" data-alt="A professional, clean indoor rabbit breeding facility with organized metal cages in a dimly lit, high-tech environment. The lighting is cold and atmospheric with blue and green undertones, reflecting a modern industrial agricultural aesthetic. The scene conveys a sense of rigorous management and clean efficiency, perfectly aligning with a dark-themed professional management application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChvq7JELf_c2srJFzQLEzcHY7x1JWhpNwtpaimtPrH_9IgGqzvi3W-To70kevDz5Hl0xB7IAN8HE09bDHhD0R99UF5uKUGFW7Uj8UZkDNVHPgI7PMOfCz0FJjO63_9EpZiHHJ6uo_ZQS2kWzwD0zSZERrlWhHeOumQzH9NtLGbXYIW_BiC2eWhD87DH7D92HBWnFr4lCGdcRpeR3rA-HSPjtFFCIDKLergtpghn-Sj8eI788-KyfSivTfW1AN_kHvt0QfVEYsvrQgt"/>
+<div class="absolute inset-0 bg-gradient-to-t from-anthracite to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<p class="text-pure-white font-bold text-sm">Saison Printemps 2024</p>
+<p class="text-muted-gray text-[10px]">Optimisation des cycles de reproduction</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-[#0B0F19] px-2 border-t border-[#242B3B] shadow-2xl">
+<!-- Accueil (Active) -->
+<a class="flex flex-col items-center justify-center text-[#10B981] font-bold active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label text-[10px] font-medium mt-0.5">Accueil</span>
+</a>
+<!-- Cheptel -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:bg-[#161B26] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="font-label text-[10px] font-medium mt-0.5">Cheptel</span>
+</a>
+<!-- Reproduction -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:bg-[#161B26] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">fertile</span>
+<span class="font-label text-[10px] font-medium mt-0.5">Reproduction</span>
+</a>
+<!-- Santé -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:bg-[#161B26] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label text-[10px] font-medium mt-0.5">Santé</span>
+</a>
+<!-- Alertes -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:bg-[#161B26] active:scale-95 transition-all duration-150 relative" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label text-[10px] font-medium mt-0.5">Alertes</span>
+<div class="absolute top-1 right-2 w-2 h-2 bg-alert-red rounded-full border border-anthracite"></div>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.classList.add('opacity-80');
+            });
+            btn.addEventListener('touchend', function() {
+                this.classList.remove('opacity-80');
+            });
+        });
+    </script>
+</body></html>

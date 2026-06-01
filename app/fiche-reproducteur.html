@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fiche Reproducteur - Lapin Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#0B0F19",
+                        surface: "#161B26",
+                        border: "#242B3B",
+                        primary: "#10B981",
+                        secondary: "#06B6D4",
+                        warning: "#F59E0B",
+                        danger: "#EF4444",
+                        muted: "#9CA3AF",
+                        white: "#F3F4F6"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Outfit", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .status-badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+        }
+        .glass-card {
+            background: rgba(22, 27, 38, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #242B3B;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="pb-24">
+<!-- Top App Bar (Shared Component Logic) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-[#0B0F19] border-b border-[#242B3B]">
+<div class="flex items-center gap-3">
+<button class="p-2 active:scale-95 transition-transform text-[#9CA3AF]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="text-[10px] text-muted font-mono uppercase tracking-wider">Identifiant</span>
+<h1 class="text-[#F3F4F6] font-display font-bold tracking-tight text-lg leading-tight">F-012</h1>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="status-badge px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">GESTANTE</span>
+<button class="p-2 text-[#9CA3AF] active:scale-95 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Offline Indicator -->
+<div class="flex items-center justify-center gap-2 py-2 px-4 bg-surface/50 border border-border rounded-xl">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] text-muted font-medium">Fonctionne sans Internet • Données locales</span>
+</div>
+<!-- Section: Informations Générales -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h2 class="text-xs font-bold text-muted uppercase tracking-widest">Informations Générales</h2>
+<span class="text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded">MODÈLE NE-Z-01</span>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="h-48 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A detailed, professional close-up of a purebred New Zealand White rabbit with thick, pristine white fur and clear, bright eyes. The setting is a clean, modern agricultural environment with soft, high-key studio lighting that emphasizes the animal's health and vitality. The background is a minimalist, dark anthracite grey to maintain the professional UI aesthetic, creating a high-contrast and sophisticated look consistent with an advanced livestock management dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoqr9iwUsAyAZ_UpOOPB4aV9SSjrMfNWZfK2x_HmHHf0F_JyuXu6hdRhpoAu_bzaxrEiG5L4_Gt9aNldsJdSAT8qkTJeAncI2yS0_0VIXF_5IBoFzVN6boNappyJEr5-wx8QNE5s_2AujkuFyoLHvCr6h9XNLPviSewv5MfnS11iIAaqJSFhLx9ynC5h6VWQDBQDhPZCE-ZztArg7M4lc3TyqgG0n3R6bmqPnRw8ZnOPTW1wmyZHsibtCzD0LB4xBDSEy5HANh7lyj"/>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-canvas to-transparent">
+<h3 class="text-xl font-bold text-white">Blanchette</h3>
+<p class="text-sm text-muted">Femelle • Néo-Zélandais</p>
+</div>
+</div>
+<div class="p-4 grid grid-cols-2 gap-y-4 gap-x-2 border-t border-border">
+<div class="space-y-1">
+<p class="text-[10px] text-muted font-medium uppercase">Âge</p>
+<p class="text-sm font-semibold">14 mois <span class="text-[10px] text-muted font-normal">(12/04/2025)</span></p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-muted font-medium uppercase">Origine</p>
+<p class="text-sm font-semibold">Élevage du Val</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-muted font-medium uppercase">Emplacement</p>
+<p class="text-sm font-mono font-bold text-secondary">CAGE A3</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-muted font-medium uppercase">Poids actuel</p>
+<p class="text-sm font-semibold">4.2 kg</p>
+</div>
+<div class="col-span-2 pt-2 mt-2 border-t border-border/50">
+<p class="text-[10px] text-muted font-medium uppercase mb-1">Observation</p>
+<p class="text-xs italic text-white/80 leading-relaxed">"Très bonne mère, attentive aux lapereaux."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Performances (Bento Grid Style) -->
+<section class="space-y-3">
+<h2 class="text-xs font-bold text-muted uppercase tracking-widest">Performances Reproduction</h2>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface border border-border p-3 rounded-xl flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-primary mb-2">fertile</span>
+<div>
+<p class="text-2xl font-bold font-display">100%</p>
+<p class="text-[10px] text-muted uppercase font-medium">Taux Réussite</p>
+</div>
+</div>
+<div class="grid grid-rows-2 gap-3">
+<div class="bg-surface border border-border px-3 py-2 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-lg font-bold font-mono">3</p>
+<p class="text-[9px] text-muted uppercase font-medium">Saillies</p>
+</div>
+<span class="material-symbols-outlined text-muted text-sm">favorite</span>
+</div>
+<div class="bg-surface border border-border px-3 py-2 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-lg font-bold font-mono">2</p>
+<p class="text-[9px] text-muted uppercase font-medium">Mises Bas</p>
+</div>
+<span class="material-symbols-outlined text-muted text-sm">child_care</span>
+</div>
+</div>
+<div class="col-span-2 bg-surface border border-border p-3 rounded-xl flex items-center justify-around divide-x divide-border">
+<div class="text-center px-4">
+<p class="text-lg font-bold">16</p>
+<p class="text-[10px] text-muted uppercase font-medium">Nés Vivants</p>
+</div>
+<div class="text-center px-4">
+<p class="text-lg font-bold">14</p>
+<p class="text-[10px] text-muted uppercase font-medium">Sevrés</p>
+</div>
+<div class="text-center px-4">
+<p class="text-[10px] font-mono text-muted">10/03/2026</p>
+<p class="text-[10px] text-muted uppercase font-medium">Dernière MB</p>
+</div>
+</div>
+<!-- Next Action Callout -->
+<div class="col-span-2 bg-primary/10 border border-primary/30 p-4 rounded-xl flex items-center gap-4 animate-pulse">
+<div class="bg-primary p-2 rounded-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">calendar_clock</span>
+</div>
+<div>
+<p class="text-[10px] text-primary font-bold uppercase tracking-widest">Action Immédiate</p>
+<p class="text-sm font-bold text-white">Contrôle gestation (Aujourd'hui)</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Historique Sanitaire -->
+<section class="space-y-3">
+<h2 class="text-xs font-bold text-muted uppercase tracking-widest">Historique Sanitaire</h2>
+<div class="space-y-2">
+<!-- Item 1: Fait -->
+<div class="flex items-center gap-4 bg-surface/40 border border-border p-3 rounded-xl">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-sm font-semibold">Déparasitage interne</h4>
+<p class="text-[10px] text-muted font-mono">12/04/2026</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-primary uppercase">Fait</span>
+</div>
+</div>
+<!-- Item 2: Retard -->
+<div class="flex items-center gap-4 bg-surface/40 border border-border p-3 rounded-xl border-l-4 border-l-danger">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-danger">event_busy</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-sm font-semibold">Rappel Vitamines AD3E</h4>
+<p class="text-[10px] text-muted font-mono">Prévu le 28/05/2026</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-danger uppercase">En retard</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Buttons -->
+<section class="grid grid-cols-2 gap-3 pt-4">
+<button class="col-span-2 bg-[#10B981] text-white py-4 rounded-lg font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                Nouvelle saillie
+            </button>
+<button class="border border-secondary text-secondary py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">medical_services</span>
+                Nouveau traitement
+            </button>
+<button class="border border-border text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">edit</span>
+                Modifier
+            </button>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Logic) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-[#0B0F19] px-2 border-t border-[#242B3B] shadow-2xl">
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-[10px] font-medium mt-1">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#10B981] font-bold active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pets</span>
+<span class="font-label text-[10px] font-medium mt-1">Cheptel</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">fertile</span>
+<span class="font-label text-[10px] font-medium mt-1">Reproduction</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label text-[10px] font-medium mt-1">Santé</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150 relative" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label text-[10px] font-medium mt-1">Alertes</span>
+<span class="absolute top-0 right-1 w-2 h-2 bg-danger rounded-full border border-canvas"></span>
+</a>
+</nav>
+<script>
+        // Light haptic feedback simulation on touch
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', () => {
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+    </script>
+</body></html>

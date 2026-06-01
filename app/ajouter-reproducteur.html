@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nouveau Reproducteur - Lapin Manager</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "anthracite": "#0B0F19",
+              "gris-sombre": "#161B26",
+              "gris-bordure": "#242B3B",
+              "blanc-pur": "#F3F4F6",
+              "gris-muted": "#9CA3AF",
+              "vert-moderne": "#10B981",
+              "bleu-cyan": "#06B6D4",
+              "orange-cuivre": "#F59E0B",
+              "rouge-alerte": "#EF4444",
+              "gris-neutre": "#6B7280",
+            },
+            borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            fontFamily: {
+                    "headline": ["Outfit", "sans-serif"],
+                    "display": ["Outfit", "sans-serif"],
+                    "body": ["Outfit", "sans-serif"],
+                    "label": ["Outfit", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #242B3B;
+            border-radius: 10px;
+        }
+        .segmented-control input:checked + label {
+            background-color: #10B981;
+            color: #0B0F19;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="pb-24">
+<!-- TopAppBar (Based on Shared Components) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 w-full bg-[#0B0F19] border-b border-[#242B3B]">
+<button class="text-[#9CA3AF] font-medium text-sm active:scale-95 transition-transform">Annuler</button>
+<h1 class="text-[#F3F4F6] font-display font-bold tracking-tight text-lg">Ajouter un Reproducteur</h1>
+<button class="bg-[#10B981] text-[#0B0F19] px-4 py-1.5 rounded-lg font-bold text-sm active:scale-95 transition-transform">Enregistrer</button>
+</header>
+<!-- Main Content Area -->
+<main class="mt-20 px-4 max-w-2xl mx-auto">
+<!-- Offline Indicator (Design System mandate) -->
+<div class="flex items-center justify-center gap-2 mb-6 py-2 px-4 bg-gris-sombre rounded-lg border border-gris-bordure w-fit mx-auto">
+<span class="material-symbols-outlined text-vert-moderne text-sm" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+<span class="text-[11px] text-gris-muted font-medium">Fonctionne sans Internet • Données locales</span>
+</div>
+<form class="space-y-6">
+<!-- Code du lapin & Nom -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="code">Code du lapin *</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur font-mono focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre" id="code" placeholder="ex: F-025" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="nom">Nom (Optionnel)</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre" id="nom" placeholder="ex: Grisette" type="text"/>
+</div>
+</div>
+<!-- Sexe Selection -->
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider">Sexe</label>
+<div class="grid grid-cols-2 bg-gris-sombre border border-gris-bordure rounded-xl p-1 segmented-control">
+<input checked="" class="hidden" id="male" name="sexe" type="radio"/>
+<label class="flex items-center justify-center gap-2 py-2.5 rounded-lg cursor-pointer transition-all font-bold text-sm text-gris-muted" for="male">
+<span class="material-symbols-outlined text-lg">male</span>
+                        Mâle
+                    </label>
+<input class="hidden" id="femelle" name="sexe" type="radio"/>
+<label class="flex items-center justify-center gap-2 py-2.5 rounded-lg cursor-pointer transition-all font-bold text-sm text-gris-muted" for="femelle">
+<span class="material-symbols-outlined text-lg">female</span>
+                        Femelle
+                    </label>
+</div>
+</div>
+<!-- Race Dropdown -->
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="race">Race</label>
+<div class="relative">
+<select class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur appearance-none focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all" id="race">
+<option>Néo-Zélandais</option>
+<option>Californien</option>
+<option>Géant des Flandres</option>
+<option>Race locale</option>
+<option>Croisé</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gris-muted">expand_more</span>
+</div>
+</div>
+<!-- Date & Origine -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="naissance">Date de naissance</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all [color-scheme:dark]" id="naissance" type="date"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="origine">Origine</label>
+<div class="relative">
+<select class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur appearance-none focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all" id="origine">
+<option>Né dans l'élevage</option>
+<option>Acheté</option>
+<option>Reçu</option>
+<option>Autre</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gris-muted">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Cage & Poids -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="cage">Emplacement / Cage</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur font-mono focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre" id="cage" placeholder="ex: Cage B4" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="poids">Poids initial (kg)</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre" id="poids" placeholder="ex: 3.5" step="0.1" type="number"/>
+</div>
+</div>
+<!-- Robe & Statut -->
+<div class="space-y-4">
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="robe">Couleur de la robe</label>
+<input class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre" id="robe" placeholder="ex: Blanc aux yeux roses" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="statut">Statut Initial</label>
+<div class="relative">
+<select class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur appearance-none focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all" id="statut">
+<option>Disponible</option>
+<option>Actif</option>
+<option>Au repos</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gris-muted">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Observation -->
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-gris-muted uppercase tracking-wider" for="observations">Observation</label>
+<textarea class="w-full bg-gris-sombre border border-gris-bordure rounded-xl px-4 py-3 text-blanc-pur focus:ring-2 focus:ring-vert-moderne focus:border-vert-moderne outline-none transition-all placeholder:text-gris-neutre resize-none" id="observations" placeholder="Détails supplémentaires sur le reproducteur..." rows="4"></textarea>
+</div>
+<!-- Bottom Actions -->
+<div class="pt-6 pb-12 flex flex-col gap-3">
+<button class="w-full bg-vert-moderne text-anthracite py-4 rounded-xl font-bold text-lg active:scale-95 transition-all duration-150 shadow-lg shadow-vert-moderne/10" type="submit">
+                    Valider et Enregistrer
+                </button>
+<button class="w-full bg-transparent border border-gris-bordure text-gris-muted py-3 rounded-xl font-medium active:scale-95 transition-all duration-150" type="button">
+                    Annuler et retourner
+                </button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar (Based on Shared Components) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-[#0B0F19] px-2 border-t border-[#242B3B] shadow-2xl">
+<!-- Accueil -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-[10px] font-medium mt-1">Accueil</span>
+</a>
+<!-- Cheptel (Active) -->
+<a class="flex flex-col items-center justify-center text-[#10B981] font-bold active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pets</span>
+<span class="font-label text-[10px] font-bold mt-1">Cheptel</span>
+</a>
+<!-- Reproduction -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">fertile</span>
+<span class="font-label text-[10px] font-medium mt-1">Reproduction</span>
+</a>
+<!-- Santé -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label text-[10px] font-medium mt-1">Santé</span>
+</a>
+<!-- Alertes -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label text-[10px] font-medium mt-1">Alertes</span>
+</a>
+</nav>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple feedback for clicks
+        document.querySelectorAll('button, a, label').forEach(el => {
+            el.addEventListener('click', () => {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+
+        // Dynamic change of status options based on gender selection (simulated)
+        const maleRadio = document.getElementById('male');
+        const femaleRadio = document.getElementById('female');
+        const statusSelect = document.getElementById('statut');
+
+        function updateStatusOptions() {
+            const currentVal = statusSelect.value;
+            statusSelect.innerHTML = '';
+            
+            const commonOptions = ['Disponible', 'Au repos'];
+            const genderSpecific = maleRadio.checked ? ['Saillie active', 'Donneur'] : ['Allaitante', 'Gestante', 'En saillie'];
+            
+            [...commonOptions, ...genderSpecific].forEach(opt => {
+                const option = document.createElement('option');
+                option.text = opt;
+                option.value = opt.toLowerCase();
+                statusSelect.add(option);
+            });
+        }
+
+        maleRadio.addEventListener('change', updateStatusOptions);
+        femaleRadio.addEventListener('change', updateStatusOptions);
+    </script>
+</body></html>

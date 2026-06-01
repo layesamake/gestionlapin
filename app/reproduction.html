@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lapin Manager - Reproduction</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            canvas: "#0B0F19",
+                            surface: "#161B26",
+                            border: "#242B3B",
+                            white: "#F3F4F6",
+                            muted: "#9CA3AF",
+                            primary: "#10B981", // Vert Moderne
+                            secondary: "#06B6D4", // Bleu Cyan
+                            warning: "#F59E0B", // Orange Cuivre
+                            danger: "#EF4444", // Rouge Alerte
+                            neutral: "#6B7280"  // Gris Neutre
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "Public Sans", "sans-serif"],
+                        display: ["Outfit", "Public Sans", "sans-serif"],
+                        body: ["Outfit", "Public Sans", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab {
+            border-bottom: 3px solid #10B981;
+            color: #10B981;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0B0F19] flex justify-between items-center px-4 h-16 border-b border-[#242B3B]">
+<div class="flex flex-col">
+<h1 class="text-[#F3F4F6] font-display font-bold tracking-tight text-lg">Reproduction</h1>
+<span class="text-[10px] text-brand-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">cloud_off</span>
+                Données enregistrées sur ce téléphone
+            </span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#161B26] active:scale-95 transition-transform text-brand-muted">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<main class="pt-20 px-4">
+<!-- Tabs Navigation -->
+<div class="flex border-b border-brand-border mb-6">
+<button class="flex-1 py-3 text-sm font-semibold active-tab transition-all" id="tab-saillies" onclick="switchTab('saillies')">Saillies</button>
+<button class="flex-1 py-3 text-sm font-semibold text-brand-muted hover:text-brand-white transition-all" id="tab-portees" onclick="switchTab('portees')">Portées</button>
+</div>
+<!-- SAILLIES SECTION -->
+<section class="space-y-6" id="content-saillies">
+<!-- Action Button -->
+<button class="w-full bg-brand-primary text-brand-canvas font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                Nouvelle Saillie
+            </button>
+<!-- Horizontal Filters -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap">Toutes</button>
+<button class="px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary text-brand-primary text-xs font-bold whitespace-nowrap">En attente</button>
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap text-brand-muted">Gestation confirmée</button>
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap text-brand-muted">Échec</button>
+</div>
+<!-- List of Saillies -->
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="bg-brand-surface border border-brand-border rounded-xl p-4">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-mono text-brand-white font-bold text-lg">F-012</span>
+<span class="text-brand-muted">x</span>
+<span class="font-mono text-brand-white font-bold text-lg">M-004</span>
+</div>
+<span class="px-2 py-1 rounded bg-brand-primary/10 text-brand-primary text-[10px] font-bold uppercase tracking-wider">Gestation confirmée</span>
+</div>
+<p class="text-sm text-brand-muted mb-1">Saillie du <span class="font-mono">16/05/2026</span></p>
+<p class="text-sm text-brand-white font-medium mb-4 italic">Mise bas prévue le <span class="font-mono">16/06/2026</span></p>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg border border-brand-border text-xs font-semibold hover:bg-brand-border transition-colors">Voir détails</button>
+<button class="flex-1 py-2 rounded-lg bg-brand-primary text-brand-canvas text-xs font-bold hover:opacity-90 transition-opacity">Enregistrer mise bas</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-brand-surface border border-brand-border rounded-xl p-4">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-mono text-brand-white font-bold text-lg">F-008</span>
+<span class="text-brand-muted">x</span>
+<span class="font-mono text-brand-white font-bold text-lg">M-002, M-006</span>
+</div>
+<span class="px-2 py-1 rounded bg-brand-secondary/10 text-brand-secondary text-[10px] font-bold uppercase tracking-wider">En attente</span>
+</div>
+<p class="text-sm text-brand-muted mb-1">Double passage • Saillie du <span class="font-mono">18/05/2026</span></p>
+<p class="text-sm text-brand-secondary font-bold mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">event_upcoming</span>
+                        Contrôle aujourd'hui
+                    </p>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-brand-secondary text-brand-canvas text-xs font-bold">Confirmer gestation</button>
+<button class="flex-1 py-2 rounded-lg border border-brand-danger text-brand-danger text-xs font-bold">Déclarer échec</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-brand-surface/60 border border-brand-border rounded-xl p-4 opacity-80">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-mono text-brand-white font-bold text-lg">F-021</span>
+<span class="text-brand-muted">x</span>
+<span class="font-mono text-brand-white font-bold text-lg">M-003</span>
+</div>
+<span class="px-2 py-1 rounded bg-brand-danger/10 text-brand-danger text-[10px] font-bold uppercase tracking-wider">Échec</span>
+</div>
+<p class="text-sm text-brand-muted">Saillie du <span class="font-mono">05/05/2026</span></p>
+</div>
+</div>
+</section>
+<!-- PORTÉES SECTION (Hidden by default) -->
+<section class="hidden space-y-6" id="content-portees">
+<button class="w-full border-2 border-dashed border-brand-secondary text-brand-secondary font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add_box</span>
+                Nouvelle Portée
+            </button>
+<!-- Horizontal Filters -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<button class="px-4 py-2 rounded-full bg-brand-primary/10 border border-brand-primary text-brand-primary text-xs font-bold whitespace-nowrap">Toutes</button>
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap text-brand-muted">En cours</button>
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap text-brand-muted">À surveiller</button>
+<button class="px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-xs whitespace-nowrap text-brand-muted">À sevrer</button>
+</div>
+<div class="space-y-4">
+<!-- Portée Card 1 -->
+<div class="bg-brand-surface border border-brand-border rounded-xl p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="font-mono text-brand-secondary font-bold text-lg">P-014</span>
+<span class="px-2 py-1 rounded bg-brand-secondary/10 text-brand-secondary text-[10px] font-bold">EN COURS</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<p class="text-[10px] text-brand-muted uppercase">Mère</p>
+<p class="font-mono text-brand-white">F-012</p>
+</div>
+<div>
+<p class="text-[10px] text-brand-muted uppercase">Âge</p>
+<p class="text-brand-white">21 jours</p>
+</div>
+<div>
+<p class="text-[10px] text-brand-muted uppercase">Effectif</p>
+<p class="text-brand-white">8 vivants</p>
+</div>
+<div>
+<p class="text-[10px] text-brand-muted uppercase">Sevrage</p>
+<p class="font-mono text-brand-white">20/06/2026</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg border border-brand-border text-xs font-semibold">Déclarer sevrage</button>
+<button class="flex-1 py-2 rounded-lg border border-brand-danger/30 text-brand-danger text-xs font-semibold">Mortalité</button>
+</div>
+</div>
+<!-- Portée Card 2 -->
+<div class="bg-brand-surface border-l-4 border-l-brand-warning border-brand-border rounded-xl p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="font-mono text-brand-warning font-bold text-lg">P-009</span>
+<span class="px-2 py-1 rounded bg-brand-warning/10 text-brand-warning text-[10px] font-bold">À SEVRER</span>
+</div>
+<p class="text-sm text-brand-muted mb-4">Mère: <span class="font-mono text-brand-white">F-008</span> • 5 lapereaux vivants</p>
+<button class="w-full py-3 rounded-lg bg-brand-warning text-brand-canvas font-bold text-sm">Sevrage immédiat</button>
+</div>
+<!-- Portée Card 3 -->
+<div class="bg-brand-surface border border-brand-border rounded-xl p-4 opacity-60">
+<div class="flex justify-between items-start mb-2">
+<span class="font-mono text-brand-muted font-bold text-lg">P-002</span>
+<span class="px-2 py-1 rounded bg-brand-neutral/10 text-brand-neutral text-[10px] font-bold">SEVRÉE</span>
+</div>
+<p class="text-sm text-brand-muted italic">Mère: F-021 • Sevrée le <span class="font-mono">15/05/2026</span></p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-[#0B0F19] px-2 border-t border-[#242B3B] shadow-2xl">
+<a class="flex flex-col items-center justify-center text-[#9CA3AF]" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-[10px] font-medium">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF]" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="font-label text-[10px] font-medium">Cheptel</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#10B981] font-bold active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fertile</span>
+<span class="font-label text-[10px]">Reproduction</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF]" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label text-[10px] font-medium">Santé</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF]" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label text-[10px] font-medium">Alertes</span>
+</a>
+</nav>
+<script>
+        function switchTab(tab) {
+            const sailliesBtn = document.getElementById('tab-saillies');
+            const porteesBtn = document.getElementById('tab-portees');
+            const sailliesContent = document.getElementById('content-saillies');
+            const porteesContent = document.getElementById('content-portees');
+
+            if (tab === 'saillies') {
+                sailliesBtn.classList.add('active-tab');
+                sailliesBtn.classList.remove('text-brand-muted');
+                porteesBtn.classList.remove('active-tab');
+                porteesBtn.classList.add('text-brand-muted');
+                sailliesContent.classList.remove('hidden');
+                porteesContent.classList.add('hidden');
+            } else {
+                porteesBtn.classList.add('active-tab');
+                porteesBtn.classList.remove('text-brand-muted');
+                sailliesBtn.classList.remove('active-tab');
+                sailliesBtn.classList.add('text-brand-muted');
+                porteesContent.classList.remove('hidden');
+                sailliesContent.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

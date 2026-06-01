@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'app-canvas': '#0B0F19',
+                        'app-card': '#161B26',
+                        'app-border': '#242B3B',
+                        'app-white': '#F3F4F6',
+                        'app-muted': '#9CA3AF',
+                        'app-primary': '#10B981', // Vert Moderne
+                        'app-secondary': '#06B6D4', // Bleu Cyan
+                        'app-warning': '#F59E0B', // Orange Cuivre
+                        'app-danger': '#EF4444', // Rouge Alerte
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ['Outfit', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Outfit', 'sans-serif'],
+                        label: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #10B981 !important;
+            ring: 2px solid #10B981;
+        }
+        /* Custom scrollbar for better dark mode look */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #242B3B; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar Component -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-[#0B0F19] border-b border-[#242B3B]">
+<button class="text-[#9CA3AF] active:scale-95 transition-transform">
+            Annuler
+        </button>
+<h1 class="text-[#F3F4F6] font-headline font-bold text-lg tracking-tight">Nouvelle Saillie</h1>
+<button class="text-[#10B981] font-bold active:scale-95 transition-transform">
+            Enregistrer
+        </button>
+</header>
+<main class="flex-grow pt-20 pb-24 px-4 space-y-6 max-w-lg mx-auto w-full">
+<!-- Offline Indicator (Design System Rule 4) -->
+<div class="flex items-center justify-center space-x-2 py-1.5 bg-[#161B26]/50 rounded-lg border border-[#242B3B] text-[11px] text-[#9CA3AF]">
+<span class="w-1.5 h-1.5 rounded-full bg-app-primary animate-pulse"></span>
+<span>Fonctionne sans Internet • Données locales</span>
+</div>
+<form class="space-y-6">
+<!-- Female Selection -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Sélection de la femelle *</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-app-muted">female</span>
+<input class="w-full bg-app-card border border-app-border rounded-lg pl-10 pr-4 py-3 text-app-white font-mono placeholder:text-gray-600 focus:ring-1 focus:ring-app-primary" placeholder="ex: F-012" type="text"/>
+</div>
+</div>
+<!-- Male Selection (Multi) -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Sélection du/des mâle(s)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-app-muted">male</span>
+<input class="w-full bg-app-card border border-app-border rounded-lg pl-10 pr-4 py-3 text-app-white font-mono placeholder:text-gray-600 focus:ring-1 focus:ring-app-primary" placeholder="ex: M-004, M-002" type="text"/>
+</div>
+</div>
+<!-- Date & Time Row -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Date de saillie *</label>
+<input class="w-full bg-app-card border border-app-border rounded-lg px-4 py-3 text-app-white font-mono focus:ring-1 focus:ring-app-primary [color-scheme:dark]" type="date" value="2026-05-16"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Heure (Facultatif)</label>
+<input class="w-full bg-app-card border border-app-border rounded-lg px-4 py-3 text-app-white font-mono focus:ring-1 focus:ring-app-primary [color-scheme:dark]" type="time"/>
+</div>
+</div>
+<!-- Type Selector (Segmented UI) -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Type de saillie</label>
+<div class="grid grid-cols-3 gap-2 p-1 bg-app-card border border-app-border rounded-xl">
+<button class="py-2 text-xs font-semibold rounded-lg bg-[#242B3B] text-app-primary" type="button">Naturelle</button>
+<button class="py-2 text-xs font-semibold rounded-lg text-app-muted hover:bg-[#242B3B]/50" type="button">Contrôlée</button>
+<button class="py-2 text-xs font-semibold rounded-lg text-app-muted hover:bg-[#242B3B]/50" type="button">Double</button>
+</div>
+</div>
+<!-- Observations -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-app-muted">Observations</label>
+<textarea class="w-full bg-app-card border border-app-border rounded-lg px-4 py-3 text-app-white placeholder:text-gray-600 focus:ring-1 focus:ring-app-primary" placeholder="Notes particulières..." rows="3"></textarea>
+</div>
+<!-- Planned Dates Section (Bento Info Box) -->
+<div class="bg-app-card border border-app-border rounded-xl overflow-hidden shadow-xl">
+<div class="px-4 py-3 border-b border-app-border bg-[#1C222E]">
+<h3 class="text-xs font-bold uppercase tracking-wider text-app-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_month</span>
+                        Dates Prévues
+                    </h3>
+</div>
+<div class="p-4 space-y-4">
+<div class="flex justify-between items-center">
+<div class="space-y-0.5">
+<p class="text-xs text-app-muted">Contrôle de gestation</p>
+<p class="text-sm font-mono font-medium text-app-white">30/05/2026</p>
+</div>
+<span class="px-2 py-1 bg-app-secondary/10 text-app-secondary text-[10px] font-bold rounded uppercase">Dans 14j</span>
+</div>
+<div class="h-px bg-app-border"></div>
+<div class="flex justify-between items-center">
+<div class="space-y-0.5">
+<p class="text-xs text-app-muted">Préparation mise bas</p>
+<p class="text-sm font-mono font-medium text-app-white">12/06/2026</p>
+</div>
+<span class="px-2 py-1 bg-app-warning/10 text-app-warning text-[10px] font-bold rounded uppercase">Dans 27j</span>
+</div>
+<div class="h-px bg-app-border"></div>
+<div class="flex justify-between items-center">
+<div class="space-y-0.5">
+<p class="text-xs text-app-muted">Mise bas prévue</p>
+<p class="text-sm font-mono font-medium text-app-white">16/06/2026</p>
+</div>
+<span class="px-2 py-1 bg-app-primary/10 text-app-primary text-[10px] font-bold rounded uppercase">Dans 31j</span>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="pt-4 space-y-3">
+<button class="w-full bg-app-primary hover:bg-emerald-500 text-app-canvas font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2" type="submit">
+<span class="material-symbols-outlined">save</span>
+                    Enregistrer la saillie
+                </button>
+<button class="w-full border border-app-border text-app-muted font-semibold py-4 rounded-xl active:scale-[0.98] transition-all" type="button">
+                    Annuler
+                </button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-[#0B0F19] border-t border-[#242B3B] px-2 shadow-2xl">
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-[10px] font-medium">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="font-label text-[10px] font-medium">Cheptel</span>
+</a>
+<!-- Active Tab: Reproduction -->
+<a class="flex flex-col items-center justify-center text-[#10B981] font-bold active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fertile</span>
+<span class="font-label text-[10px]">Reproduction</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label text-[10px] font-medium">Santé</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label text-[10px] font-medium">Alertes</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for Segmented Buttons
+        const buttons = document.querySelectorAll('.grid-cols-3 button');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => {
+                    b.classList.remove('bg-[#242B3B]', 'text-app-primary');
+                    b.classList.add('text-app-muted');
+                });
+                btn.classList.add('bg-[#242B3B]', 'text-app-primary');
+                btn.classList.remove('text-app-muted');
+            });
+        });
+
+        // Form submission prevention for demo
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body></html>

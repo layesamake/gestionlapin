@@ -1,0 +1,45 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AppLayout } from './components/layout/AppLayout';
+import { Dashboard } from './pages/Dashboard';
+import { Cheptel } from './pages/Cheptel';
+import { Reproduction } from './pages/Reproduction';
+import { Sante } from './pages/Sante';
+import { Alertes } from './pages/Alertes';
+import { Parametres } from './pages/Parametres';
+import { FicheReproducteur } from './pages/FicheReproducteur';
+import { AjouterReproducteur } from './pages/AjouterReproducteur';
+import { AjouterRace } from './pages/AjouterRace';
+import { NouvelleSaillie } from './pages/NouvelleSaillie';
+import { NouvellePortee } from './pages/NouvellePortee';
+import { FichePortee } from './pages/FichePortee';
+import { ProgrammerTraitement } from './pages/ProgrammerTraitement';
+import { EnregistrerSoin } from './pages/EnregistrerSoin';
+import { FicheTraitement } from './pages/FicheTraitement';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="cheptel" element={<Cheptel />} />
+          <Route path="cheptel/nouveau" element={<AjouterReproducteur />} />
+          <Route path="cheptel/race/nouvelle" element={<AjouterRace />} />
+          <Route path="cheptel/:id" element={<FicheReproducteur />} />
+          <Route path="reproduction" element={<Reproduction />} />
+          <Route path="reproduction/saillie/nouvelle" element={<NouvelleSaillie />} />
+          <Route path="reproduction/portee/nouvelle" element={<NouvellePortee />} />
+          <Route path="reproduction/portee/:id" element={<FichePortee />} />
+          <Route path="sante" element={<Sante />} />
+          <Route path="sante/traitement/nouveau" element={<ProgrammerTraitement />} />
+          <Route path="sante/soin/nouveau" element={<EnregistrerSoin />} />
+          <Route path="sante/traitement/:id" element={<FicheTraitement />} />
+          <Route path="alertes" element={<Alertes />} />
+          <Route path="parametres" element={<Parametres />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;

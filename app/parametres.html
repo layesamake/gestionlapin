@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Paramètres - Lapin Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "anthracite": "#0B0F19",
+                        "dark-gray": "#161B26",
+                        "border-gray": "#242B3B",
+                        "pure-white": "#F3F4F6",
+                        "muted-gray": "#9CA3AF",
+                        "modern-green": "#10B981",
+                        "cyan-blue": "#06B6D4",
+                        "copper-orange": "#F59E0B",
+                        "alert-red": "#EF4444",
+                        "neutral-gray": "#6B7280"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Outfit", "sans-serif"],
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Outfit", "sans-serif"],
+                        "label": ["Outfit", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-switch:checked {
+            background-color: #10B981;
+        }
+        .custom-switch {
+            appearance: none;
+            width: 44px;
+            height: 24px;
+            background-color: #242B3B;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .custom-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+        .custom-switch:checked::after {
+            transform: translateX(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-[#0B0F19] text-[#10B981] border-b border-[#242B3B] z-50 flex justify-between items-center px-4 h-16">
+<button class="flex items-center gap-2 text-[#9CA3AF] active:scale-95 transition-transform" onclick="history.back()">
+<span class="material-symbols-outlined">chevron_left</span>
+<span class="font-medium">Accueil</span>
+</button>
+<h1 class="text-[#F3F4F6] font-display font-bold tracking-tight text-lg">Paramètres</h1>
+<button class="bg-[#10B981] text-[#0B0F19] px-3 py-1.5 rounded-lg text-sm font-bold active:scale-95 transition-transform">
+            Enregistrer
+        </button>
+</header>
+<main class="mt-20 px-4 space-y-6 max-w-2xl mx-auto">
+<!-- Offline Status Banner -->
+<div class="bg-dark-gray border border-modern-green/30 rounded-xl p-4 flex items-start gap-4">
+<div class="bg-modern-green/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-modern-green" style="font-variation-settings: 'FILL' 1;">cloud_off</span>
+</div>
+<div>
+<h3 class="text-modern-green font-bold text-sm">Données Locales</h3>
+<p class="text-muted-gray text-xs leading-relaxed mt-1">
+                    Vos informations sont stockées directement sur ce téléphone. Le mode hors connexion est activé pour garantir une utilisation en élevage sans interruption.
+                </p>
+</div>
+</div>
+<!-- Sauvegarde Section -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h2 class="text-sm font-bold uppercase tracking-wider text-muted-gray">Sauvegarde</h2>
+<span class="font-mono text-[10px] text-muted-gray">Dernière : 28/05/2026</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-center justify-center p-4 bg-dark-gray border border-border-gray rounded-xl active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-copper-orange mb-2">cloud_upload</span>
+<span class="text-xs font-medium">Sauvegarder</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 bg-dark-gray border border-border-gray rounded-xl active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-copper-orange mb-2">cloud_download</span>
+<span class="text-xs font-medium">Restaurer</span>
+</button>
+</div>
+</section>
+<!-- Reproduction Parameters (Bento Style) -->
+<section class="space-y-3">
+<h2 class="text-sm font-bold uppercase tracking-wider text-muted-gray">Paramètres Reproduction</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Input Item -->
+<div class="bg-dark-gray border border-border-gray p-4 rounded-xl">
+<label class="block text-[11px] font-medium text-muted-gray mb-1">Contrôle de gestation</label>
+<div class="flex items-center justify-between">
+<input class="bg-transparent border-none p-0 text-2xl font-bold font-display text-cyan-blue focus:ring-0 w-20" type="number" value="14"/>
+<span class="text-muted-gray font-mono text-sm">jours</span>
+</div>
+</div>
+<!-- Input Item -->
+<div class="bg-dark-gray border border-border-gray p-4 rounded-xl">
+<label class="block text-[11px] font-medium text-muted-gray mb-1">Préparation mise bas</label>
+<div class="flex items-center justify-between">
+<input class="bg-transparent border-none p-0 text-2xl font-bold font-display text-cyan-blue focus:ring-0 w-20" type="number" value="27"/>
+<span class="text-muted-gray font-mono text-sm">jours</span>
+</div>
+</div>
+<!-- Input Item -->
+<div class="bg-dark-gray border border-border-gray p-4 rounded-xl">
+<label class="block text-[11px] font-medium text-muted-gray mb-1">Durée gestation</label>
+<div class="flex items-center justify-between">
+<input class="bg-transparent border-none p-0 text-2xl font-bold font-display text-cyan-blue focus:ring-0 w-20" type="number" value="31"/>
+<span class="text-muted-gray font-mono text-sm">jours</span>
+</div>
+</div>
+<!-- Input Item -->
+<div class="bg-dark-gray border border-border-gray p-4 rounded-xl">
+<label class="block text-[11px] font-medium text-muted-gray mb-1">Âge sevrage</label>
+<div class="flex items-center justify-between">
+<input class="bg-transparent border-none p-0 text-2xl font-bold font-display text-cyan-blue focus:ring-0 w-20" type="number" value="35"/>
+<span class="text-muted-gray font-mono text-sm">jours</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Paramètres Sanitaires -->
+<section class="space-y-3">
+<h2 class="text-sm font-bold uppercase tracking-wider text-muted-gray">Paramètres Sanitaires</h2>
+<div class="bg-dark-gray border border-border-gray rounded-xl overflow-hidden divide-y divide-border-gray">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-modern-green">medical_services</span>
+<span class="text-sm font-medium">Rappel auto traitements</span>
+</div>
+<input checked="" class="custom-switch" type="checkbox"/>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-blue">settings_backup_restore</span>
+<span class="text-sm font-medium">Rappel auto sauvegarde</span>
+</div>
+<input checked="" class="custom-switch" type="checkbox"/>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<div class="pt-6 space-y-3">
+<button class="w-full bg-modern-green text-anthracite py-4 rounded-xl font-extrabold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">save</span>
+                Enregistrer les paramètres
+            </button>
+<button class="w-full bg-transparent text-muted-gray py-3 rounded-xl font-semibold text-sm active:bg-dark-gray transition-all">
+                Annuler
+            </button>
+</div>
+</main>
+<!-- Visual Polish: Soft Ambient Glow -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+<div class="absolute -top-[10%] -right-[10%] w-[50%] h-[40%] bg-modern-green opacity-5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[10%] -left-[10%] w-[50%] h-[40%] bg-cyan-blue opacity-5 blur-[120px] rounded-full"></div>
+</div>
+<script>
+        // Simple micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Subtle feedback handled by tailwind active:scale classes
+            });
+        });
+
+        // Numeric input constraints
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                if (e.target.value < 1) e.target.value = 1;
+            });
+        });
+    </script>
+</body></html>
