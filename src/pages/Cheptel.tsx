@@ -67,7 +67,14 @@ export const Cheptel: React.FC = () => {
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className={`font-mono font-bold text-lg text-${animal.badgeColor}`}>{animal.id}</span>
+                  <span className={`font-mono font-bold text-lg text-${animal.badgeColor}`}>
+                    {animal.id}
+                  </span>
+                  {animal.name && (
+                    <span className="font-semibold text-lg text-brand-text">
+                      - {animal.name}
+                    </span>
+                  )}
                   <span className={`text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-${animal.badgeColor}/10 text-${animal.badgeColor}`}>
                     {animal.status}
                   </span>
