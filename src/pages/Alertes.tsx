@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
-import { alertesData } from '../data/mockData';
-import { CalendarX, Calendar, Activity, Database, Leaf, Shield, HeartPulse } from 'lucide-react';
+import { useStore } from '../store/useStore';
+import { CalendarX, Calendar, Activity, Database, Leaf, Shield, HeartPulse, CheckCircle } from 'lucide-react';
 
 export const Alertes: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState("Aujourd'hui");
+  const [activeFilter, setActiveFilter] = useState("Toutes");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const alertes = useStore(state => state.alertes);
 
   const filters = ["Aujourd'hui", "En retard", "Cette semaine", "Toutes"];
+
+  const filteredAlertes = alertes.filter((alerte: any) => {
+    let matchTime = true;
+    const t = alerte.time?.toLowerCase() || '';
+    if (activeFilter === "Aujourd'hui") matchTime = t.includes("aujourd'hui");
+    else if (activeFilter === "En retard") matchTime = t.includes("retard");
+    else if (activeFilter === "Cette semaine") matchTime = true; // Show all for demo
+
+    let matchCat = true;
+    if (activeCategory === 'Reproduction') matchCat = alerte.type === 'Urgent' || alerte.type === 'Important';
+    else if (activeCategory === 'Santé') matchCat = alerte.type === 'Santé';
+    else if (activeCategory === 'Sauvegarde') matchCat = alerte.type === 'Système';
+
+    return matchTime && matchCat;
+  });
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -36,19 +53,34 @@ export const Alertes: React.FC = () => {
       </section>
 
       <section className="mb-6 flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface/50 text-xs font-semibold text-muted hover:text-foreground transition-colors whitespace-nowrap">
+        <button 
+          onClick={() => setActiveCategory(activeCategory === 'Reproduction' ? null : 'Reproduction')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
+            activeCategory === 'Reproduction' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          }`}
+        >
           <Leaf className="w-4 h-4" /> Reproduction
         </button>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface/50 text-xs font-semibold text-muted hover:text-foreground transition-colors whitespace-nowrap">
+        <button 
+          onClick={() => setActiveCategory(activeCategory === 'Santé' ? null : 'Santé')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
+            activeCategory === 'Santé' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          }`}
+        >
           <Shield className="w-4 h-4" /> Santé
         </button>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface/50 text-xs font-semibold text-muted hover:text-foreground transition-colors whitespace-nowrap">
+        <button 
+          onClick={() => setActiveCategory(activeCategory === 'Sauvegarde' ? null : 'Sauvegarde')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
+            activeCategory === 'Sauvegarde' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          }`}
+        >
           <Database className="w-4 h-4" /> Sauvegarde
         </button>
       </section>
 
       <div className="space-y-4">
-        {alertesData.map((alerte) => (
+        {filteredAlertes.map((alerte: any) => (
           <article 
             key={alerte.id}
             className={`bg-surface border-l-4 rounded-xl p-4 shadow-xl transition-all hover:translate-y-[-2px] active:scale-[0.98] border-l-${alerte.typeColor}`}
@@ -98,6 +130,13 @@ export const Alertes: React.FC = () => {
             </div>
           </article>
         ))}
+
+        {filteredAlertes.length === 0 && (
+          <div className="text-center py-12">
+            <CheckCircle className="w-12 h-12 text-primary/50 mx-auto mb-3" />
+            <p className="text-muted font-medium">Aucune alerte pour ce filtre</p>
+          </div>
+        )}
 
         <div className="h-10"></div>
       </div>
