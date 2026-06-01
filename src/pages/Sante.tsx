@@ -11,6 +11,13 @@ export const Sante: React.FC = () => {
 
   const filters = ['Tous', 'À faire', 'En cours', 'Faits', 'En retard', 'Prophylaxie'];
 
+  const filteredSoins = soins.filter(soin => {
+    if (activeFilter === 'Tous') return true;
+    if (activeFilter === 'Faits') return soin.status === 'Fait';
+    if (activeFilter === 'Prophylaxie') return soin.category === 'Prophylaxie';
+    return soin.status === activeFilter;
+  });
+
   const getIcon = (status: string) => {
     switch (status) {
       case 'À faire': return <Calendar className="w-4 h-4" />;
@@ -90,7 +97,7 @@ export const Sante: React.FC = () => {
       </section>
 
       <section className="space-y-4">
-        {soins.map(soin => (
+        {filteredSoins.map(soin => (
           <div key={soin.id} className={`bg-surface rounded-xl border p-4 shadow-sm transition-opacity ${
             soin.isLate ? 'border-danger/30 border-l-4 border-l-danger' : 'border-border'
           } ${soin.status === 'Fait' ? 'opacity-80' : ''}`}>
