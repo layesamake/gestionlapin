@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useStore } from './store/useStore';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Cheptel } from './pages/Cheptel';
@@ -17,6 +19,12 @@ import { EnregistrerSoin } from './pages/EnregistrerSoin';
 import { FicheTraitement } from './pages/FicheTraitement';
 
 function App() {
+  const theme = useStore((state) => state.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return (
     <BrowserRouter>
       <Routes>

@@ -26,9 +26,11 @@ interface AppState {
   soins: any[];
   dashboard: any;
   alertes: any[];
+  theme: string;
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
   removeAlerte: (id: number) => void;
+  setTheme: (theme: string) => void;
   importData: (data: string) => boolean;
   exportData: () => string;
 }
@@ -41,6 +43,7 @@ export const useStore = create<AppState>()(
       soins: santeData.soins,
       dashboard: dashboardData,
       alertes: alertesData,
+      theme: 'nature',
 
       addAnimal: (animal) => set((state) => ({ animals: [...state.animals, animal] })),
       
@@ -51,6 +54,8 @@ export const useStore = create<AppState>()(
       removeAlerte: (id) => set((state) => ({
         alertes: state.alertes.filter((a) => a.id !== id)
       })),
+
+      setTheme: (theme) => set({ theme }),
 
       importData: (jsonData) => {
         try {

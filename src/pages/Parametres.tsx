@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
-  const { exportData, importData } = useStore();
+  const { exportData, importData, theme, setTheme } = useStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
@@ -87,6 +87,37 @@ export const Parametres: React.FC = () => {
             </p>
           </div>
         </div>
+
+        {/* Apparence */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-muted">Apparence</h2>
+          <div className="bg-surface border border-border p-2 rounded-xl grid grid-cols-3 gap-2">
+            <button 
+              onClick={() => setTheme('clair')}
+              className={`py-2 rounded-lg text-sm font-semibold transition-all ${
+                theme === 'clair' ? 'bg-primary text-background shadow-md' : 'text-muted hover:bg-border/50'
+              }`}
+            >
+              Clair
+            </button>
+            <button 
+              onClick={() => setTheme('sombre')}
+              className={`py-2 rounded-lg text-sm font-semibold transition-all ${
+                theme === 'sombre' ? 'bg-primary text-background shadow-md' : 'text-muted hover:bg-border/50'
+              }`}
+            >
+              Sombre
+            </button>
+            <button 
+              onClick={() => setTheme('nature')}
+              className={`py-2 rounded-lg text-sm font-semibold transition-all ${
+                theme === 'nature' ? 'bg-primary text-background shadow-md' : 'text-muted hover:bg-border/50'
+              }`}
+            >
+              Nature
+            </button>
+          </div>
+        </section>
 
         {/* Sauvegarde Section */}
         <section className="space-y-3">

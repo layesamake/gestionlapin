@@ -3,43 +3,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @theme {
-  /* Thème Clair Nature / Ferme */
-  --color-background: #F9F6F0; /* Crème doux */
-  --color-surface: #FFFFFF; /* Blanc pur pour les cartes */
-  --color-border: #E5E0D8; /* Gris-beige clair */
-  
-  --color-primary: #4C7C59; /* Vert nature/forêt */
-  --color-secondary: #D97757; /* Terre cuite/terracotta */
-  
-  --color-warning: #D4A373; /* Blé / Moutarde */
-  --color-danger: #C15B5B; /* Rouge rustique */
-  
-  --color-neutral: #8C857D; /* Gris brunâtre */
-  --color-muted: #A6A098; /* Beige grisé */
-  --color-foreground: #2C2A29; /* Charbon/brun très foncé pour le texte */
-  
-  /* Alias pour compatibilité si utilisés */
-  --color-anthracite: #F9F6F0;
-  --color-card-bg: #FFFFFF;
-  --color-border-gray: #E5E0D8;
-  --color-pure-white: #2C2A29;
-  --color-muted-gray: #A6A098;
-  --color-modern-green: #4C7C59;
-  --color-cyan-blue: #D97757;
-  --color-copper-orange: #D4A373;
-  --color-alert-red: #C15B5B;
-  --color-neutral-gray: #8C857D;
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-neutral: var(--neutral);
+  --color-muted: var(--muted);
+  --color-foreground: var(--foreground);
 
-  --color-brand-bg: #F9F6F0;
-  --color-brand-card: #FFFFFF;
-  --color-brand-border: #E5E0D8;
-  --color-brand-text: #2C2A29;
-  --color-brand-muted: #A6A098;
-  --color-brand-primary: #4C7C59;
-  --color-brand-secondary: #D97757;
-  --color-brand-warning: #D4A373;
-  --color-brand-danger: #C15B5B;
-  --color-brand-neutral: #8C857D;
+  /* Alias pour compatibilité si utilisés */
+  --color-anthracite: var(--bg);
+  --color-card-bg: var(--surface);
+  --color-border-gray: var(--border);
+  --color-pure-white: var(--foreground);
+  --color-muted-gray: var(--muted);
+  --color-modern-green: var(--primary);
+  --color-cyan-blue: var(--secondary);
+  --color-copper-orange: var(--warning);
+  --color-alert-red: var(--danger);
+  --color-neutral-gray: var(--neutral);
+
+  --color-brand-bg: var(--bg);
+  --color-brand-card: var(--surface);
+  --color-brand-border: var(--border);
+  --color-brand-text: var(--foreground);
+  --color-brand-muted: var(--muted);
+  --color-brand-primary: var(--primary);
+  --color-brand-secondary: var(--secondary);
+  --color-brand-warning: var(--warning);
+  --color-brand-danger: var(--danger);
+  --color-brand-neutral: var(--neutral);
 
   --font-sans: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -47,6 +43,45 @@
 }
 
 @layer base {
+  :root, [data-theme="nature"] {
+    --bg: #F9F6F0;
+    --surface: #FFFFFF;
+    --border: #E5E0D8;
+    --primary: #4C7C59;
+    --secondary: #D97757;
+    --warning: #D4A373;
+    --danger: #C15B5B;
+    --neutral: #8C857D;
+    --muted: #A6A098;
+    --foreground: #2C2A29;
+  }
+
+  [data-theme="sombre"] {
+    --bg: #0B0F19;
+    --surface: #161B26;
+    --border: #242B3B;
+    --primary: #10B981;
+    --secondary: #06B6D4;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --neutral: #6B7280;
+    --muted: #9CA3AF;
+    --foreground: #F3F4F6;
+  }
+
+  [data-theme="clair"] {
+    --bg: #F3F4F6;
+    --surface: #FFFFFF;
+    --border: #E5E7EB;
+    --primary: #2563EB;
+    --secondary: #8B5CF6;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --neutral: #9CA3AF;
+    --muted: #D1D5DB;
+    --foreground: #111827;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
