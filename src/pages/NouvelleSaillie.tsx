@@ -7,8 +7,8 @@ export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
   const animals = useStore(state => state.animals);
   
-  const femelles = animals.filter(a => a.gender === 'F');
-  const males = animals.filter(a => a.gender === 'M');
+  const femelles = animals.filter(a => a.gender === 'F' || a?.type?.startsWith('Femelle'));
+  const males = animals.filter(a => a.gender === 'M' || a?.type?.startsWith('Mâle'));
 
   const [typeSaillie, setTypeSaillie] = useState('Naturelle');
   const [dateSaillie, setDateSaillie] = useState(new Date().toISOString().split('T')[0]);
@@ -72,7 +72,7 @@ export const NouvelleSaillie: React.FC = () => {
               >
                 <option value="" disabled>Sélectionner une femelle</option>
                 {femelles.map(f => (
-                  <option key={f.id} value={f.id}>{f.id} - {f.name}</option>
+                  <option key={f.id} value={f.id}>{f.id}{f.name ? ` - ${f.name}` : ''}</option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
@@ -91,7 +91,7 @@ export const NouvelleSaillie: React.FC = () => {
               >
                 <option value="" disabled>Sélectionner un mâle</option>
                 {males.map(m => (
-                  <option key={m.id} value={m.id}>{m.id} - {m.name}</option>
+                  <option key={m.id} value={m.id}>{m.id}{m.name ? ` - ${m.name}` : ''}</option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
