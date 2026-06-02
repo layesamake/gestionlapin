@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dashboardData } from '../data/mockData';
 import { PawPrint, Plus, Heart, MonitorSmartphone, Syringe } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { indicators, alerts } = dashboardData;
+  const { indicators } = dashboardData;
+  const [alerts, setAlerts] = useState(dashboardData.alerts);
+
+  const handleAlertClick = (action: string, id: number) => {
+    // Visually remove the alert
+    setAlerts(prev => prev.filter(a => a.id !== id));
+    
+    // Navigate to appropriate section based on action text
+    if (action.includes('Confirmer') || action.includes('mise bas')) {
+      navigate('/reproduction');
+    } else if (action.includes('fait')) {
+      navigate('/sante');
+    }
+  };
 
   return (
     <>
@@ -132,13 +145,16 @@ export const Dashboard: React.FC = () => {
                 {alert.location && <span className="font-mono">{alert.location.replace('Cage ', '')}</span>}
                 {alert.location && `)`}
               </p>
-              <button className={`w-full py-2.5 text-xs font-bold rounded-lg transition-all active:scale-[0.98] ${
-                alert.type === 'danger' 
-                  ? 'bg-danger text-foreground hover:bg-danger/90 shadow-lg shadow-danger/10' 
-                  : alert.title === 'Déparasitage'
-                    ? 'border border-border text-muted hover:bg-[#1C2331]'
-                    : 'bg-warning/10 border border-warning/30 text-warning hover:bg-warning/20'
-              }`}>
+              <button 
+                onClick={() => handleAlertClick(alert.action, alert.id)}
+                className={`w-full py-2.5 text-xs font-bold rounded-lg transition-all active:scale-[0.98] ${
+                  alert.type === 'danger' 
+                    ? 'bg-danger text-foreground hover:bg-danger/90 shadow-lg shadow-danger/10' 
+                    : alert.title === 'Déparasitage'
+                      ? 'border border-border text-muted hover:bg-[#1C2331]'
+                      : 'bg-warning/10 border border-warning/30 text-warning hover:bg-warning/20'
+                }`}
+              >
                 {alert.action}
               </button>
             </div>
