@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, ChevronDown, Camera } from 'lucide-react';
+import { ChevronDown, Camera, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../utils/cropImage';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
@@ -10,14 +12,37 @@ export const AjouterReproducteur: React.FC = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isCropping, setIsCropping] = useState(false);
+
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
+        setImageSrc(reader.result as string);
+        setIsCropping(true);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const onCropComplete = (_croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const handleCropSave = async () => {
+    if (imageSrc && croppedAreaPixels) {
+      try {
+        const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+        setPhotoPreview(croppedImage);
+        setIsCropping(false);
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
@@ -63,11 +88,7 @@ export const AjouterReproducteur: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="pt-20 px-4 max-w-2xl mx-auto">
-        {/* Offline Indicator */}
-        <div className="flex items-center justify-center gap-2 mb-6 py-2 px-4 bg-surface rounded-lg border border-border w-fit mx-auto">
-          <CheckCircle className="w-4 h-4 text-primary" />
-          <span className="text-[11px] text-muted font-medium">Fonctionne sans Internet • Données locales</span>
-        </div>
+
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Photo du lapin */}
@@ -254,6 +275,39 @@ export const AjouterReproducteur: React.FC = () => {
           </div>
         </form>
       </main>
+
+      {/* Cropper Modal */}
+      {isCropping && imageSrc && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col">
+          <div className="relative flex-grow">
+            <Cropper
+              image={imageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+            />
+          </div>
+          <div className="bg-background border-t border-border p-4 flex items-center justify-between z-10">
+            <button 
+              type="button"
+              onClick={() => setIsCropping(false)}
+              className="text-white flex items-center gap-2 font-medium"
+            >
+              <X className="w-5 h-5" /> Annuler
+            </button>
+            <button 
+              type="button"
+              onClick={handleCropSave}
+              className="bg-primary text-background px-4 py-2 rounded-lg flex items-center gap-2 font-bold"
+            >
+              <Check className="w-5 h-5" /> Valider
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
