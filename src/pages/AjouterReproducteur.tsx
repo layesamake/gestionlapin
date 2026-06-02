@@ -92,10 +92,9 @@ export const AjouterReproducteur: React.FC = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Photo du lapin */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted uppercase tracking-wider">Photo</label>
+          <div className="flex flex-col items-center justify-center py-4">
             <div 
-              className="w-full h-32 bg-surface border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all overflow-hidden relative"
+              className="w-32 h-32 bg-surface border-2 border-dashed border-border rounded-full flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all overflow-hidden relative shadow-lg"
               onClick={() => fileInputRef.current?.click()}
             >
               {photoPreview ? (
@@ -103,7 +102,7 @@ export const AjouterReproducteur: React.FC = () => {
               ) : (
                 <>
                   <Camera className="w-8 h-8 text-muted" />
-                  <span className="text-sm font-medium text-muted">Ajouter une photo</span>
+                  <span className="text-[10px] font-medium text-muted uppercase tracking-wider">Photo</span>
                 </>
               )}
               <input 
