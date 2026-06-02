@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
-  const animals = useStore(state => state.animals);
+  const { animals, addSaillie } = useStore();
   
   const femelles = animals.filter(a => a.gender === 'F' || a?.type?.startsWith('Femelle'));
   const males = animals.filter(a => a.gender === 'M' || a?.type?.startsWith('Mâle'));
@@ -82,7 +82,21 @@ export const NouvelleSaillie: React.FC = () => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate save
+    if (!selectedFemale) {
+      alert("Veuillez sélectionner une femelle");
+      return;
+    }
+
+    addSaillie({
+      id: Date.now(),
+      female: selectedFemale,
+      male: 'N/A', // Mâle is optional in the UI for now or can be extracted if we bind it
+      date: dateSaillie,
+      expectedDate: formatDate(miseBas),
+      status: 'En attente',
+      statusBadgeColor: 'bg-warning/20 text-warning'
+    });
+
     navigate('/reproduction');
   };
 

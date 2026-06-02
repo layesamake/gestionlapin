@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save } from 'lucide-react';
+import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { generatePDFRegister } from '../utils/pdfGenerator';
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
-  const { exportData, importData, theme, setTheme } = useStore();
+  const { exportData, importData, theme, setTheme, resetData } = useStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
@@ -221,6 +221,29 @@ export const Parametres: React.FC = () => {
                 <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
+          </div>
+        </section>
+
+        {/* Zone Dangereuse */}
+        <section className="space-y-3 pt-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-danger">Zone Dangereuse</h2>
+          <div className="bg-danger/10 border border-danger/30 rounded-xl p-4 flex flex-col items-center gap-3 text-center">
+            <AlertTriangle className="w-8 h-8 text-danger" />
+            <p className="text-xs text-muted">
+              Supprimer toutes les données (animaux, saillies, transactions). Cette action est irréversible.
+            </p>
+            <button 
+              onClick={() => {
+                if(window.confirm('Êtes-vous sûr de vouloir supprimer TOUTES vos données ? Cette action est définitive !')) {
+                  resetData();
+                  alert('Toutes les données ont été réinitialisées.');
+                  navigate('/');
+                }
+              }}
+              className="mt-2 px-4 py-2 bg-danger text-white rounded-lg text-sm font-bold active:scale-95 transition-transform"
+            >
+              Réinitialiser les données
+            </button>
           </div>
         </section>
 

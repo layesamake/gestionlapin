@@ -66,13 +66,16 @@ interface AppState {
   removeAlerte: (id: number) => void;
   addTransaction: (transaction: Transaction) => void;
   removeTransaction: (id: string) => void;
+  addSaillie: (saillie: Saillie) => void;
   updateSaillie: (id: number, saillie: Partial<Saillie>) => void;
   removeSaillie: (id: number) => void;
+  addPortee: (portee: Portee) => void;
   updatePortee: (id: string, portee: Partial<Portee>) => void;
   removePortee: (id: string) => void;
   setTheme: (theme: string) => void;
   importData: (data: string) => boolean;
   exportData: () => string;
+  resetData: () => void;
 }
 
 export const useStore = create<AppState>()(
@@ -116,12 +119,20 @@ export const useStore = create<AppState>()(
         transactions: state.transactions.filter((t) => t.id !== id)
       })),
 
+      addSaillie: (saillie) => set((state) => ({
+        saillies: [...state.saillies, saillie]
+      })),
+
       updateSaillie: (id, updatedSaillie) => set((state) => ({
         saillies: state.saillies.map((s) => s.id === id ? { ...s, ...updatedSaillie } : s)
       })),
 
       removeSaillie: (id) => set((state) => ({
         saillies: state.saillies.filter((s) => s.id !== id)
+      })),
+
+      addPortee: (portee) => set((state) => ({
+        portees: [...state.portees, portee]
       })),
 
       updatePortee: (id, updatedPortee) => set((state) => ({
@@ -150,8 +161,6 @@ export const useStore = create<AppState>()(
 
       exportData: () => {
         const state = get();
-        // Zustand persist automatically handles saving to localStorage.
-        // For export, we just dump the persisted state.
         const exportObj = {
           state: {
             animals: state.animals,
@@ -160,13 +169,25 @@ export const useStore = create<AppState>()(
             dashboard: state.dashboard,
             alertes: state.alertes,
             transactions: state.transactions,
+            saillies: state.saillies,
+            portees: state.portees,
             theme: state.theme,
           },
           version: 1,
           timestamp: new Date().toISOString()
         };
         return JSON.stringify(exportObj, null, 2);
-      }
+      },
+
+      resetData: () => set({
+        animals: [],
+        santeStats: { tauxMortalite: 0, traitementsEnCours: 0, alertesSanitaires: 0 },
+        soins: [],
+        alertes: [],
+        transactions: [],
+        saillies: [],
+        portees: [],
+      }),
     }),
     {
       name: 'gestion-lapins-storage', // key in localStorage
