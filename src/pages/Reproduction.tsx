@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PlusCircle, Calendar, PlusSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useStore } from '../store/useStore';
 
 export const Reproduction: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'saillies' | 'portees'>('saillies');
@@ -8,55 +9,44 @@ export const Reproduction: React.FC = () => {
   const [porteeFilter, setPorteeFilter] = useState('Toutes');
   const navigate = useNavigate();
 
+  const { saillies, portees, updateSaillie, removeSaillie, updatePortee, removePortee } = useStore();
+
   const sailliesFilters = ['Toutes', 'En attente', 'Gestation confirmée', 'Échec'];
   const porteesFilters = ['Toutes', 'En cours', 'À surveiller', 'À sevrer'];
 
-  const [saillies, setSaillies] = useState([
-    { id: 1, female: 'F-012', male: 'M-004', status: 'Gestation confirmée', statusBadgeColor: 'primary', date: '16/05/2026', expectedDate: '16/06/2026' },
-    { id: 2, female: 'F-008', male: 'M-002, M-006', status: 'En attente', statusBadgeColor: 'secondary', date: '18/05/2026', hasControlToday: true, type: 'Double passage' },
-    { id: 3, female: 'F-021', male: 'M-003', status: 'Échec', statusBadgeColor: 'danger', date: '05/05/2026' }
-  ]);
-
-  const [portees, setPortees] = useState([
-    { id: 'P-014', status: 'En cours', female: 'F-012', age: '21 jours', effectif: '8 vivants', sevrage: '20/06/2026', badgeColor: 'secondary' },
-    { id: 'P-009', status: 'À sevrer', female: 'F-008', effectif: '5 lapereaux vivants', badgeColor: 'warning' }
-  ]);
-
   const handleConfirmerGestation = (id: number) => {
-    setSaillies(saillies.map(s => s.id === id ? { ...s, status: 'Gestation confirmée', statusBadgeColor: 'primary' } : s));
+    updateSaillie(id, { status: 'Gestation confirmée', statusBadgeColor: 'primary' });
   };
 
   const handleDeclarerEchec = (id: number) => {
-    setSaillies(saillies.map(s => s.id === id ? { ...s, status: 'Échec', statusBadgeColor: 'danger' } : s));
+    updateSaillie(id, { status: 'Échec', statusBadgeColor: 'danger' });
   };
 
   const handleEnregistrerMiseBas = (id: number) => {
-    setSaillies(saillies.filter(s => s.id !== id));
+    removeSaillie(id);
     navigate('/reproduction/portee/nouvelle');
   };
 
   const handleDeclarerSevrage = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setPortees(portees.map(p => p.id === id ? { ...p, status: 'À sevrer', badgeColor: 'warning' } : p));
+    updatePortee(id, { status: 'À sevrer', badgeColor: 'warning' });
   };
 
   const handleMortalite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setPortees(portees.map(p => {
-      if (p.id === id) {
-        const match = p.effectif.match(/(\d+)/);
-        if (match) {
-          const current = parseInt(match[1]);
-          return { ...p, effectif: `${Math.max(0, current - 1)} vivant${current - 1 > 1 ? 's' : ''}` };
-        }
+    const portee = portees.find(p => p.id === id);
+    if (portee) {
+      const match = portee.effectif.match(/(\d+)/);
+      if (match) {
+        const current = parseInt(match[1]);
+        updatePortee(id, { effectif: `${Math.max(0, current - 1)} vivant${current - 1 > 1 ? 's' : ''}` });
       }
-      return p;
-    }));
+    }
   };
 
   const handleSevrageImmediat = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setPortees(portees.filter(p => p.id !== id));
+    removePortee(id);
   };
 
   const filteredSaillies = saillieFilter === 'Toutes' ? saillies : saillies.filter(s => s.status === saillieFilter);

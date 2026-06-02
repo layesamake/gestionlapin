@@ -29,6 +29,28 @@ export interface Transaction {
   description: string;
 }
 
+export interface Saillie {
+  id: number;
+  female: string;
+  male: string;
+  status: string;
+  statusBadgeColor: string;
+  date: string;
+  expectedDate?: string;
+  hasControlToday?: boolean;
+  type?: string;
+}
+
+export interface Portee {
+  id: string;
+  status: string;
+  female: string;
+  age?: string;
+  effectif: string;
+  sevrage?: string;
+  badgeColor: string;
+}
+
 interface AppState {
   animals: Animal[];
   santeStats: any;
@@ -36,12 +58,18 @@ interface AppState {
   dashboard: any;
   alertes: any[];
   transactions: Transaction[];
+  saillies: Saillie[];
+  portees: Portee[];
   theme: string;
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
   removeAlerte: (id: number) => void;
   addTransaction: (transaction: Transaction) => void;
   removeTransaction: (id: string) => void;
+  updateSaillie: (id: number, saillie: Partial<Saillie>) => void;
+  removeSaillie: (id: number) => void;
+  updatePortee: (id: string, portee: Partial<Portee>) => void;
+  removePortee: (id: string) => void;
   setTheme: (theme: string) => void;
   importData: (data: string) => boolean;
   exportData: () => string;
@@ -58,6 +86,15 @@ export const useStore = create<AppState>()(
       transactions: [
         { id: '1', date: new Date().toISOString().split('T')[0], type: 'EXPENSE', category: 'Alimentation', amount: 15000, description: 'Sacs de granulés' },
         { id: '2', date: new Date().toISOString().split('T')[0], type: 'INCOME', category: 'Vente', amount: 35000, description: 'Vente de 5 lapins de chair' }
+      ],
+      saillies: [
+        { id: 1, female: 'F-012', male: 'M-004', status: 'Gestation confirmée', statusBadgeColor: 'primary', date: '16/05/2026', expectedDate: '16/06/2026' },
+        { id: 2, female: 'F-008', male: 'M-002, M-006', status: 'En attente', statusBadgeColor: 'secondary', date: '18/05/2026', hasControlToday: true, type: 'Double passage' },
+        { id: 3, female: 'F-021', male: 'M-003', status: 'Échec', statusBadgeColor: 'danger', date: '05/05/2026' }
+      ],
+      portees: [
+        { id: 'P-014', status: 'En cours', female: 'F-012', age: '21 jours', effectif: '8 vivants', sevrage: '20/06/2026', badgeColor: 'secondary' },
+        { id: 'P-009', status: 'À sevrer', female: 'F-008', effectif: '5 lapereaux vivants', badgeColor: 'warning' }
       ],
       theme: 'nature',
 
@@ -77,6 +114,22 @@ export const useStore = create<AppState>()(
 
       removeTransaction: (id) => set((state) => ({
         transactions: state.transactions.filter((t) => t.id !== id)
+      })),
+
+      updateSaillie: (id, updatedSaillie) => set((state) => ({
+        saillies: state.saillies.map((s) => s.id === id ? { ...s, ...updatedSaillie } : s)
+      })),
+
+      removeSaillie: (id) => set((state) => ({
+        saillies: state.saillies.filter((s) => s.id !== id)
+      })),
+
+      updatePortee: (id, updatedPortee) => set((state) => ({
+        portees: state.portees.map((p) => p.id === id ? { ...p, ...updatedPortee } : p)
+      })),
+
+      removePortee: (id) => set((state) => ({
+        portees: state.portees.filter((p) => p.id !== id)
       })),
 
       setTheme: (theme) => set({ theme }),
