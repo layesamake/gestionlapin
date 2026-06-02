@@ -94,7 +94,7 @@ export const AjouterReproducteur: React.FC = () => {
           {/* Photo du lapin */}
           <div className="flex flex-col items-center justify-center py-4">
             <div 
-              className="w-32 h-32 bg-surface border-2 border-dashed border-border rounded-full flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all overflow-hidden relative shadow-lg"
+              className="w-40 h-40 bg-surface border-2 border-dashed border-border rounded-full flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-surface/80 transition-all overflow-hidden relative shadow-lg"
               onClick={() => fileInputRef.current?.click()}
             >
               {photoPreview ? (

@@ -47,12 +47,6 @@ export const FicheReproducteur = () => {
       </header>
 
       <main className="pt-20 px-4 space-y-6">
-        {/* Offline Indicator */}
-        <div className="flex items-center justify-center gap-2 py-2 px-4 bg-surface/50 border border-border rounded-xl">
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-          <span className="text-[10px] text-muted font-medium">Fonctionne sans Internet • Données locales</span>
-        </div>
-
         {/* Section: Informations Générales */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
