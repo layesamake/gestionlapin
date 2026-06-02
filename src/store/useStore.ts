@@ -20,16 +20,28 @@ export interface Animal {
   weight?: string;
 }
 
+export interface Transaction {
+  id: string;
+  date: string;
+  type: 'INCOME' | 'EXPENSE';
+  category: string;
+  amount: number;
+  description: string;
+}
+
 interface AppState {
   animals: Animal[];
   santeStats: any;
   soins: any[];
   dashboard: any;
   alertes: any[];
+  transactions: Transaction[];
   theme: string;
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
   removeAlerte: (id: number) => void;
+  addTransaction: (transaction: Transaction) => void;
+  removeTransaction: (id: string) => void;
   setTheme: (theme: string) => void;
   importData: (data: string) => boolean;
   exportData: () => string;
@@ -43,6 +55,10 @@ export const useStore = create<AppState>()(
       soins: santeData.soins,
       dashboard: dashboardData,
       alertes: alertesData,
+      transactions: [
+        { id: '1', date: new Date().toISOString().split('T')[0], type: 'EXPENSE', category: 'Alimentation', amount: 15000, description: 'Sacs de granulés' },
+        { id: '2', date: new Date().toISOString().split('T')[0], type: 'INCOME', category: 'Vente', amount: 35000, description: 'Vente de 5 lapins de chair' }
+      ],
       theme: 'nature',
 
       addAnimal: (animal) => set((state) => ({ animals: [...state.animals, animal] })),
@@ -53,6 +69,14 @@ export const useStore = create<AppState>()(
 
       removeAlerte: (id) => set((state) => ({
         alertes: state.alertes.filter((a) => a.id !== id)
+      })),
+
+      addTransaction: (transaction) => set((state) => ({
+        transactions: [transaction, ...state.transactions]
+      })),
+
+      removeTransaction: (id) => set((state) => ({
+        transactions: state.transactions.filter((t) => t.id !== id)
       })),
 
       setTheme: (theme) => set({ theme }),
@@ -82,6 +106,8 @@ export const useStore = create<AppState>()(
             soins: state.soins,
             dashboard: state.dashboard,
             alertes: state.alertes,
+            transactions: state.transactions,
+            theme: state.theme,
           },
           version: 1,
           timestamp: new Date().toISOString()

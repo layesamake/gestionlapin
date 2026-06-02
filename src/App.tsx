@@ -17,6 +17,8 @@ import { FichePortee } from './pages/FichePortee';
 import { ProgrammerTraitement } from './pages/ProgrammerTraitement';
 import { EnregistrerSoin } from './pages/EnregistrerSoin';
 import { FicheTraitement } from './pages/FicheTraitement';
+import { Finance } from './pages/Finance';
+import { NouvelleTransaction } from './pages/NouvelleTransaction';
 
 function App() {
   const theme = useStore((state) => state.theme);
@@ -44,6 +46,8 @@ function App() {
           <Route path="sante/traitement/:id" element={<FicheTraitement />} />
           <Route path="alertes" element={<Alertes />} />
           <Route path="parametres" element={<Parametres />} />
+          <Route path="finance" element={<Finance />} />
+          <Route path="finance/nouvelle" element={<NouvelleTransaction />} />
         </Route>
       </Routes>
     </BrowserRouter>

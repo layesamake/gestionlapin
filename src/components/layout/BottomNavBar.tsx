@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, PawPrint, HeartPulse, Stethoscope, Bell } from 'lucide-react';
+import { Home, PawPrint, HeartPulse, Stethoscope, Wallet } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export const BottomNavBar: React.FC = () => {
@@ -10,7 +10,7 @@ export const BottomNavBar: React.FC = () => {
     { path: '/cheptel', label: 'Cheptel', icon: PawPrint },
     { path: '/reproduction', label: 'Reproduction', icon: HeartPulse },
     { path: '/sante', label: 'Santé', icon: Stethoscope },
-    { path: '/alertes', label: 'Alertes', icon: Bell, hasBadge: true },
+    { path: '/finance', label: 'Finance', icon: Wallet },
   ];
 
   return (
@@ -27,9 +27,6 @@ export const BottomNavBar: React.FC = () => {
           >
             <item.icon className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} />
             <span className="font-sans text-[10px] font-medium mt-0.5">{item.label}</span>
-            {item.hasBadge && (
-              <div className="absolute top-2 right-4 w-2 h-2 bg-danger rounded-full border border-background"></div>
-            )}
           </Link>
         );
       })}
