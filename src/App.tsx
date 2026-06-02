@@ -12,6 +12,7 @@ import { FicheReproducteur } from './pages/FicheReproducteur';
 import { AjouterReproducteur } from './pages/AjouterReproducteur';
 import { AjouterRace } from './pages/AjouterRace';
 import { NouvelleSaillie } from './pages/NouvelleSaillie';
+import { FicheSaillie } from './pages/FicheSaillie';
 import { NouvellePortee } from './pages/NouvellePortee';
 import { FichePortee } from './pages/FichePortee';
 import { ProgrammerTraitement } from './pages/ProgrammerTraitement';
@@ -38,6 +39,7 @@ function App() {
           <Route path="cheptel/:id" element={<FicheReproducteur />} />
           <Route path="reproduction" element={<Reproduction />} />
           <Route path="reproduction/saillie/nouvelle" element={<NouvelleSaillie />} />
+          <Route path="reproduction/saillie/:id" element={<FicheSaillie />} />
           <Route path="reproduction/portee/nouvelle" element={<NouvellePortee />} />
           <Route path="reproduction/portee/:id" element={<FichePortee />} />
           <Route path="sante" element={<Sante />} />

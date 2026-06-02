@@ -135,7 +135,7 @@ export const Reproduction: React.FC = () => {
                 <div className="flex gap-2">
                   {s.status === 'Gestation confirmée' && (
                     <>
-                      <button className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Voir détails</button>
+                      <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Voir détails</button>
                       <button onClick={() => handleEnregistrerMiseBas(s.id)} className="flex-1 py-2 rounded-lg bg-primary text-background text-xs font-bold hover:opacity-90 transition-opacity">Enregistrer mise bas</button>
                     </>
                   )}
@@ -146,7 +146,7 @@ export const Reproduction: React.FC = () => {
                     </>
                   )}
                   {s.status === 'Échec' && (
-                    <button className="w-full py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Détails de l'échec</button>
+                    <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="w-full py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Détails de l'échec</button>
                   )}
                 </div>
               </div>
