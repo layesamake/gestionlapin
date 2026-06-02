@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, RotateCcw, Save } from 'lucide-react';
+import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { generatePDFRegister } from '../utils/pdfGenerator';
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
@@ -131,7 +132,7 @@ export const Parametres: React.FC = () => {
               className="flex flex-col items-center justify-center p-4 bg-surface border border-border rounded-xl active:scale-[0.98] transition-all hover:bg-border/50"
             >
               <CloudUpload className="w-6 h-6 text-warning mb-2" />
-              <span className="text-xs font-medium">Sauvegarder</span>
+              <span className="text-xs font-medium">Sauvegarder JSON</span>
             </button>
             <button 
               onClick={() => fileInputRef.current?.click()}
@@ -146,6 +147,13 @@ export const Parametres: React.FC = () => {
                 accept=".json" 
                 onChange={handleImport} 
               />
+            </button>
+            <button 
+              onClick={generatePDFRegister}
+              className="col-span-2 flex items-center justify-center gap-2 p-4 bg-primary/10 border border-primary/30 rounded-xl active:scale-[0.98] transition-all hover:bg-primary/20 text-primary"
+            >
+              <FileText className="w-6 h-6" />
+              <span className="text-sm font-bold">Générer Registre PDF</span>
             </button>
           </div>
         </section>
