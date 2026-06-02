@@ -10,6 +10,7 @@ export const NouvelleSaillie: React.FC = () => {
   const femelles = animals.filter(a => a.gender === 'F' || a?.type?.startsWith('Femelle'));
   const males = animals.filter(a => a.gender === 'M' || a?.type?.startsWith('Mâle'));
 
+  const [selectedFemale, setSelectedFemale] = useState('');
   const [typeSaillie, setTypeSaillie] = useState('Naturelle');
   const [dateSaillie, setDateSaillie] = useState(new Date().toISOString().split('T')[0]);
 
@@ -20,12 +21,64 @@ export const NouvelleSaillie: React.FC = () => {
 
   const formatDate = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   
-  const formatCalendarDate = (d: Date) => {
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  const formatICSDate = (d: Date) => {
+    return d.toISOString().replace(/-|:|\.\d+/g, '').substring(0, 15) + 'Z';
   };
-  const calDateStr = formatCalendarDate(miseBas);
-  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mise+bas+prévue+(Gestion+Lapins)&dates=${calDateStr}T080000Z/${calDateStr}T100000Z&details=Vérifier+la+mise+bas+de+la+lapine`;
+
+  const handleAddToCalendar = () => {
+    if (!selectedFemale) {
+      alert("Veuillez d'abord sélectionner une femelle.");
+      return;
+    }
+
+    const events = [
+      {
+        title: `🐰 Palper ${selectedFemale}`,
+        date: controleGestation,
+        desc: `Contrôle de gestation à J+14 pour la saillie du ${formatDate(dateObj)}`
+      },
+      {
+        title: `🐰 Boîte à nid ${selectedFemale}`,
+        date: prepMiseBas,
+        desc: `Mettre la boîte à nid. Mise bas prévue dans 4 jours.`
+      },
+      {
+        title: `🐰 Mise bas prévue : ${selectedFemale}`,
+        date: miseBas,
+        desc: `Vérifier la mise bas de la femelle ${selectedFemale}.`
+      }
+    ];
+
+    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Gestion Lapins//FR\n";
+    
+    events.forEach(event => {
+      // Create an event for 08:00 AM to 09:00 AM on that day
+      event.date.setHours(8, 0, 0, 0);
+      const start = formatICSDate(event.date);
+      const end = formatICSDate(new Date(event.date.getTime() + 60 * 60 * 1000));
+      
+      icsContent += "BEGIN:VEVENT\n";
+      icsContent += `DTSTART:${start}\n`;
+      icsContent += `DTEND:${end}\n`;
+      icsContent += `SUMMARY:${event.title}\n`;
+      icsContent += `DESCRIPTION:${event.desc}\n`;
+      // Reminder 1 hour before
+      icsContent += "BEGIN:VALARM\nTRIGGER:-PT1H\nACTION:DISPLAY\nDESCRIPTION:Rappel\nEND:VALARM\n";
+      icsContent += "END:VEVENT\n";
+    });
+    
+    icsContent += "END:VCALENDAR";
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `suivi_${selectedFemale}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +121,8 @@ export const NouvelleSaillie: React.FC = () => {
               <select 
                 className="w-full bg-surface border border-border rounded-lg pl-10 pr-10 py-3 text-foreground font-mono appearance-none focus:ring-1 focus:ring-primary outline-none" 
                 required
-                defaultValue=""
+                value={selectedFemale}
+                onChange={(e) => setSelectedFemale(e.target.value)}
               >
                 <option value="" disabled>Sélectionner une femelle</option>
                 {femelles.map(f => (
@@ -182,14 +236,13 @@ export const NouvelleSaillie: React.FC = () => {
                   </div>
                   <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Dans 31j</span>
                 </div>
-                <a 
-                  href={googleCalendarUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
+                  type="button"
+                  onClick={handleAddToCalendar}
                   className="mt-2 w-full flex items-center justify-center gap-2 bg-[#1a73e8]/10 text-[#1a73e8] border border-[#1a73e8]/30 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#1a73e8]/20 transition-colors"
                 >
-                  <Calendar className="w-4 h-4" /> Ajouter à Google Agenda
-                </a>
+                  <Calendar className="w-4 h-4" /> Ajouter au Calendrier
+                </button>
               </div>
             </div>
           </div>
