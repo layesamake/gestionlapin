@@ -6,11 +6,19 @@ export const FicheReproducteur = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const animals = useStore(state => state.animals);
+  const updateAnimal = useStore(state => state.updateAnimal);
 
   // Find animal or fallback to a default mock for the demo
   const animalInfo = (animals.find((a: any) => a.id === id) || {
     id: 'F-012', name: 'Blanchette', gender: 'F', race: 'Néo-Zélandais', age: '14 mois', weight: '4.2', status: 'Gestante', statusColor: 'primary', cage: 'A3'
   }) as any;
+
+  const handleMortalite = () => {
+    if (window.confirm(`Voulez-vous vraiment déclarer la mortalité de ce reproducteur (${animalInfo.id}) ?`)) {
+      updateAnimal(animalInfo.id, { status: 'Mort', badgeColor: 'brand-danger' });
+      navigate('/cheptel');
+    }
+  };
 
   return (
     <div className="pb-24">
@@ -184,7 +192,7 @@ export const FicheReproducteur = () => {
         {/* Quick Actions Buttons */}
         <section className="grid grid-cols-2 gap-3 pt-4">
           <button 
-            onClick={() => navigate('/reproduction/nouvelle')}
+            onClick={() => navigate('/reproduction/saillie/nouvelle')}
             className="col-span-2 bg-primary text-background py-4 rounded-lg font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20"
           >
             <PlusCircle className="w-5 h-5" />
@@ -197,6 +205,12 @@ export const FicheReproducteur = () => {
           <button className="border border-border text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-surface">
             <Edit3 className="w-5 h-5" />
             Modifier
+          </button>
+          <button 
+            onClick={handleMortalite}
+            className="col-span-2 border border-danger/50 bg-danger/10 text-danger py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-danger/20"
+          >
+            Déclarer mortalité
           </button>
         </section>
       </main>

@@ -8,12 +8,13 @@ export const Dashboard: React.FC = () => {
   const { animals, saillies, portees, alertes, removeAlerte } = useStore();
 
   // Dynamic indicators calculation
-  const totalLapins = animals.length + portees.reduce((sum, p) => {
+  const aliveAnimals = animals.filter(a => a.status !== 'Mort');
+  const totalLapins = aliveAnimals.length + portees.reduce((sum, p) => {
     const match = p.effectif.match(/(\d+)/);
     return sum + (match ? parseInt(match[1]) : 0);
   }, 0);
-  const malesActifs = animals.filter(a => a.gender === 'M' || a.type.toLowerCase().includes('mâle')).length;
-  const femellesRepr = animals.filter(a => a.gender === 'F' || a.type.toLowerCase().includes('femelle')).length;
+  const malesActifs = aliveAnimals.filter(a => a.gender === 'M' || a.type.toLowerCase().includes('mâle')).length;
+  const femellesRepr = aliveAnimals.filter(a => a.gender === 'F' || a.type.toLowerCase().includes('femelle')).length;
   const femellesGestantesCount = saillies.filter(s => s.status === 'Gestation confirmée').length;
   const porteesEnCoursCount = portees.filter(p => p.status === 'En cours').length;
   const totalLapereaux = portees.reduce((sum, p) => {
