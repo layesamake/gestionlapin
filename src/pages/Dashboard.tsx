@@ -36,12 +36,6 @@ export const Dashboard: React.FC = () => {
 
   return (
     <>
-      {/* Connectivity Indicator */}
-      <div className="mb-6 flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-primary/10 border border-primary/20">
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-        <span className="text-primary text-[11px] font-medium uppercase tracking-wider">Mode hors connexion disponible • Données locales</span>
-      </div>
-
       {/* Key Indicators Grid */}
       <section className="grid grid-cols-2 gap-3 mb-8">
         <div className="col-span-2 bg-surface border border-border p-4 rounded-xl flex items-center justify-between">
