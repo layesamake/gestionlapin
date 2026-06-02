@@ -11,16 +11,53 @@ export const Reproduction: React.FC = () => {
   const sailliesFilters = ['Toutes', 'En attente', 'Gestation confirmée', 'Échec'];
   const porteesFilters = ['Toutes', 'En cours', 'À surveiller', 'À sevrer'];
 
-  const saillies = [
+  const [saillies, setSaillies] = useState([
     { id: 1, female: 'F-012', male: 'M-004', status: 'Gestation confirmée', statusBadgeColor: 'primary', date: '16/05/2026', expectedDate: '16/06/2026' },
     { id: 2, female: 'F-008', male: 'M-002, M-006', status: 'En attente', statusBadgeColor: 'secondary', date: '18/05/2026', hasControlToday: true, type: 'Double passage' },
     { id: 3, female: 'F-021', male: 'M-003', status: 'Échec', statusBadgeColor: 'danger', date: '05/05/2026' }
-  ];
+  ]);
 
-  const portees = [
+  const [portees, setPortees] = useState([
     { id: 'P-014', status: 'En cours', female: 'F-012', age: '21 jours', effectif: '8 vivants', sevrage: '20/06/2026', badgeColor: 'secondary' },
     { id: 'P-009', status: 'À sevrer', female: 'F-008', effectif: '5 lapereaux vivants', badgeColor: 'warning' }
-  ];
+  ]);
+
+  const handleConfirmerGestation = (id: number) => {
+    setSaillies(saillies.map(s => s.id === id ? { ...s, status: 'Gestation confirmée', statusBadgeColor: 'primary' } : s));
+  };
+
+  const handleDeclarerEchec = (id: number) => {
+    setSaillies(saillies.map(s => s.id === id ? { ...s, status: 'Échec', statusBadgeColor: 'danger' } : s));
+  };
+
+  const handleEnregistrerMiseBas = (id: number) => {
+    setSaillies(saillies.filter(s => s.id !== id));
+    navigate('/reproduction/portee/nouvelle');
+  };
+
+  const handleDeclarerSevrage = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPortees(portees.map(p => p.id === id ? { ...p, status: 'À sevrer', badgeColor: 'warning' } : p));
+  };
+
+  const handleMortalite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPortees(portees.map(p => {
+      if (p.id === id) {
+        const match = p.effectif.match(/(\d+)/);
+        if (match) {
+          const current = parseInt(match[1]);
+          return { ...p, effectif: `${Math.max(0, current - 1)} vivant${current - 1 > 1 ? 's' : ''}` };
+        }
+      }
+      return p;
+    }));
+  };
+
+  const handleSevrageImmediat = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPortees(portees.filter(p => p.id !== id));
+  };
 
   const filteredSaillies = saillieFilter === 'Toutes' ? saillies : saillies.filter(s => s.status === saillieFilter);
   const filteredPortees = porteeFilter === 'Toutes' ? portees : portees.filter(p => p.status === porteeFilter);
@@ -99,13 +136,13 @@ export const Reproduction: React.FC = () => {
                   {s.status === 'Gestation confirmée' && (
                     <>
                       <button className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Voir détails</button>
-                      <button className="flex-1 py-2 rounded-lg bg-primary text-background text-xs font-bold hover:opacity-90 transition-opacity">Enregistrer mise bas</button>
+                      <button onClick={() => handleEnregistrerMiseBas(s.id)} className="flex-1 py-2 rounded-lg bg-primary text-background text-xs font-bold hover:opacity-90 transition-opacity">Enregistrer mise bas</button>
                     </>
                   )}
                   {s.status === 'En attente' && (
                     <>
-                      <button className="flex-1 py-2 rounded-lg bg-secondary text-background text-xs font-bold">Confirmer gestation</button>
-                      <button className="flex-1 py-2 rounded-lg border border-danger text-danger text-xs font-bold">Déclarer échec</button>
+                      <button onClick={() => handleConfirmerGestation(s.id)} className="flex-1 py-2 rounded-lg bg-secondary text-background text-xs font-bold">Confirmer gestation</button>
+                      <button onClick={() => handleDeclarerEchec(s.id)} className="flex-1 py-2 rounded-lg border border-danger text-danger text-xs font-bold">Déclarer échec</button>
                     </>
                   )}
                   {s.status === 'Échec' && (
@@ -179,8 +216,8 @@ export const Reproduction: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-surface">Déclarer sevrage</button>
-                      <button className="flex-1 py-2 rounded-lg border border-danger/30 text-danger text-xs font-semibold hover:bg-danger/10">Mortalité</button>
+                      <button onClick={(e) => handleDeclarerSevrage(p.id, e)} className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-surface">Déclarer sevrage</button>
+                      <button onClick={(e) => handleMortalite(p.id, e)} className="flex-1 py-2 rounded-lg border border-danger/30 text-danger text-xs font-semibold hover:bg-danger/10">Mortalité</button>
                     </div>
                   </>
                 )}
@@ -188,7 +225,7 @@ export const Reproduction: React.FC = () => {
                 {p.status === 'À sevrer' && (
                   <>
                     <p className="text-sm text-muted mb-4">Mère: <span className="font-mono text-foreground">{p.female}</span> • {p.effectif}</p>
-                    <button className="w-full py-3 rounded-lg bg-warning text-background font-bold text-sm">Sevrage immédiat</button>
+                    <button onClick={(e) => handleSevrageImmediat(p.id, e)} className="w-full py-3 rounded-lg bg-warning text-background font-bold text-sm">Sevrage immédiat</button>
                   </>
                 )}
               </div>
