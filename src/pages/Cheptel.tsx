@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Search, PlusCircle, CheckCircle, Info, Repeat, PawPrint } from 'lucide-react';
+import { Search, PlusCircle, PawPrint, Mars, Venus } from 'lucide-react';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
@@ -16,15 +16,6 @@ export const Cheptel: React.FC = () => {
     if (activeFilter === 'Femelles') return animal.type.includes('Femelle');
     return animal.status === activeFilter;
   });
-
-  const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'check_circle': return <CheckCircle className="w-5 h-5 text-brand-primary" />;
-      case 'info': return <Info className="w-5 h-5 text-brand-neutral" />;
-      case 'event_repeat': return <Repeat className="w-5 h-5 text-brand-warning" />;
-      default: return null;
-    }
-  };
 
   return (
     <>
@@ -56,44 +47,54 @@ export const Cheptel: React.FC = () => {
       </section>
 
       <section className="space-y-3 mt-6">
-        {filteredAnimals.map((animal: any) => (
-          <div 
-            key={animal.id} 
-            onClick={() => navigate(`/cheptel/${animal.id}`)}
-            className={`cursor-pointer bg-brand-card border rounded-xl p-4 flex flex-col gap-3 shadow-sm transition-colors ${
-              animal.isWarning ? 'border-brand-warning/30 border-l-4 border-l-brand-warning hover:border-brand-warning/50' : 'border-brand-border hover:border-brand-primary/30'
-            }`}
-          >
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
+        {filteredAnimals.map((animal: any) => {
+          const isFemale = animal.gender === 'F' || animal.type?.toLowerCase().includes('femelle') || animal.id?.startsWith('F-');
+          const isMale = animal.gender === 'M' || animal.type?.toLowerCase().includes('mâle') || animal.id?.startsWith('M-');
+          const displayName = animal.name && animal.name !== 'Sans nom' ? animal.name : '';
+
+          return (
+            <div 
+              key={animal.id} 
+              onClick={() => navigate(`/cheptel/${animal.id}`)}
+              className={`cursor-pointer bg-brand-card border rounded-xl p-3 flex items-center gap-4 shadow-sm transition-all hover:scale-[1.01] ${
+                animal.isWarning 
+                  ? 'border-brand-warning/30 border-l-4 border-l-brand-warning hover:border-brand-warning/50' 
+                  : 'border-brand-border hover:border-brand-primary/30'
+              }`}
+            >
+              {/* Photo Miniature */}
+              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-brand-border/40 flex items-center justify-center border border-brand-border">
+                {animal.image ? (
+                  <img src={animal.image} alt={displayName || animal.id} className="w-full h-full object-cover" />
+                ) : (
+                  <PawPrint className="w-6 h-6 text-brand-muted/50" />
+                )}
+              </div>
+
+              {/* Informations */}
+              <div className="flex-grow min-w-0 flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
-                  <span className={`font-mono font-bold text-lg text-${animal.badgeColor}`}>
+                  <span className="font-mono font-bold text-sm text-brand-muted">
                     {animal.id}
                   </span>
-                  {animal.name && (
-                    <span className="font-semibold text-lg text-brand-text">
-                      - {animal.name}
+                  {displayName && (
+                    <span className="font-bold text-base text-brand-text truncate">
+                      {displayName}
                     </span>
                   )}
-                  <span className={`text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-${animal.badgeColor}/10 text-${animal.badgeColor}`}>
+                  {isFemale && <Venus className="w-4 h-4 text-pink-500 flex-shrink-0" />}
+                  {isMale && <Mars className="w-4 h-4 text-sky-500 flex-shrink-0" />}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-${animal.badgeColor}/10 text-${animal.badgeColor}`}>
                     {animal.status}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-brand-text">{animal.type}</p>
-              </div>
-              <div className="text-right">
-                <span className="text-[11px] font-mono text-brand-muted block uppercase">Localisation</span>
-                <span className="text-sm font-bold text-brand-text">{animal.location}</span>
               </div>
             </div>
-            {animal.infoText && (
-              <div className="flex items-center gap-2 pt-2 border-t border-brand-border/50">
-                {getIcon(animal.infoIcon as string)}
-                <span className={`text-xs font-semibold text-${animal.infoColor}`}>{animal.infoText}</span>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section className="flex flex-col gap-3 pt-6">
