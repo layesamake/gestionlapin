@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Save, TrendingUp, TrendingDown } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Save, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
 import { useStore, type Transaction } from '../store/useStore';
 
 export const NouvelleTransaction: React.FC = () => {
   const navigate = useNavigate();
-  const addTransaction = useStore(state => state.addTransaction);
+  const { id } = useParams();
+  const isEditMode = !!id;
 
-  const [type, setType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const { addTransaction, updateTransaction, removeTransaction, transactions } = useStore();
+  const existingTransaction = isEditMode ? transactions.find(t => t.id === id) : null;
+
+  const [type, setType] = useState<'INCOME' | 'EXPENSE'>(existingTransaction?.type || 'EXPENSE');
+  const [date, setDate] = useState(existingTransaction?.date || new Date().toISOString().split('T')[0]);
+  const [amount, setAmount] = useState(existingTransaction ? existingTransaction.amount.toString() : '');
+  const [category, setCategory] = useState(existingTransaction?.category || '');
+  const [description, setDescription] = useState(existingTransaction?.description || '');
 
   const expenseCategories = ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'];
   const incomeCategories = ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'];
@@ -22,8 +26,7 @@ export const NouvelleTransaction: React.FC = () => {
     e.preventDefault();
     if (!amount || !category) return;
 
-    const transaction: Transaction = {
-      id: Date.now().toString(),
+    const transactionData = {
       date,
       type,
       category,
@@ -31,8 +34,25 @@ export const NouvelleTransaction: React.FC = () => {
       description
     };
 
-    addTransaction(transaction);
+    if (isEditMode && id) {
+      updateTransaction(id, transactionData);
+    } else {
+      const newTransaction: Transaction = {
+        id: Date.now().toString(),
+        ...transactionData
+      };
+      addTransaction(newTransaction);
+    }
     navigate(-1);
+  };
+
+  const handleDelete = () => {
+    if (isEditMode && id) {
+      if (window.confirm("Voulez-vous vraiment supprimer définitivement cette transaction ?")) {
+        removeTransaction(id);
+        navigate('/finance');
+      }
+    }
   };
 
   return (
@@ -41,7 +61,9 @@ export const NouvelleTransaction: React.FC = () => {
         <button onClick={() => navigate(-1)} className="text-muted active:scale-95 transition-transform">
           Annuler
         </button>
-        <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">Nouvelle Transaction</h1>
+        <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">
+          {isEditMode ? 'Modifier la Transaction' : 'Nouvelle Transaction'}
+        </h1>
         <button onClick={handleSubmit} className="text-primary font-bold active:scale-95 transition-transform">
           Enregistrer
         </button>
@@ -52,7 +74,10 @@ export const NouvelleTransaction: React.FC = () => {
         <div className="grid grid-cols-2 gap-2 p-1 bg-surface border border-border rounded-xl">
           <button 
             type="button"
-            onClick={() => setType('INCOME')}
+            onClick={() => {
+              setType('INCOME');
+              setCategory('');
+            }}
             className={`py-3 flex items-center justify-center gap-2 rounded-lg font-bold text-sm transition-all ${
               type === 'INCOME' ? 'bg-secondary/10 text-secondary border border-secondary/20' : 'text-muted hover:bg-border/50'
             }`}
@@ -61,7 +86,10 @@ export const NouvelleTransaction: React.FC = () => {
           </button>
           <button 
             type="button"
-            onClick={() => setType('EXPENSE')}
+            onClick={() => {
+              setType('EXPENSE');
+              setCategory('');
+            }}
             className={`py-3 flex items-center justify-center gap-2 rounded-lg font-bold text-sm transition-all ${
               type === 'EXPENSE' ? 'bg-danger/10 text-danger border border-danger/20' : 'text-muted hover:bg-border/50'
             }`}
@@ -137,6 +165,16 @@ export const NouvelleTransaction: React.FC = () => {
             >
               <Save className="w-5 h-5 fill-current" /> Enregistrer la transaction
             </button>
+
+            {isEditMode && (
+              <button 
+                type="button"
+                onClick={handleDelete}
+                className="w-full border border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger font-bold py-3.5 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+              >
+                <Trash2 className="w-5 h-5" /> Supprimer la transaction
+              </button>
+            )}
           </div>
         </form>
       </main>

@@ -52,6 +52,7 @@ function App() {
           <Route path="parametres" element={<Parametres />} />
           <Route path="finance" element={<Finance />} />
           <Route path="finance/nouvelle" element={<NouvelleTransaction />} />
+          <Route path="finance/modifier/:id" element={<NouvelleTransaction />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -98,7 +98,11 @@ export const Finance: React.FC = () => {
           </div>
         ) : (
           getFilteredTransactions().map(t => (
-            <div key={t.id} className="bg-surface border border-border rounded-xl p-4 flex items-center gap-4">
+            <div 
+              key={t.id} 
+              onClick={() => navigate(`/finance/modifier/${t.id}`)}
+              className="bg-surface border border-border rounded-xl p-4 flex items-center gap-4 cursor-pointer hover:border-primary/30 active:scale-[0.99] transition-all"
+            >
               <div className={`p-3 rounded-full flex-shrink-0 ${t.type === 'INCOME' ? 'bg-secondary/10 text-secondary' : 'bg-danger/10 text-danger'}`}>
                 {t.type === 'INCOME' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
               </div>

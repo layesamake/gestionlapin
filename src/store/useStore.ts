@@ -79,6 +79,7 @@ interface AppState {
   removeAnimal: (id: string) => void;
   removeAlerte: (id: number) => void;
   addTransaction: (transaction: Transaction) => void;
+  updateTransaction: (id: string, transaction: Partial<Transaction>) => void;
   removeTransaction: (id: string) => void;
   addSaillie: (saillie: Saillie) => void;
   updateSaillie: (id: number, saillie: Partial<Saillie>) => void;
@@ -140,6 +141,10 @@ export const useStore = create<AppState>()(
 
       addTransaction: (transaction) => set((state) => ({
         transactions: [transaction, ...state.transactions]
+      })),
+
+      updateTransaction: (id, updatedTransaction) => set((state) => ({
+        transactions: state.transactions.map((t) => t.id === id ? { ...t, ...updatedTransaction } : t)
       })),
 
       removeTransaction: (id) => set((state) => ({
