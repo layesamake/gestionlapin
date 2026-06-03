@@ -54,6 +54,12 @@ export interface Portee {
   effectif: string;
   sevrage?: string;
   badgeColor: string;
+  dateMiseBas?: string;
+  totalNes?: number;
+  nesVivants?: number;
+  mortsNes?: number;
+  cage?: string;
+  observations?: string;
 }
 
 interface AppState {

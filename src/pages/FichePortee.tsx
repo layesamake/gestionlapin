@@ -1,13 +1,39 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Settings,   Pill, CheckCircle, LogOut } from 'lucide-react';
+import { ArrowLeft, Settings, Pill, CheckCircle, LogOut, Edit, Trash } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const FichePortee: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { portees, removePortee, animals } = useStore();
 
-  // Mock ID
   const porteeId = id || 'P-014';
+  const porteeInfo = portees.find((p) => p.id === porteeId) || {
+    id: 'P-014',
+    status: 'En cours',
+    female: 'F-012',
+    age: '21 jours',
+    effectif: '8 vivants',
+    sevrage: '20/06/2026',
+    badgeColor: 'secondary',
+    dateMiseBas: '2026-05-30',
+    totalNes: 9,
+    nesVivants: 8,
+    mortsNes: 1,
+    cage: 'Cage A3',
+    observations: 'Portée vigoureuse, bon développement.'
+  } as any;
+
+  const mother = animals.find((a) => a.id === porteeInfo.female);
+  const motherName = mother ? mother.name : 'Inconnue';
+
+  const handleDelete = () => {
+    if (window.confirm(`Voulez-vous vraiment supprimer la portée ${porteeInfo.id} ? Cette action est irréversible.`)) {
+      removePortee(porteeInfo.id);
+      navigate('/reproduction');
+    }
+  };
 
   return (
     <div className="pb-24">
@@ -23,7 +49,9 @@ export const FichePortee: React.FC = () => {
           <h1 className="text-foreground font-display font-bold tracking-tight text-lg">Fiche Portée: {porteeId}</h1>
         </div>
         <div className="flex items-center gap-4">
-          <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">En cours</span>
+          <span className={`bg-${porteeInfo.badgeColor || 'primary'}/10 text-${porteeInfo.badgeColor || 'primary'} text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider`}>
+            {porteeInfo.status}
+          </span>
           <button className="text-muted active:scale-95 transition-transform">
             <Settings className="w-6 h-6" />
           </button>
@@ -47,15 +75,15 @@ export const FichePortee: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-muted text-xs font-medium uppercase tracking-widest mb-1">Emplacement</p>
-                <span className="font-mono bg-border px-3 py-1 rounded text-sm font-bold text-foreground">Cage A3</span>
+                <span className="font-mono bg-border px-3 py-1 rounded text-sm font-bold text-foreground">{porteeInfo.cage || 'Cage A3'}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-background p-3 rounded-lg border border-border/50">
                 <p className="text-muted text-[10px] uppercase font-bold mb-1">Mère</p>
-                <p className="font-mono text-foreground text-sm">F-012</p>
-                <p className="text-muted text-xs">Blanchette</p>
+                <p className="font-mono text-foreground text-sm">{porteeInfo.female}</p>
+                <p className="text-muted text-xs">{motherName}</p>
               </div>
               <div className="bg-background p-3 rounded-lg border border-border/50">
                 <p className="text-muted text-[10px] uppercase font-bold mb-1">Père</p>
@@ -71,18 +99,20 @@ export const FichePortee: React.FC = () => {
               </div>
               <div className="flex justify-between items-center text-sm border-t border-border pt-3">
                 <span className="text-muted">Mise bas</span>
-                <span className="font-mono text-foreground">16/06/2026</span>
+                <span className="font-mono text-foreground">
+                  {porteeInfo.dateMiseBas ? new Date(porteeInfo.dateMiseBas).toLocaleDateString('fr-FR') : '16/06/2026'}
+                </span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-border pt-3">
                 <span className="text-muted">Âge de la portée</span>
-                <span className="font-bold text-secondary">21 jours</span>
+                <span className="font-bold text-secondary">{porteeInfo.age || '21 jours'}</span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-border pt-3">
                 <div className="flex flex-col">
                   <span className="text-muted">Sevrage</span>
                   <span className="text-[10px] text-warning">dans 14 jours</span>
                 </div>
-                <span className="font-mono text-foreground">21/07/2026</span>
+                <span className="font-mono text-foreground">{porteeInfo.sevrage || '21/07/2026'}</span>
               </div>
             </div>
           </div>
@@ -92,15 +122,15 @@ export const FichePortee: React.FC = () => {
             <p className="text-muted text-[10px] uppercase font-bold mb-3">Bilan de production</p>
             <div className="grid grid-cols-5 gap-2">
               <div className="text-center">
-                <p className="text-foreground font-bold text-lg leading-tight">9</p>
+                <p className="text-foreground font-bold text-lg leading-tight">{porteeInfo.totalNes ?? 9}</p>
                 <p className="text-[8px] text-muted uppercase">Nés</p>
               </div>
               <div className="text-center">
-                <p className="text-primary font-bold text-lg leading-tight">8</p>
+                <p className="text-primary font-bold text-lg leading-tight">{porteeInfo.nesVivants ?? 8}</p>
                 <p className="text-[8px] text-muted uppercase">Vifs</p>
               </div>
               <div className="text-center">
-                <p className="text-danger font-bold text-lg leading-tight">1</p>
+                <p className="text-danger font-bold text-lg leading-tight">{porteeInfo.mortsNes ?? 1}</p>
                 <p className="text-[8px] text-muted uppercase">Morts</p>
               </div>
               <div className="text-center">
@@ -108,7 +138,7 @@ export const FichePortee: React.FC = () => {
                 <p className="text-[8px] text-muted uppercase">Post</p>
               </div>
               <div className="text-center border-l border-border">
-                <p className="text-secondary font-bold text-lg leading-tight">8</p>
+                <p className="text-secondary font-bold text-lg leading-tight">{porteeInfo.nesVivants ?? 8}</p>
                 <p className="text-[8px] text-muted uppercase">Actu.</p>
               </div>
             </div>
@@ -118,7 +148,7 @@ export const FichePortee: React.FC = () => {
             <div className="flex gap-2 items-start">
               {/* Note icon placeholder */}
               <span className="text-muted w-4 h-4 flex-shrink-0">📝</span>
-              <p className="text-xs text-muted italic">"Portée vigoureuse, bon développement."</p>
+              <p className="text-xs text-muted italic">"{porteeInfo.observations || 'Aucune observation enregistrée.'}"</p>
             </div>
           </div>
         </section>
@@ -183,11 +213,19 @@ export const FichePortee: React.FC = () => {
             Déclarer sevrage
           </button>
           <div className="grid grid-cols-2 gap-3">
-            <button className="border border-danger text-danger font-bold py-3 rounded-lg text-sm active:scale-[0.98] transition-transform">
-              Mortalité
+            <button 
+              onClick={() => navigate(`/reproduction/portee/modifier/${porteeInfo.id}`)}
+              className="border border-border text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-surface"
+            >
+              <Edit className="w-5 h-5" />
+              Modifier
             </button>
-            <button className="border border-border text-foreground font-bold py-3 rounded-lg text-sm active:scale-[0.98] transition-transform hover:bg-surface">
-              Emplacement
+            <button 
+              onClick={handleDelete}
+              className="border border-danger/50 bg-danger/10 text-danger py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-danger/20"
+            >
+              <Trash className="w-5 h-5" />
+              Supprimer
             </button>
           </div>
         </section>

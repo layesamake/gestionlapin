@@ -42,6 +42,7 @@ function App() {
           <Route path="reproduction/saillie/nouvelle" element={<NouvelleSaillie />} />
           <Route path="reproduction/saillie/:id" element={<FicheSaillie />} />
           <Route path="reproduction/portee/nouvelle" element={<NouvellePortee />} />
+          <Route path="reproduction/portee/modifier/:id" element={<NouvellePortee />} />
           <Route path="reproduction/portee/:id" element={<FichePortee />} />
           <Route path="sante" element={<Sante />} />
           <Route path="sante/traitement/nouveau" element={<ProgrammerTraitement />} />
