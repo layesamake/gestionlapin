@@ -1,9 +1,16 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import {  Save,  Pill, Syringe } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Save, Pill, Syringe } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const ProgrammerTraitement: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { animals } = useStore();
+
+  const [cible, setCible] = useState(location.state?.animalId ? 'specifique' : 'tout');
+  const [specificAnimalId, setSpecificAnimalId] = useState(location.state?.animalId || '');
+  const [typeTraitement, setTypeTraitement] = useState<'preventif' | 'curatif'>('preventif');
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +23,7 @@ export const ProgrammerTraitement: React.FC = () => {
         <button 
           onClick={() => navigate(-1)}
           className="text-muted active:scale-95 transition-transform"
+          type="button"
         >
           Annuler
         </button>
@@ -23,6 +31,7 @@ export const ProgrammerTraitement: React.FC = () => {
         <button 
           onClick={handleSave}
           className="text-primary font-bold active:scale-95 transition-transform"
+          type="button"
         >
           Enregistrer
         </button>
@@ -42,7 +51,11 @@ export const ProgrammerTraitement: React.FC = () => {
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-muted">Cible *</label>
-            <select className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary outline-none">
+            <select 
+              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary outline-none font-sans"
+              value={cible}
+              onChange={(e) => setCible(e.target.value)}
+            >
               <option value="tout">Tout le cheptel</option>
               <option value="males">Tous les mâles</option>
               <option value="femelles">Toutes les femelles</option>
@@ -51,13 +64,44 @@ export const ProgrammerTraitement: React.FC = () => {
             </select>
           </div>
 
+          {cible === 'specifique' && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+              <label className="block text-sm font-medium text-muted">Sélectionner le lapin *</label>
+              <select 
+                className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none"
+                value={specificAnimalId}
+                onChange={(e) => setSpecificAnimalId(e.target.value)}
+                required
+              >
+                <option value="" disabled>Sélectionner un lapin</option>
+                {animals.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.id} {a.name ? `- ${a.name}` : ''} ({a.gender === 'F' ? 'Femelle' : 'Mâle'})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-muted">Type</label>
             <div className="grid grid-cols-2 gap-3 p-1 bg-surface border border-border rounded-xl">
-              <button type="button" className="py-2 text-xs font-semibold rounded-lg bg-border text-primary flex items-center justify-center gap-2">
+              <button 
+                type="button" 
+                onClick={() => setTypeTraitement('preventif')}
+                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
+                  typeTraitement === 'preventif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
+                }`}
+              >
                 <Pill className="w-4 h-4" /> Préventif
               </button>
-              <button type="button" className="py-2 text-xs font-semibold rounded-lg text-muted hover:bg-border/50 flex items-center justify-center gap-2">
+              <button 
+                type="button" 
+                onClick={() => setTypeTraitement('curatif')}
+                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
+                  typeTraitement === 'curatif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
+                }`}
+              >
                 <Syringe className="w-4 h-4" /> Curatif
               </button>
             </div>

@@ -213,7 +213,12 @@ export const FicheReproducteur = () => {
             <PlusCircle className="w-5 h-5" />
             Nouvelle saillie
           </button>
-          <button className="border border-secondary text-secondary py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+          <button 
+            onClick={() => navigate('/sante/traitement/nouveau', {
+              state: { animalId: animalInfo.id }
+            })}
+            className="border border-secondary text-secondary py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+          >
             <Syringe className="w-5 h-5" />
             Nouveau traitement
           </button>
