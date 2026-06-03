@@ -1,10 +1,32 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle } from 'lucide-react';
+import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit } from 'lucide-react';
+
+// Helper to format Date string to YYYY-MM-DD
+const getPlannedDateFromSoin = (soin: any) => {
+  if (soin.plannedDate) return soin.plannedDate;
+  const match = soin.date?.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (match) {
+    const [, d, m, y] = match;
+    return `${y}-${m}-${d}`;
+  }
+  return new Date().toISOString().split('T')[0];
+};
+
+// Helper to format YYYY-MM-DD to DD/MM/YYYY
+const formatToFrenchDate = (dateStr: string) => {
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const [y, m, d] = parts;
+    return `${d}/${m}/${y}`;
+  }
+  return dateStr;
+};
 
 export const Sante: React.FC = () => {
   const soins = useStore(s => s.soins);
+  const updateSoin = useStore(s => s.updateSoin);
   const [activeFilter, setActiveFilter] = useState('Tous');
   const navigate = useNavigate();
 
@@ -29,6 +51,85 @@ export const Sante: React.FC = () => {
       case 'Fait': return <CheckCircle className="w-4 h-4" />;
       case 'En retard': return <AlertTriangle className="w-4 h-4" />;
       default: return null;
+    }
+  };
+
+  const handleCompleteSoin = (id: number) => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const frenchDate = formatToFrenchDate(todayStr);
+    updateSoin(id, {
+      status: 'Fait',
+      statusColor: 'primary',
+      date: `Fait le ${frenchDate} • Terminé`,
+      isToday: false,
+      isLate: false,
+    });
+  };
+
+  const handlePostponeSoin = (id: number) => {
+    const soin = soins.find(s => s.id === id);
+    if (!soin) return;
+    
+    const currentPlanned = getPlannedDateFromSoin(soin);
+    const newDate = prompt("Saisir la nouvelle date du traitement (AAAA-MM-JJ) :", currentPlanned);
+    
+    if (!newDate) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+      alert("Format de date invalide. Veuillez utiliser le format AAAA-MM-JJ.");
+      return;
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const isToday = newDate === todayStr;
+    const isLate = newDate < todayStr;
+
+    let dateLabel = '';
+    if (isToday) {
+      dateLabel = `Prévu le ${formatToFrenchDate(newDate)} (Aujourd'hui)`;
+    } else if (isLate) {
+      const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(newDate).getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      dateLabel = `Prévu le ${formatToFrenchDate(newDate)} (Il y a ${diffDays} jours)`;
+    } else {
+      dateLabel = `Prévu le ${formatToFrenchDate(newDate)}`;
+    }
+
+    updateSoin(id, {
+      plannedDate: newDate,
+      status: isLate ? 'En retard' : 'À faire',
+      statusColor: isLate ? 'danger' : 'warning',
+      date: dateLabel,
+      isToday,
+      isLate,
+    });
+  };
+
+  const handleRecordDose = (id: number) => {
+    const soin = soins.find(s => s.id === id);
+    if (!soin) return;
+    const dose = prompt("Saisir la dose ou note d'administration (ex: 2ème dose administrée) :", "Dose administrée");
+    if (!dose) return;
+    
+    const todayStr = new Date().toISOString().split('T')[0];
+    const frenchDate = formatToFrenchDate(todayStr);
+    const currentObs = soin.observations ? `${soin.observations}\n` : '';
+    
+    const complete = window.confirm("Est-ce la dernière dose ? (Marquer comme terminé)");
+    
+    if (complete) {
+      updateSoin(id, {
+        status: 'Fait',
+        statusColor: 'primary',
+        date: `Fait le ${frenchDate} • Terminé`,
+        observations: `${currentObs}[${frenchDate}] ${dose} (Dernière dose)`,
+        isToday: false,
+        isLate: false
+      });
+    } else {
+      updateSoin(id, {
+        observations: `${currentObs}[${frenchDate}] ${dose}`,
+      });
+      alert("Dose enregistrée dans les observations.");
     }
   };
 
@@ -117,9 +218,18 @@ export const Sante: React.FC = () => {
                 <h3 className="mt-2 font-bold text-foreground text-lg leading-tight">{soin.type}</h3>
                 <p className="text-xs text-muted font-medium">{soin.category}</p>
               </div>
-              <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[10px] font-bold px-2 py-1 rounded uppercase`}>
-                {soin.status}
-              </span>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => navigate(`/sante/traitement/modifier/${soin.id}`)}
+                  className="p-1.5 bg-background border border-border rounded-lg text-muted hover:text-primary active:scale-95 transition-all"
+                  title="Modifier le traitement"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                </button>
+                <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[10px] font-bold px-2 py-1 rounded uppercase`}>
+                  {soin.status}
+                </span>
+              </div>
             </div>
             
             <div className={`flex items-center gap-2 text-sm mb-4 ${soin.isLate ? 'text-danger' : 'text-muted'}`}>
@@ -132,13 +242,28 @@ export const Sante: React.FC = () => {
 
             {soin.status === 'À faire' && (
               <div className="grid grid-cols-2 gap-3">
-                <button className="bg-primary/10 text-primary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-primary/20">Marquer comme fait</button>
-                <button className="bg-border text-muted font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-surface">Reporter</button>
+                <button 
+                  onClick={() => handleCompleteSoin(soin.id)}
+                  className="bg-primary/10 text-primary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-primary/20"
+                >
+                  Marquer comme fait
+                </button>
+                <button 
+                  onClick={() => handlePostponeSoin(soin.id)}
+                  className="bg-border text-muted font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-surface"
+                >
+                  Reporter
+                </button>
               </div>
             )}
 
             {soin.status === 'En cours' && (
-              <button className="w-full bg-secondary/10 text-secondary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-secondary/20">Enregistrer dose</button>
+              <button 
+                onClick={() => handleRecordDose(soin.id)}
+                className="w-full bg-secondary/10 text-secondary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-secondary/20"
+              >
+                Enregistrer dose
+              </button>
             )}
 
             {soin.status === 'Fait' && (
@@ -151,7 +276,12 @@ export const Sante: React.FC = () => {
             )}
 
             {soin.status === 'En retard' && (
-              <button className="w-full bg-danger text-white font-bold py-3 rounded text-sm active:scale-95 transition-all shadow-lg shadow-danger/20 hover:bg-danger/90">Marquer comme fait</button>
+              <button 
+                onClick={() => handleCompleteSoin(soin.id)}
+                className="w-full bg-danger text-white font-bold py-3 rounded text-sm active:scale-95 transition-all shadow-lg shadow-danger/20 hover:bg-danger/90"
+              >
+                Marquer comme fait
+              </button>
             )}
           </div>
         ))}

@@ -46,6 +46,7 @@ function App() {
           <Route path="reproduction/portee/:id" element={<FichePortee />} />
           <Route path="sante" element={<Sante />} />
           <Route path="sante/traitement/nouveau" element={<ProgrammerTraitement />} />
+          <Route path="sante/traitement/modifier/:id" element={<ProgrammerTraitement />} />
           <Route path="sante/soin/nouveau" element={<EnregistrerSoin />} />
           <Route path="sante/traitement/:id" element={<FicheTraitement />} />
           <Route path="alertes" element={<Alertes />} />

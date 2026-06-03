@@ -85,6 +85,9 @@ interface AppState {
   addTransaction: (transaction: Transaction) => void;
   updateTransaction: (id: string, transaction: Partial<Transaction>) => void;
   removeTransaction: (id: string) => void;
+  addSoin: (soin: any) => void;
+  updateSoin: (id: number, soin: Partial<any>) => void;
+  removeSoin: (id: number) => void;
   addSaillie: (saillie: Saillie) => void;
   updateSaillie: (id: number, saillie: Partial<Saillie>) => void;
   removeSaillie: (id: number) => void;
@@ -173,6 +176,18 @@ export const useStore = create<AppState>()(
 
       removeTransaction: (id) => set((state) => ({
         transactions: state.transactions.filter((t) => t.id !== id)
+      })),
+
+      addSoin: (soin) => set((state) => ({
+        soins: [soin, ...state.soins]
+      })),
+
+      updateSoin: (id, updatedSoin) => set((state) => ({
+        soins: state.soins.map((s) => s.id === id ? { ...s, ...updatedSoin } : s)
+      })),
+
+      removeSoin: (id) => set((state) => ({
+        soins: state.soins.filter((s) => s.id !== id)
       })),
 
       addSaillie: (saillie) => set((state) => ({
