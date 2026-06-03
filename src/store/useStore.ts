@@ -74,6 +74,10 @@ interface AppState {
   theme: string;
   races: string[];
   addRace: (race: string) => void;
+  expenseCategories: string[];
+  incomeCategories: string[];
+  addExpenseCategory: (category: string) => void;
+  addIncomeCategory: (category: string) => void;
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
   removeAnimal: (id: string) => void;
@@ -116,6 +120,8 @@ export const useStore = create<AppState>()(
       ],
       theme: 'nature',
       races: ['Néo-Zélandais', 'Californien', 'Géant des Flandres', 'Race locale', 'Croisé'],
+      expenseCategories: ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'],
+      incomeCategories: ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'],
 
       addRace: (race) => set((state) => {
         const cleaned = race.trim();
@@ -123,6 +129,24 @@ export const useStore = create<AppState>()(
         const exists = state.races.some((r) => r.toLowerCase() === cleaned.toLowerCase());
         if (exists) return {};
         return { races: [...state.races, cleaned] };
+      }),
+
+      addExpenseCategory: (category) => set((state) => {
+        const cleaned = category.trim();
+        if (!cleaned) return {};
+        const expenseCategories = state.expenseCategories || ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'];
+        const exists = expenseCategories.some((c) => c.toLowerCase() === cleaned.toLowerCase());
+        if (exists) return {};
+        return { expenseCategories: [...expenseCategories, cleaned] };
+      }),
+
+      addIncomeCategory: (category) => set((state) => {
+        const cleaned = category.trim();
+        if (!cleaned) return {};
+        const incomeCategories = state.incomeCategories || ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'];
+        const exists = incomeCategories.some((c) => c.toLowerCase() === cleaned.toLowerCase());
+        if (exists) return {};
+        return { incomeCategories: [...incomeCategories, cleaned] };
       }),
 
       addAnimal: (animal) => set((state) => ({ animals: [...state.animals, animal] })),
@@ -205,6 +229,8 @@ export const useStore = create<AppState>()(
             portees: state.portees,
             theme: state.theme,
             races: state.races,
+            expenseCategories: state.expenseCategories,
+            incomeCategories: state.incomeCategories,
           },
           version: 1,
           timestamp: new Date().toISOString()
@@ -221,6 +247,8 @@ export const useStore = create<AppState>()(
         saillies: [],
         portees: [],
         races: ['Néo-Zélandais', 'Californien', 'Géant des Flandres', 'Race locale', 'Croisé'],
+        expenseCategories: ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'],
+        incomeCategories: ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'],
       }),
     }),
     {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
+import { Save, TrendingUp, TrendingDown, Trash2, Plus, X, ChevronDown } from 'lucide-react';
 import { useStore, type Transaction } from '../store/useStore';
 
 export const NouvelleTransaction: React.FC = () => {
@@ -8,7 +8,17 @@ export const NouvelleTransaction: React.FC = () => {
   const { id } = useParams();
   const isEditMode = !!id;
 
-  const { addTransaction, updateTransaction, removeTransaction, transactions } = useStore();
+  const { 
+    addTransaction, 
+    updateTransaction, 
+    removeTransaction, 
+    transactions,
+    expenseCategories,
+    incomeCategories,
+    addExpenseCategory,
+    addIncomeCategory
+  } = useStore();
+
   const existingTransaction = isEditMode ? transactions.find(t => t.id === id) : null;
 
   const [type, setType] = useState<'INCOME' | 'EXPENSE'>(existingTransaction?.type || 'EXPENSE');
@@ -17,10 +27,13 @@ export const NouvelleTransaction: React.FC = () => {
   const [category, setCategory] = useState(existingTransaction?.category || '');
   const [description, setDescription] = useState(existingTransaction?.description || '');
 
-  const expenseCategories = ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'];
-  const incomeCategories = ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'];
+  // Add categories modal state
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
-  const categories = type === 'EXPENSE' ? expenseCategories : incomeCategories;
+  const categories = type === 'EXPENSE' 
+    ? (expenseCategories || ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre']) 
+    : (incomeCategories || ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre']);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +65,27 @@ export const NouvelleTransaction: React.FC = () => {
         removeTransaction(id);
         navigate('/finance');
       }
+    }
+  };
+
+  const handleAddNewCategory = () => {
+    const cleaned = newCategoryName.trim();
+    if (cleaned) {
+      if (type === 'EXPENSE') {
+        addExpenseCategory(cleaned);
+      } else {
+        addIncomeCategory(cleaned);
+      }
+      setCategory(cleaned);
+      setNewCategoryName('');
+      setIsAddingCategory(false);
+    }
+  };
+
+  const handleCategoryKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddNewCategory();
     }
   };
 
@@ -127,20 +161,33 @@ export const NouvelleTransaction: React.FC = () => {
             />
           </div>
 
-          {/* Category */}
+          {/* Category Dropdown */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-muted">Catégorie *</label>
-            <select 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none" 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="" disabled>Sélectionner une catégorie</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <div className="relative flex-grow">
+                <select 
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none font-mono focus:ring-1 focus:ring-primary outline-none transition-all" 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>Sélectionner une catégorie</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddingCategory(true)}
+                className="flex-shrink-0 bg-surface border border-border hover:border-primary/50 text-primary px-3.5 rounded-xl active:scale-95 transition-all flex items-center justify-center"
+                title="Ajouter une nouvelle catégorie"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Description */}
@@ -178,6 +225,66 @@ export const NouvelleTransaction: React.FC = () => {
           </div>
         </form>
       </main>
+
+      {/* Modal d'ajout de catégorie */}
+      {isAddingCategory && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-surface border border-border rounded-2xl w-full max-w-sm p-6 space-y-6 shadow-2xl relative">
+            <div className="flex justify-between items-center">
+              <h3 className="text-foreground font-display font-bold text-lg">Nouvelle catégorie</h3>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setIsAddingCategory(false);
+                  setNewCategoryName('');
+                }}
+                className="p-1.5 text-muted hover:text-foreground rounded-lg active:scale-95 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="new-category-name">
+                  Nom de la catégorie ({type === 'INCOME' ? 'Revenu' : 'Dépense'}) *
+                </label>
+                <input 
+                  type="text"
+                  id="new-category-name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  onKeyDown={handleCategoryKeyDown}
+                  placeholder="ex: Vente de peaux, Emballage..."
+                  className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button 
+                type="button"
+                onClick={() => {
+                  setIsAddingCategory(false);
+                  setNewCategoryName('');
+                }}
+                className="flex-1 bg-transparent border border-border text-muted py-3 rounded-xl font-medium active:scale-95 transition-all text-sm"
+              >
+                Annuler
+              </button>
+              <button 
+                type="button"
+                onClick={handleAddNewCategory}
+                disabled={!newCategoryName.trim()}
+                className="flex-1 bg-primary text-background py-3 rounded-xl font-bold active:scale-95 transition-all text-sm shadow-lg shadow-primary/10 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
