@@ -48,6 +48,8 @@ export const cheptelData = {
   animals: [
     {
       id: 'F-012',
+      name: 'Blanchette',
+      gender: 'F',
       status: 'Gestante',
       type: 'Femelle • Néo-Zélandais',
       location: 'Cage A3',
@@ -59,6 +61,8 @@ export const cheptelData = {
     },
     {
       id: 'M-004',
+      name: 'Gribouille',
+      gender: 'M',
       status: 'Actif',
       type: 'Mâle • Californien',
       location: 'Cage B1',
@@ -70,6 +74,8 @@ export const cheptelData = {
     },
     {
       id: 'F-021',
+      name: 'Cacao',
+      gender: 'F',
       status: 'Allaitante',
       type: 'Femelle • Croisé',
       location: 'Cage C2',
@@ -82,6 +88,8 @@ export const cheptelData = {
     },
     {
       id: 'F-008',
+      name: 'Plume',
+      gender: 'F',
       status: 'Au repos',
       type: 'Femelle • Géant des Flandres',
       location: 'Cage D1',
