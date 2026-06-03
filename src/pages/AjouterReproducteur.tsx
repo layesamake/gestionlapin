@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronDown, Camera, Check, X } from 'lucide-react';
+import { ChevronDown, Camera, Check, X, Plus } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../utils/cropImage';
@@ -10,7 +10,7 @@ export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
-  const { addAnimal, updateAnimal, animals } = useStore();
+  const { addAnimal, updateAnimal, animals, races, addRace } = useStore();
   const existingAnimal = isEditMode ? animals.find((a) => a.id === id) : null;
 
   const [sexe, setSexe] = useState<'male' | 'female'>(() => {
@@ -28,6 +28,30 @@ export const AjouterReproducteur: React.FC = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isCropping, setIsCropping] = useState(false);
+
+  // Races addition states
+  const [selectedRace, setSelectedRace] = useState<string>(
+    existingAnimal?.race || 'Néo-Zélandais'
+  );
+  const [isAddingRace, setIsAddingRace] = useState(false);
+  const [newRaceName, setNewRaceName] = useState('');
+
+  const handleAddNewRace = () => {
+    const cleaned = newRaceName.trim();
+    if (cleaned) {
+      addRace(cleaned);
+      setSelectedRace(cleaned);
+      setNewRaceName('');
+      setIsAddingRace(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddNewRace();
+    }
+  };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,11 +101,11 @@ export const AjouterReproducteur: React.FC = () => {
     const animalData = {
       name: target.nom?.value || 'Sans nom',
       status: status,
-      type: `${sexe === 'female' ? 'Femelle' : 'Mâle'} • ${target.race?.value || 'Race locale'}`,
+      type: `${sexe === 'female' ? 'Femelle' : 'Mâle'} • ${selectedRace || 'Race locale'}`,
       location: target.cage?.value || 'Cage par défaut',
       image: imageUrl,
       gender: gender,
-      race: target.race?.value,
+      race: selectedRace,
       age: target.naissance?.value ? calculateAge(target.naissance?.value) : (existingAnimal?.age || 'Nouveau'),
       weight: target.poids?.value || existingAnimal?.weight || '',
       naissance: target.naissance?.value || '',
@@ -202,19 +226,28 @@ export const AjouterReproducteur: React.FC = () => {
           {/* Race Dropdown */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="race">Race</label>
-            <div className="relative">
-              <select 
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
-                id="race"
-                defaultValue={existingAnimal?.race || 'Néo-Zélandais'}
+            <div className="flex gap-2">
+              <div className="relative flex-grow">
+                <select 
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                  id="race"
+                  value={selectedRace}
+                  onChange={(e) => setSelectedRace(e.target.value)}
+                >
+                  {races.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddingRace(true)}
+                className="flex-shrink-0 bg-surface border border-border hover:border-primary/50 text-primary px-3 rounded-xl active:scale-95 transition-all flex items-center justify-center"
+                title="Ajouter une nouvelle race"
               >
-                <option>Néo-Zélandais</option>
-                <option>Californien</option>
-                <option>Géant des Flandres</option>
-                <option>Race locale</option>
-                <option>Croisé</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted w-5 h-5" />
+                <Plus className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
@@ -364,6 +397,64 @@ export const AjouterReproducteur: React.FC = () => {
             >
               <Check className="w-5 h-5" /> Valider
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal d'ajout de race */}
+      {isAddingRace && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-surface border border-border rounded-2xl w-full max-w-sm p-6 space-y-6 shadow-2xl relative">
+            <div className="flex justify-between items-center">
+              <h3 className="text-foreground font-display font-bold text-lg">Nouvelle race</h3>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setIsAddingRace(false);
+                  setNewRaceName('');
+                }}
+                className="p-1.5 text-muted hover:text-foreground rounded-lg active:scale-95 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="new-race-name">Nom de la race *</label>
+                <input 
+                  type="text"
+                  id="new-race-name"
+                  value={newRaceName}
+                  onChange={(e) => setNewRaceName(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="ex: Bélier Français..."
+                  className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button 
+                type="button"
+                onClick={() => {
+                  setIsAddingRace(false);
+                  setNewRaceName('');
+                }}
+                className="flex-1 bg-transparent border border-border text-muted py-3 rounded-xl font-medium active:scale-95 transition-all text-sm"
+              >
+                Annuler
+              </button>
+              <button 
+                type="button"
+                onClick={handleAddNewRace}
+                disabled={!newRaceName.trim()}
+                className="flex-1 bg-primary text-background py-3 rounded-xl font-bold active:scale-95 transition-all text-sm shadow-lg shadow-primary/10 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Enregistrer
+              </button>
+            </div>
           </div>
         </div>
       )}

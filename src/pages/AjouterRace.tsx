@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CloudOff, Info, Save } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 export const AjouterRace: React.FC = () => {
   const navigate = useNavigate();
+  const addRace = useStore((state) => state.addRace);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [raceName, setRaceName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleaned = raceName.trim();
+    if (!cleaned) return;
     setIsSubmitting(true);
-    // Simulate API call
+    addRace(cleaned);
+    
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate('/cheptel'); // Or wherever appropriate
-    }, 1500);
+      navigate(-1); // Or wherever appropriate
+    }, 1000);
   };
 
   return (
@@ -23,13 +29,16 @@ export const AjouterRace: React.FC = () => {
         <button 
           onClick={() => navigate(-1)}
           className="text-muted hover:text-foreground transition-colors active:scale-95"
+          type="button"
         >
           Annuler
         </button>
         <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">Ajouter une Race</h1>
         <button 
-          className="text-primary font-bold hover:opacity-80 transition-all active:scale-95"
+          className="text-primary font-bold hover:opacity-80 transition-all active:scale-95 disabled:opacity-50"
           onClick={handleSubmit}
+          disabled={isSubmitting || !raceName.trim()}
+          type="button"
         >
           Enregistrer
         </button>
@@ -54,6 +63,8 @@ export const AjouterRace: React.FC = () => {
             <input 
               className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-muted/50" 
               id="race_name" name="race_name" placeholder="ex: Géant des Flandres, Californien..." required type="text"
+              value={raceName}
+              onChange={(e) => setRaceName(e.target.value)}
             />
           </div>
 

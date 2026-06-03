@@ -66,6 +66,8 @@ interface AppState {
   saillies: Saillie[];
   portees: Portee[];
   theme: string;
+  races: string[];
+  addRace: (race: string) => void;
   addAnimal: (animal: Animal) => void;
   updateAnimal: (id: string, animal: Partial<Animal>) => void;
   removeAlerte: (id: number) => void;
@@ -105,6 +107,15 @@ export const useStore = create<AppState>()(
         { id: 'P-009', status: 'À sevrer', female: 'F-008', effectif: '5 lapereaux vivants', badgeColor: 'warning' }
       ],
       theme: 'nature',
+      races: ['Néo-Zélandais', 'Californien', 'Géant des Flandres', 'Race locale', 'Croisé'],
+
+      addRace: (race) => set((state) => {
+        const cleaned = race.trim();
+        if (!cleaned) return {};
+        const exists = state.races.some((r) => r.toLowerCase() === cleaned.toLowerCase());
+        if (exists) return {};
+        return { races: [...state.races, cleaned] };
+      }),
 
       addAnimal: (animal) => set((state) => ({ animals: [...state.animals, animal] })),
       
@@ -177,6 +188,7 @@ export const useStore = create<AppState>()(
             saillies: state.saillies,
             portees: state.portees,
             theme: state.theme,
+            races: state.races,
           },
           version: 1,
           timestamp: new Date().toISOString()
@@ -192,6 +204,7 @@ export const useStore = create<AppState>()(
         transactions: [],
         saillies: [],
         portees: [],
+        races: ['Néo-Zélandais', 'Californien', 'Géant des Flandres', 'Race locale', 'Croisé'],
       }),
     }),
     {
