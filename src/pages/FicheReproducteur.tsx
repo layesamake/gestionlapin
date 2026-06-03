@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings, Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
+import { ArrowLeft, Settings, Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3, Trash2 } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { calculateAge } from '../utils/dateUtils';
 
@@ -8,6 +8,7 @@ export const FicheReproducteur = () => {
   const navigate = useNavigate();
   const animals = useStore(state => state.animals);
   const updateAnimal = useStore(state => state.updateAnimal);
+  const removeAnimal = useStore(state => state.removeAnimal);
 
   // Find animal or fallback to a default mock for the demo
   const animalInfo = (animals.find((a: any) => a.id === id) || {
@@ -17,6 +18,13 @@ export const FicheReproducteur = () => {
   const handleMortalite = () => {
     if (window.confirm(`Voulez-vous vraiment déclarer la mortalité de ce reproducteur (${animalInfo.id}) ?`)) {
       updateAnimal(animalInfo.id, { status: 'Mort', badgeColor: 'brand-danger' });
+      navigate('/cheptel');
+    }
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Voulez-vous vraiment supprimer définitivement le reproducteur ${animalInfo.id} ? Cette action est irréversible.`)) {
+      removeAnimal(animalInfo.id);
       navigate('/cheptel');
     }
   };
@@ -230,8 +238,15 @@ export const FicheReproducteur = () => {
             Modifier
           </button>
           <button 
+            onClick={handleDelete}
+            className="border border-danger/50 bg-danger/10 text-danger py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-danger/20"
+          >
+            <Trash2 className="w-5 h-5" />
+            Supprimer
+          </button>
+          <button 
             onClick={handleMortalite}
-            className="col-span-2 border border-danger/50 bg-danger/10 text-danger py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-danger/20"
+            className="col-span-2 border border-border bg-surface text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-border/50"
           >
             Déclarer mortalité
           </button>
