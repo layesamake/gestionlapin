@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Search, PlusCircle, PawPrint, Mars, Venus } from 'lucide-react';
+import { Search, PlusCircle, PawPrint, Tag } from 'lucide-react';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
@@ -16,6 +16,26 @@ export const Cheptel: React.FC = () => {
     if (activeFilter === 'Femelles') return animal.type.includes('Femelle');
     return animal.status === activeFilter;
   });
+
+  const getStatusBadgeStyle = (status: string) => {
+    const s = status.toLowerCase();
+    if (s.includes('saillie')) {
+      return 'bg-amber-500/10 text-amber-500 border border-amber-500/30';
+    }
+    if (s.includes('actif')) {
+      return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+    }
+    if (s.includes('allaitante')) {
+      return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
+    }
+    if (s.includes('gestante')) {
+      return 'bg-rose-500/10 text-rose-400 border border-rose-500/30';
+    }
+    if (s.includes('repos')) {
+      return 'bg-blue-500/10 text-blue-400 border border-blue-500/30';
+    }
+    return 'bg-brand-neutral/10 text-brand-neutral border border-brand-neutral/30';
+  };
 
   return (
     <>
@@ -49,53 +69,78 @@ export const Cheptel: React.FC = () => {
       <section className="space-y-3 mt-6">
         {filteredAnimals.map((animal: any) => {
           const isFemale = animal.gender === 'F' || animal.type?.toLowerCase().includes('femelle') || animal.id?.startsWith('F-');
-          const isMale = animal.gender === 'M' || animal.type?.toLowerCase().includes('mâle') || animal.id?.startsWith('M-');
-          const displayName = animal.name && animal.name !== 'Sans nom' ? animal.name : '';
+          const displayName = animal.name && animal.name !== 'Sans nom' ? animal.name : animal.id;
+          
+          let breed = animal.race;
+          if (!breed && animal.type) {
+            const parts = animal.type.split('•');
+            if (parts.length > 1) {
+              breed = parts[1].trim();
+            }
+          }
 
           return (
             <div 
               key={animal.id} 
               onClick={() => navigate(`/cheptel/${animal.id}`)}
-              className={`cursor-pointer bg-brand-card border rounded-xl p-3 flex items-center gap-4 shadow-sm transition-all hover:scale-[1.01] ${
+              className={`cursor-pointer bg-brand-card border rounded-2xl p-4 flex items-start gap-4 shadow-sm transition-all hover:scale-[1.01] ${
                 animal.isWarning 
                   ? 'border-brand-warning/30 border-l-4 border-l-brand-warning hover:border-brand-warning/50' 
                   : 'border-brand-border hover:border-brand-primary/30'
               }`}
             >
               {/* Photo Miniature */}
-              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-brand-border/40 flex items-center justify-center border border-brand-border">
+              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-brand-border/40 flex items-center justify-center border border-brand-border/50">
                 {animal.image ? (
-                  <img src={animal.image} alt={displayName || animal.id} className="w-full h-full object-cover" />
+                  <img src={animal.image} alt={displayName} className="w-full h-full object-cover" />
                 ) : (
                   <PawPrint className="w-6 h-6 text-brand-muted/50" />
                 )}
               </div>
 
               {/* Informations */}
-              <div className="flex-grow min-w-0 flex flex-col gap-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-sm text-brand-muted">
-                    {animal.id}
-                  </span>
-                  {displayName && (
-                    <span className="font-bold text-base text-brand-text truncate">
-                      {displayName}
-                    </span>
-                  )}
-                  {isFemale && <Venus className="w-4 h-4 text-pink-500 flex-shrink-0" />}
-                  {isMale && <Mars className="w-4 h-4 text-sky-500 flex-shrink-0" />}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-${animal.badgeColor}/10 text-${animal.badgeColor}`}>
+              <div className="flex-grow min-w-0 flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-2">
+                  {/* Nom ou ID */}
+                  <h3 className="font-display font-bold text-lg text-brand-text truncate leading-tight animate-fade-in">
+                    {displayName}
+                  </h3>
+                  
+                  {/* Statut Badge */}
+                  <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${getStatusBadgeStyle(animal.status)}`}>
                     {animal.status}
                   </span>
                 </div>
+
+                {/* Sexe et Race / Robe */}
+                <div className="flex items-center gap-1.5 text-sm text-brand-text/90 font-medium">
+                  {isFemale ? (
+                    <span className="text-brand-text/95 font-bold">♀</span>
+                  ) : (
+                    <span className="text-emerald-400 font-bold">♂</span>
+                  )}
+                  <span className="truncate">
+                    {isFemale ? 'Femelle' : 'Mâle'}
+                    {(animal.robe || breed) && ' - '}
+                    {animal.robe}
+                    {animal.robe && breed && ', '}
+                    {breed}
+                  </span>
+                </div>
+
+                {/* Emplacement / Cage */}
+                {(animal.cage || animal.location) && (
+                  <div className="flex items-center gap-1.5 text-xs text-brand-muted font-medium mt-0.5">
+                    <Tag className="w-3.5 h-3.5 text-brand-muted" />
+                    <span>{animal.cage || animal.location}</span>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </section>
+
 
       <section className="flex flex-col gap-3 pt-6">
         <button 

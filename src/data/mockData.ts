@@ -57,7 +57,8 @@ export const cheptelData = {
       infoIcon: 'check_circle',
       infoText: 'Traitement à jour',
       infoColor: 'brand-primary',
-      image: 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800',
+      robe: 'Blanc pur'
     },
     {
       id: 'M-004',
@@ -70,7 +71,8 @@ export const cheptelData = {
       infoIcon: 'info',
       infoText: 'Aucun traitement en cours',
       infoColor: 'brand-muted',
-      image: 'https://images.unsplash.com/photo-1518796745738-41048802f99a?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1518796745738-41048802f99a?auto=format&fit=crop&q=80&w=800',
+      robe: 'Grisette'
     },
     {
       id: 'F-021',
@@ -84,7 +86,8 @@ export const cheptelData = {
       infoText: 'Alerte: Rappel vitamine demain',
       infoColor: 'brand-warning',
       isWarning: true,
-      image: 'https://images.unsplash.com/photo-1591561582301-7ce6588cc286?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1591561582301-7ce6588cc286?auto=format&fit=crop&q=80&w=800',
+      robe: 'Chocolat'
     },
     {
       id: 'F-008',
@@ -94,7 +97,8 @@ export const cheptelData = {
       type: 'Femelle • Géant des Flandres',
       location: 'Cage D1',
       badgeColor: 'brand-neutral',
-      image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&q=80&w=800'
+      image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&q=80&w=800',
+      robe: 'Fauve'
     }
   ]
 };
