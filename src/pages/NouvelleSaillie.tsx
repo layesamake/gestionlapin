@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, Save, ChevronDown } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { animals, addSaillie } = useStore();
   
   const femelles = animals.filter(a => a.gender === 'F' || a?.type?.startsWith('Femelle'));
   const males = animals.filter(a => a.gender === 'M' || a?.type?.startsWith('Mâle'));
 
-  const [selectedFemale, setSelectedFemale] = useState('');
+  const [selectedFemale, setSelectedFemale] = useState(location.state?.femaleId || '');
+  const [selectedMale, setSelectedMale] = useState(location.state?.maleId || '');
   const [typeSaillie, setTypeSaillie] = useState('Naturelle');
   const [dateSaillie, setDateSaillie] = useState(new Date().toISOString().split('T')[0]);
 
@@ -90,7 +92,7 @@ export const NouvelleSaillie: React.FC = () => {
     addSaillie({
       id: Date.now(),
       female: selectedFemale,
-      male: 'N/A', // Mâle is optional in the UI for now or can be extracted if we bind it
+      male: selectedMale || 'N/A',
       date: dateSaillie,
       expectedDate: formatDate(miseBas),
       status: 'En attente',
@@ -154,8 +156,8 @@ export const NouvelleSaillie: React.FC = () => {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-lg font-bold">♂</span>
               <select 
                 className="w-full bg-surface border border-border rounded-lg pl-10 pr-10 py-3 text-foreground font-mono appearance-none focus:ring-1 focus:ring-primary outline-none" 
-                required
-                defaultValue=""
+                value={selectedMale}
+                onChange={(e) => setSelectedMale(e.target.value)}
               >
                 <option value="" disabled>Sélectionner un mâle</option>
                 {males.map(m => (

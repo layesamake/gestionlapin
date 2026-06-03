@@ -202,7 +202,12 @@ export const FicheReproducteur = () => {
         {/* Quick Actions Buttons */}
         <section className="grid grid-cols-2 gap-3 pt-4">
           <button 
-            onClick={() => navigate('/reproduction/saillie/nouvelle')}
+            onClick={() => navigate('/reproduction/saillie/nouvelle', {
+              state: {
+                femaleId: animalInfo.gender === 'F' ? animalInfo.id : undefined,
+                maleId: animalInfo.gender === 'M' ? animalInfo.id : undefined
+              }
+            })}
             className="col-span-2 bg-primary text-background py-4 rounded-lg font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20"
           >
             <PlusCircle className="w-5 h-5" />
