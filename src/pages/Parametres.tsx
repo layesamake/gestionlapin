@@ -92,7 +92,7 @@ export const Parametres: React.FC = () => {
         {/* Apparence */}
         <section className="space-y-3">
           <h2 className="text-sm font-bold uppercase tracking-wider text-muted">Apparence</h2>
-          <div className="bg-surface border border-border p-2 rounded-xl grid grid-cols-3 gap-2">
+          <div className="bg-surface border border-border p-2 rounded-xl grid grid-cols-4 gap-2">
             <button 
               onClick={() => setTheme('clair')}
               className={`py-2 rounded-lg text-sm font-semibold transition-all ${
@@ -116,6 +116,14 @@ export const Parametres: React.FC = () => {
               }`}
             >
               Nature
+            </button>
+            <button 
+              onClick={() => setTheme('ferme')}
+              className={`py-2 rounded-lg text-sm font-semibold transition-all ${
+                theme === 'ferme' ? 'bg-primary text-background shadow-md' : 'text-muted hover:bg-border/50'
+              }`}
+            >
+              Ferme
             </button>
           </div>
         </section>

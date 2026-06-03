@@ -56,6 +56,19 @@
     --foreground: #2C2A29;
   }
 
+  [data-theme="ferme"] {
+    --bg: #F0F4EE;
+    --surface: #FFFFFF;
+    --border: #DDE5DA;
+    --primary: #135F38;
+    --secondary: #E07A07;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --neutral: #6B7C72;
+    --muted: #9CAFA4;
+    --foreground: #1A2D23;
+  }
+
   [data-theme="sombre"] {
     --bg: #0B0F19;
     --surface: #161B26;
