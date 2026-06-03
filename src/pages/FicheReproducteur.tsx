@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, Heart, Baby, CalendarClock, CheckCircle, CalendarX, PlusCircle, Syringe, Edit3 } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { calculateAge } from '../utils/dateUtils';
 
 export const FicheReproducteur = () => {
   const { id } = useParams();
@@ -72,15 +73,28 @@ export const FicheReproducteur = () => {
             <div className="p-4 grid grid-cols-2 gap-y-4 gap-x-2 border-t border-border">
               <div className="space-y-1">
                 <p className="text-[10px] text-muted font-medium uppercase">Âge</p>
-                <p className="text-sm font-semibold">{animalInfo.age} <span className="text-[10px] text-muted font-normal">(12/04/2025)</span></p>
+                <p className="text-sm font-semibold">
+                  {animalInfo.naissance ? calculateAge(animalInfo.naissance) : animalInfo.age}
+                  {animalInfo.naissance && (
+                    <span className="text-[10px] text-muted font-normal"> ({new Date(animalInfo.naissance).toLocaleDateString('fr-FR')})</span>
+                  )}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] text-muted font-medium uppercase">Origine</p>
-                <p className="text-sm font-semibold">Élevage du Val</p>
+                <p className="text-sm font-semibold">{animalInfo.origine || 'Élevage du Val'}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] text-muted font-medium uppercase">Emplacement</p>
-                <p className="text-sm font-mono font-bold text-secondary">CAGE {animalInfo.cage}</p>
+                <p className="text-sm font-mono font-bold text-secondary">
+                  {(() => {
+                    const loc = animalInfo.cage || animalInfo.location || '';
+                    if (loc.toLowerCase().startsWith('cage ')) {
+                      return loc.toUpperCase();
+                    }
+                    return loc ? `CAGE ${loc.toUpperCase()}` : 'CAGE NON DÉFINIE';
+                  })()}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] text-muted font-medium uppercase">Poids actuel</p>
@@ -88,7 +102,9 @@ export const FicheReproducteur = () => {
               </div>
               <div className="col-span-2 pt-2 mt-2 border-t border-border/50">
                 <p className="text-[10px] text-muted font-medium uppercase mb-1">Observation</p>
-                <p className="text-xs italic text-foreground/80 leading-relaxed">"Très bonne mère, attentive aux lapereaux."</p>
+                <p className="text-xs italic text-foreground/80 leading-relaxed">
+                  "{animalInfo.observations || (animalInfo.id === 'F-012' ? 'Très bonne mère, attentive aux lapereaux.' : 'Aucune observation enregistrée.')}"
+                </p>
               </div>
             </div>
           </div>
@@ -196,7 +212,10 @@ export const FicheReproducteur = () => {
             <Syringe className="w-5 h-5" />
             Nouveau traitement
           </button>
-          <button className="border border-border text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-surface">
+          <button 
+            onClick={() => navigate(`/cheptel/modifier/${animalInfo.id}`)}
+            className="border border-border text-muted py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-surface"
+          >
             <Edit3 className="w-5 h-5" />
             Modifier
           </button>

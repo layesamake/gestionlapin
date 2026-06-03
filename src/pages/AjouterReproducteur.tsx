@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronDown, Camera, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../utils/cropImage';
+import { calculateAge } from '../utils/dateUtils';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
-  const { addAnimal } = useStore();
-  const [sexe, setSexe] = useState<'male' | 'female'>('male');
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const { id } = useParams();
+  const isEditMode = !!id;
+  const { addAnimal, updateAnimal, animals } = useStore();
+  const existingAnimal = isEditMode ? animals.find((a) => a.id === id) : null;
+
+  const [sexe, setSexe] = useState<'male' | 'female'>(() => {
+    if (existingAnimal) {
+      return existingAnimal.gender === 'F' ? 'female' : 'male';
+    }
+    return 'male';
+  });
+  
+  const [photoPreview, setPhotoPreview] = useState<string | null>(existingAnimal?.image || null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -53,21 +64,44 @@ export const AjouterReproducteur: React.FC = () => {
     // Use the uploaded photo Base64 or fallback to default
     const imageUrl = photoPreview || 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5088?auto=format&fit=crop&q=80&w=800';
 
-    addAnimal({
-      id: target.code?.value || 'N-001',
+    const gender = sexe === 'female' ? 'F' : 'M';
+    const status = target.statut?.value || 'Disponible';
+    
+    // Calculate badge color based on status (matching original style definitions in mockData & DESIGN.md)
+    let badgeColor = 'brand-neutral';
+    if (status === 'Gestante') badgeColor = 'brand-primary';
+    else if (status === 'Actif' || status === 'Allaitante' || status === 'Saillie active') badgeColor = 'brand-secondary';
+    else if (status === 'En retard' || status === 'Mort' || status === 'Décédé' || status === 'Échec') badgeColor = 'brand-danger';
+    else if (status === 'À surveiller' || status === 'Au repos') badgeColor = 'brand-neutral';
+
+    const animalData = {
       name: target.nom?.value || 'Sans nom',
-      status: target.statut?.value || 'Disponible',
+      status: status,
       type: `${sexe === 'female' ? 'Femelle' : 'Mâle'} • ${target.race?.value || 'Race locale'}`,
       location: target.cage?.value || 'Cage par défaut',
-      badgeColor: 'brand-neutral',
       image: imageUrl,
-      gender: sexe === 'female' ? 'F' : 'M',
+      gender: gender,
       race: target.race?.value,
-      age: 'Nouveau',
-      weight: target.poids?.value
-    });
-    
-    navigate('/cheptel');
+      age: target.naissance?.value ? calculateAge(target.naissance?.value) : (existingAnimal?.age || 'Nouveau'),
+      weight: target.poids?.value || existingAnimal?.weight || '',
+      naissance: target.naissance?.value || '',
+      origine: target.origine?.value || '',
+      cage: target.cage?.value || '',
+      robe: target.robe?.value || '',
+      observations: target.observations?.value || '',
+      badgeColor: badgeColor
+    };
+
+    if (isEditMode && id) {
+      updateAnimal(id, animalData);
+      navigate(`/cheptel/${id}`);
+    } else {
+      addAnimal({
+        id: target.code?.value || 'N-001',
+        ...animalData
+      });
+      navigate('/cheptel');
+    }
   };
 
   return (
@@ -77,20 +111,25 @@ export const AjouterReproducteur: React.FC = () => {
         <button 
           onClick={() => navigate(-1)}
           className="text-muted font-medium text-sm active:scale-95 transition-transform"
+          type="button"
         >
           Annuler
         </button>
-        <h1 className="text-foreground font-display font-bold tracking-tight text-lg">Ajouter un Reproducteur</h1>
-        <button className="bg-primary text-background px-4 py-1.5 rounded-lg font-bold text-sm active:scale-95 transition-transform">
+        <h1 className="text-foreground font-display font-bold tracking-tight text-lg">
+          {isEditMode ? 'Modifier le Reproducteur' : 'Ajouter un Reproducteur'}
+        </h1>
+        <button 
+          form="breed-form"
+          type="submit"
+          className="bg-primary text-background px-4 py-1.5 rounded-lg font-bold text-sm active:scale-95 transition-transform"
+        >
           Enregistrer
         </button>
       </header>
 
       {/* Main Content Area */}
       <main className="pt-20 px-4 max-w-2xl mx-auto">
-
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form id="breed-form" className="space-y-6" onSubmit={handleSubmit}>
           {/* Photo du lapin */}
           <div className="flex flex-col items-center justify-center py-4">
             <div 
@@ -120,15 +159,19 @@ export const AjouterReproducteur: React.FC = () => {
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="code">Code du lapin *</label>
               <input 
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground font-mono focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral" 
-                id="code" placeholder="ex: F-025" type="text" 
+                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground font-mono focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral disabled:opacity-50" 
+                id="code" placeholder="ex: F-025" type="text"
+                defaultValue={existingAnimal?.id || ''}
+                disabled={isEditMode}
+                required
               />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="nom">Nom (Optionnel)</label>
               <input 
                 className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral" 
-                id="nom" placeholder="ex: Grisette" type="text" 
+                id="nom" placeholder="ex: Grisette" type="text"
+                defaultValue={existingAnimal?.name || ''}
               />
             </div>
           </div>
@@ -160,7 +203,11 @@ export const AjouterReproducteur: React.FC = () => {
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="race">Race</label>
             <div className="relative">
-              <select className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="race">
+              <select 
+                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                id="race"
+                defaultValue={existingAnimal?.race || 'Néo-Zélandais'}
+              >
                 <option>Néo-Zélandais</option>
                 <option>Californien</option>
                 <option>Géant des Flandres</option>
@@ -177,13 +224,18 @@ export const AjouterReproducteur: React.FC = () => {
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="naissance">Date de naissance</label>
               <input 
                 className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all [color-scheme:light]" 
-                id="naissance" type="date" 
+                id="naissance" type="date"
+                defaultValue={existingAnimal?.naissance || ''}
               />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="origine">Origine</label>
               <div className="relative">
-                <select className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="origine">
+                <select 
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                  id="origine"
+                  defaultValue={existingAnimal?.origine || "Né dans l'élevage"}
+                >
                   <option>Né dans l'élevage</option>
                   <option>Acheté</option>
                   <option>Reçu</option>
@@ -200,14 +252,16 @@ export const AjouterReproducteur: React.FC = () => {
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="cage">Emplacement / Cage</label>
               <input 
                 className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground font-mono focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral" 
-                id="cage" placeholder="ex: Cage B4" type="text" 
+                id="cage" placeholder="ex: Cage B4" type="text"
+                defaultValue={existingAnimal?.cage || existingAnimal?.location || ''}
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="poids">Poids initial (kg)</label>
+              <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="poids">Poids actuel (kg)</label>
               <input 
                 className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral" 
-                id="poids" placeholder="ex: 3.5" step="0.1" type="number" 
+                id="poids" placeholder="ex: 3.5" step="0.1" type="number"
+                defaultValue={existingAnimal?.weight || ''}
               />
             </div>
           </div>
@@ -218,13 +272,18 @@ export const AjouterReproducteur: React.FC = () => {
               <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="robe">Couleur de la robe</label>
               <input 
                 className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral" 
-                id="robe" placeholder="ex: Blanc aux yeux roses" type="text" 
+                id="robe" placeholder="ex: Blanc aux yeux roses" type="text"
+                defaultValue={existingAnimal?.robe || ''}
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="statut">Statut Initial</label>
+              <label className="text-xs font-medium text-muted uppercase tracking-wider" htmlFor="statut">Statut</label>
               <div className="relative">
-                <select className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="statut">
+                <select 
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                  id="statut"
+                  defaultValue={existingAnimal?.status || 'Disponible'}
+                >
                   <option>Disponible</option>
                   <option>Actif</option>
                   <option>Au repos</option>
@@ -253,6 +312,7 @@ export const AjouterReproducteur: React.FC = () => {
             <textarea 
               className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-neutral resize-none" 
               id="observations" placeholder="Détails supplémentaires sur le reproducteur..." rows={4}
+              defaultValue={existingAnimal?.observations || ''}
             ></textarea>
           </div>
 

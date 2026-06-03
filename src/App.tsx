@@ -35,6 +35,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="cheptel" element={<Cheptel />} />
           <Route path="cheptel/nouveau" element={<AjouterReproducteur />} />
+          <Route path="cheptel/modifier/:id" element={<AjouterReproducteur />} />
           <Route path="cheptel/race/nouvelle" element={<AjouterRace />} />
           <Route path="cheptel/:id" element={<FicheReproducteur />} />
           <Route path="reproduction" element={<Reproduction />} />

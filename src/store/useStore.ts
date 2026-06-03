@@ -18,6 +18,11 @@ export interface Animal {
   race?: string;
   age?: string;
   weight?: string;
+  naissance?: string;
+  origine?: string;
+  cage?: string;
+  robe?: string;
+  observations?: string;
 }
 
 export interface Transaction {
