@@ -85,7 +85,7 @@
 <div class="col-span-2 bg-card-bg border border-border-gray p-4 rounded-xl flex items-center justify-between">
 <div>
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Total Lapins</p>
-<p class="text-4xl font-bold font-display text-pure-white leading-none mt-1">48</p>
+<p id="total-lapins" class="text-4xl font-bold font-display text-pure-white leading-none mt-1">48</p>
 </div>
 <div class="p-3 bg-white/5 rounded-lg">
 <span class="material-symbols-outlined text-modern-green text-3xl">pets</span>
@@ -93,17 +93,17 @@
 </div>
 <div class="bg-card-bg border border-border-gray p-4 rounded-xl">
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Mâles Actifs</p>
-<p class="text-2xl font-bold text-pure-white mt-1">6</p>
+<p id="males-actifs" class="text-2xl font-bold text-pure-white mt-1">6</p>
 </div>
 <div class="bg-card-bg border border-border-gray p-4 rounded-xl">
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Femelles Repr.</p>
-<p class="text-2xl font-bold text-pure-white mt-1">12</p>
+<p id="femelles-repr" class="text-2xl font-bold text-pure-white mt-1">12</p>
 </div>
 <div class="bg-card-bg border border-border-gray p-4 rounded-xl relative overflow-hidden">
 <div class="absolute top-0 right-0 h-full w-1 bg-modern-green"></div>
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Femelles Gestantes</p>
 <div class="flex items-baseline gap-2 mt-1">
-<p class="text-2xl font-bold text-pure-white leading-none">4</p>
+<p id="femelles-gestantes" class="text-2xl font-bold text-pure-white leading-none">4</p>
 <span class="px-1.5 py-0.5 rounded bg-modern-green/10 text-modern-green text-[10px] font-bold">STABLE</span>
 </div>
 </div>
@@ -111,20 +111,20 @@
 <div class="absolute top-0 right-0 h-full w-1 bg-cyan-blue"></div>
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Portées en cours</p>
 <div class="flex items-baseline gap-2 mt-1">
-<p class="text-2xl font-bold text-pure-white leading-none">5</p>
+<p id="portees-cours" class="text-2xl font-bold text-pure-white leading-none">5</p>
 <span class="px-1.5 py-0.5 rounded bg-cyan-blue/10 text-cyan-blue text-[10px] font-bold">ACTIF</span>
 </div>
 </div>
 <div class="bg-card-bg border border-border-gray p-4 rounded-xl">
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Lapereaux</p>
-<p class="text-2xl font-bold text-pure-white mt-1">32</p>
+<p id="lapereaux" class="text-2xl font-bold text-pure-white mt-1">32</p>
 <p class="text-[10px] text-muted-gray mt-1">Non sevrés</p>
 </div>
 <div class="bg-card-bg border border-alert-red/30 p-4 rounded-xl relative overflow-hidden">
 <div class="absolute top-0 right-0 h-full w-1 bg-alert-red"></div>
 <p class="text-muted-gray text-xs font-medium uppercase tracking-wider">Alertes</p>
 <div class="flex items-baseline gap-2 mt-1">
-<p class="text-2xl font-bold text-alert-red leading-none">2</p>
+<p id="alertes" class="text-2xl font-bold text-alert-red leading-none">2</p>
 <span class="px-1.5 py-0.5 rounded bg-alert-red/10 text-alert-red text-[10px] font-bold">URGENT</span>
 </div>
 </div>
@@ -250,5 +250,59 @@
                 this.classList.remove('opacity-80');
             });
         });
+
+        // Dynamise the dashboard statistics using data from localStorage
+        function updateDashboardStats() {
+            try {
+                const rawData = localStorage.getItem('gestion-lapins-storage');
+                if (!rawData) return;
+                
+                const parsed = JSON.parse(rawData);
+                const state = parsed.state;
+                if (!state) return;
+
+                const animals = state.animals || [];
+                const portees = state.portees || [];
+                const alertes = state.alertes || [];
+
+                const aliveAnimals = animals.filter(a => a.status !== 'Mort' && a.status !== 'Décédé');
+                
+                // Calculate total lapereaux in portees
+                let totalLapereaux = 0;
+                portees.forEach(p => {
+                    const match = p.effectif.match(/(\d+)/);
+                    if (match) totalLapereaux += parseInt(match[1]);
+                });
+
+                const totalLapins = aliveAnimals.length + totalLapereaux;
+                
+                const malesActifs = aliveAnimals.filter(a => {
+                    return a.gender === 'M' || (a.type && a.type.toLowerCase().includes('mâle')) || (a.id && a.id.startsWith('M-'));
+                }).length;
+
+                const femellesRepr = aliveAnimals.filter(a => {
+                    return a.gender === 'F' || (a.type && a.type.toLowerCase().includes('femelle')) || (a.id && a.id.startsWith('F-'));
+                }).length;
+
+                const femellesGestantesCount = aliveAnimals.filter(a => a.status === 'Gestante').length;
+                const porteesEnCoursCount = portees.filter(p => p.status === 'En cours').length;
+
+                // Update DOM
+                if (document.getElementById('total-lapins')) document.getElementById('total-lapins').textContent = totalLapins;
+                if (document.getElementById('males-actifs')) document.getElementById('males-actifs').textContent = malesActifs;
+                if (document.getElementById('femelles-repr')) document.getElementById('femelles-repr').textContent = femellesRepr;
+                if (document.getElementById('femelles-gestantes')) document.getElementById('femelles-gestantes').textContent = femellesGestantesCount;
+                if (document.getElementById('portees-cours')) document.getElementById('portees-cours').textContent = porteesEnCoursCount;
+                if (document.getElementById('lapereaux')) document.getElementById('lapereaux').textContent = totalLapereaux;
+                if (document.getElementById('alertes')) document.getElementById('alertes').textContent = alertes.length;
+
+            } catch (e) {
+                console.error("Failed to load or calculate dynamic stats", e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateDashboardStats);
+        // Also run immediately in case DOM is already loaded
+        updateDashboardStats();
     </script>
 </body></html>
