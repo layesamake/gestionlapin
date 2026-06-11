@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, Plus } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export const Finance: React.FC = () => {
   const transactions = useStore(state => state.transactions);
@@ -82,7 +83,33 @@ export const Finance: React.FC = () => {
         </button>
       </div>
 
-
+      {/* Graphique Visuel */}
+      <section className="bg-surface border border-border rounded-xl p-4 mb-6 shadow-sm">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted mb-4">Aperçu Financier</h3>
+        <div className="h-40 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[
+              { name: 'Revenus', amount: totalRevenus, color: '#10b981' },
+              { name: 'Dépenses', amount: totalDepenses, color: '#f43f5e' }
+            ]}>
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+              <Tooltip 
+                cursor={{ fill: 'transparent' }}
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                formatter={(value: number) => [`${value} FCFA`, 'Montant']}
+              />
+              <Bar dataKey="amount" radius={[6, 6, 6, 6]} barSize={40}>
+                {[
+                  { name: 'Revenus', amount: totalRevenus, color: '#10b981' },
+                  { name: 'Dépenses', amount: totalDepenses, color: '#f43f5e' }
+                ].map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
 
       {/* Transactions List */}
       <section className="space-y-3">
