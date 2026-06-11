@@ -20,6 +20,7 @@ import { EnregistrerSoin } from './pages/EnregistrerSoin';
 import { FicheTraitement } from './pages/FicheTraitement';
 import { Finance } from './pages/Finance';
 import { NouvelleTransaction } from './pages/NouvelleTransaction';
+import { Onboarding } from './pages/Onboarding';
 
 function App() {
   const theme = useStore((state) => state.theme);
@@ -31,6 +32,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="cheptel" element={<Cheptel />} />

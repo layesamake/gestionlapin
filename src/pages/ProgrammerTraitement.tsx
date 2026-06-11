@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { Save, Pill, Syringe, Trash2 } from 'lucide-react';
+import { Pill, Syringe, Trash2 } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { Wizard } from '../components/ui/Wizard';
+import type { WizardStep } from '../components/ui/Wizard';
 
 // Helper to format Date string to YYYY-MM-DD
 const getPlannedDateFromSoin = (soin: any) => {
@@ -41,90 +43,77 @@ export const ProgrammerTraitement: React.FC = () => {
 
   const existingSoin = id ? soins.find(s => String(s.id) === String(id)) : null;
 
-  const [nom, setNom] = useState(existingSoin ? existingSoin.type : '');
-  const [cible, setCible] = useState(
-    existingSoin ? getCibleFromAnimalId(existingSoin.animalId) : (location.state?.animalId ? 'specifique' : 'tout')
-  );
-  const [specificAnimalId, setSpecificAnimalId] = useState(
-    existingSoin ? (getCibleFromAnimalId(existingSoin.animalId) === 'specifique' ? existingSoin.animalId : '') : (location.state?.animalId || '')
-  );
-  const [typeTraitement, setTypeTraitement] = useState<'preventif' | 'curatif'>(
-    existingSoin ? (existingSoin.category === 'Traitement curatif' ? 'curatif' : 'preventif') : 'preventif'
-  );
-  const [datePrevue, setDatePrevue] = useState(
-    existingSoin ? getPlannedDateFromSoin(existingSoin) : new Date().toISOString().split('T')[0]
-  );
-  const [posologie, setPosologie] = useState(existingSoin?.posologie || '');
-  const [observations, setObservations] = useState(existingSoin?.observations || '');
+  const [formData, setFormData] = useState({
+    nom: existingSoin ? existingSoin.type : '',
+    cible: existingSoin ? getCibleFromAnimalId(existingSoin.animalId) : (location.state?.animalId ? 'specifique' : 'tout'),
+    specificAnimalId: existingSoin ? (getCibleFromAnimalId(existingSoin.animalId) === 'specifique' ? existingSoin.animalId : '') : (location.state?.animalId || ''),
+    typeTraitement: existingSoin ? (existingSoin.category === 'Traitement curatif' ? 'curatif' : 'preventif') : 'preventif',
+    datePrevue: existingSoin ? getPlannedDateFromSoin(existingSoin) : new Date().toISOString().split('T')[0],
+    posologie: existingSoin?.posologie || '',
+    observations: existingSoin?.observations || ''
+  });
 
-  // Synchronize state if existingSoin changes/loads
+  const handleChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
     if (existingSoin) {
-      setNom(existingSoin.type);
       const computedCible = getCibleFromAnimalId(existingSoin.animalId);
-      setCible(computedCible);
-      setSpecificAnimalId(computedCible === 'specifique' ? existingSoin.animalId : '');
-      setTypeTraitement(existingSoin.category === 'Traitement curatif' ? 'curatif' : 'preventif');
-      setDatePrevue(getPlannedDateFromSoin(existingSoin));
-      setPosologie(existingSoin.posologie || '');
-      setObservations(existingSoin.observations || '');
+      setFormData({
+        nom: existingSoin.type,
+        cible: computedCible,
+        specificAnimalId: computedCible === 'specifique' ? existingSoin.animalId : '',
+        typeTraitement: existingSoin.category === 'Traitement curatif' ? 'curatif' : 'preventif',
+        datePrevue: getPlannedDateFromSoin(existingSoin),
+        posologie: existingSoin.posologie || '',
+        observations: existingSoin.observations || ''
+      });
     }
   }, [existingSoin]);
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nom.trim() || !datePrevue) {
-      alert('Veuillez remplir les champs obligatoires.');
-      return;
-    }
-
+  const handleComplete = () => {
     const todayStr = new Date().toISOString().split('T')[0];
-    const isToday = datePrevue === todayStr;
-    const isLate = datePrevue < todayStr;
+    const isToday = formData.datePrevue === todayStr;
+    const isLate = formData.datePrevue < todayStr;
 
-    // determine animalId label
     let animalId = 'Tout le cheptel';
-    if (cible === 'males') animalId = 'Tous les mâles';
-    else if (cible === 'femelles') animalId = 'Toutes les femelles';
-    else if (cible === 'portees') animalId = 'Toutes les portées';
-    else if (cible === 'specifique') {
-      if (!specificAnimalId) {
-        alert('Veuillez sélectionner un lapin.');
-        return;
-      }
-      animalId = specificAnimalId;
+    if (formData.cible === 'males') animalId = 'Tous les mâles';
+    else if (formData.cible === 'femelles') animalId = 'Toutes les femelles';
+    else if (formData.cible === 'portees') animalId = 'Toutes les portées';
+    else if (formData.cible === 'specifique') {
+      animalId = formData.specificAnimalId;
     }
 
-    const category = typeTraitement === 'preventif' ? 'Prophylaxie' : 'Traitement curatif';
+    const category = formData.typeTraitement === 'preventif' ? 'Prophylaxie' : 'Traitement curatif';
     const status = existingSoin ? existingSoin.status : (isLate ? 'En retard' : 'À faire');
     
-    // calculate date label
     let dateLabel = '';
     if (status === 'Fait') {
-      dateLabel = `Fait le ${formatToFrenchDate(datePrevue)} • Terminé`;
+      dateLabel = `Fait le ${formatToFrenchDate(formData.datePrevue)} • Terminé`;
     } else if (status === 'En cours') {
-      dateLabel = `Du ${formatToFrenchDate(datePrevue)} au ${formatToFrenchDate(datePrevue)}`;
+      dateLabel = `Du ${formatToFrenchDate(formData.datePrevue)} au ${formatToFrenchDate(formData.datePrevue)}`;
     } else {
       if (isToday) {
-        dateLabel = `Prévu le ${formatToFrenchDate(datePrevue)} (Aujourd'hui)`;
+        dateLabel = `Prévu le ${formatToFrenchDate(formData.datePrevue)} (Aujourd'hui)`;
       } else if (isLate) {
-        const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(datePrevue).getTime());
+        const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(formData.datePrevue).getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        dateLabel = `Prévu le ${formatToFrenchDate(datePrevue)} (Il y a ${diffDays} jours)`;
+        dateLabel = `Prévu le ${formatToFrenchDate(formData.datePrevue)} (Il y a ${diffDays} jours)`;
       } else {
-        dateLabel = `Prévu le ${formatToFrenchDate(datePrevue)}`;
+        dateLabel = `Prévu le ${formatToFrenchDate(formData.datePrevue)}`;
       }
     }
 
     const statusColor = status === 'Fait' ? 'primary' : status === 'En cours' ? 'secondary' : isLate ? 'danger' : 'warning';
 
     const soinData = {
-      type: nom,
+      type: formData.nom,
       animalId,
       category,
-      plannedDate: datePrevue,
-      posologie,
-      observations,
+      plannedDate: formData.datePrevue,
+      posologie: formData.posologie,
+      observations: formData.observations,
       status,
       statusColor,
       date: dateLabel,
@@ -151,153 +140,138 @@ export const ProgrammerTraitement: React.FC = () => {
     }
   };
 
-  return (
-    <div className="flex flex-col min-h-screen pb-24">
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-background border-b border-border">
-        <button 
-          onClick={() => navigate(-1)}
-          className="text-muted active:scale-95 transition-transform"
-          type="button"
+  const isStep1Valid = formData.nom.trim().length > 0 && 
+                      (formData.cible !== 'specifique' || formData.specificAnimalId.trim().length > 0);
+
+  const step1Content = (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Nom du traitement *</label>
+        <input 
+          className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
+          placeholder="ex: Vitamine AD3E" 
+          type="text" 
+          value={formData.nom}
+          onChange={(e) => handleChange('nom', e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Cible *</label>
+        <select 
+          className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary outline-none font-sans"
+          value={formData.cible}
+          onChange={(e) => handleChange('cible', e.target.value)}
         >
-          Annuler
-        </button>
-        <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">
-          {existingSoin ? 'Modifier le Traitement' : 'Nouveau Traitement'}
-        </h1>
-        <button 
-          onClick={handleSave}
-          className="text-primary font-bold active:scale-95 transition-transform"
-          type="button"
-        >
-          Enregistrer
-        </button>
-      </header>
+          <option value="tout">Tout le cheptel</option>
+          <option value="males">Tous les mâles</option>
+          <option value="femelles">Toutes les femelles</option>
+          <option value="portees">Toutes les portées</option>
+          <option value="specifique">Lapin spécifique</option>
+        </select>
+      </div>
 
-      <main className="flex-grow pt-20 px-4 space-y-6 max-w-lg mx-auto w-full">
-        <form className="space-y-6" onSubmit={handleSave}>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Nom du traitement *</label>
-            <input 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
-              placeholder="ex: Vitamine AD3E" 
-              type="text" 
-              value={nom}
-              onChange={(e) => setNom(e.target.value)}
-              required
-            />
-          </div>
+      {formData.cible === 'specifique' && (
+        <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+          <label className="block text-sm font-medium text-muted">Sélectionner le lapin *</label>
+          <select 
+            className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none"
+            value={formData.specificAnimalId}
+            onChange={(e) => handleChange('specificAnimalId', e.target.value)}
+          >
+            <option value="" disabled>Sélectionner un lapin</option>
+            {animals.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.id} {a.name ? `- ${a.name}` : ''} ({a.gender === 'F' ? 'Femelle' : 'Mâle'})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Cible *</label>
-            <select 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground focus:ring-1 focus:ring-primary outline-none font-sans"
-              value={cible}
-              onChange={(e) => setCible(e.target.value)}
-            >
-              <option value="tout">Tout le cheptel</option>
-              <option value="males">Tous les mâles</option>
-              <option value="femelles">Toutes les femelles</option>
-              <option value="portees">Toutes les portées</option>
-              <option value="specifique">Lapin spécifique</option>
-            </select>
-          </div>
-
-          {cible === 'specifique' && (
-            <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
-              <label className="block text-sm font-medium text-muted">Sélectionner le lapin *</label>
-              <select 
-                className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none"
-                value={specificAnimalId}
-                onChange={(e) => setSpecificAnimalId(e.target.value)}
-                required
-              >
-                <option value="" disabled>Sélectionner un lapin</option>
-                {animals.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.id} {a.name ? `- ${a.name}` : ''} ({a.gender === 'F' ? 'Femelle' : 'Mâle'})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Type</label>
-            <div className="grid grid-cols-2 gap-3 p-1 bg-surface border border-border rounded-xl">
-              <button 
-                type="button" 
-                onClick={() => setTypeTraitement('preventif')}
-                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
-                  typeTraitement === 'preventif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
-                }`}
-              >
-                <Pill className="w-4 h-4" /> Préventif
-              </button>
-              <button 
-                type="button" 
-                onClick={() => setTypeTraitement('curatif')}
-                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
-                  typeTraitement === 'curatif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
-                }`}
-              >
-                <Syringe className="w-4 h-4" /> Curatif
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Date prévue *</label>
-            <input 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none [color-scheme:light]" 
-              type="date" 
-              value={datePrevue}
-              onChange={(e) => setDatePrevue(e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Posologie</label>
-            <input 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
-              placeholder="ex: 1ml dans l'eau" 
-              type="text" 
-              value={posologie}
-              onChange={(e) => setPosologie(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted">Observations</label>
-            <textarea 
-              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none resize-none" 
-              placeholder="Notes complémentaires..." 
-              rows={3}
-              value={observations}
-              onChange={(e) => setObservations(e.target.value)}
-            ></textarea>
-          </div>
-
-          <div className="pt-4 space-y-3">
-            <button 
-              type="submit"
-              className="w-full bg-primary text-background font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2 shadow-lg shadow-primary/20"
-            >
-              <Save className="w-5 h-5 fill-current" /> {existingSoin ? 'Enregistrer les modifications' : 'Programmer'}
-            </button>
-            
-            {existingSoin && (
-              <button 
-                type="button"
-                onClick={handleDelete}
-                className="w-full bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2"
-              >
-                <Trash2 className="w-5 h-5" /> Supprimer le traitement
-              </button>
-            )}
-          </div>
-        </form>
-      </main>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Type</label>
+        <div className="grid grid-cols-2 gap-3 p-1 bg-surface border border-border rounded-xl">
+          <button 
+            type="button" 
+            onClick={() => handleChange('typeTraitement', 'preventif')}
+            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
+              formData.typeTraitement === 'preventif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
+            }`}
+          >
+            <Pill className="w-4 h-4" /> Préventif
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleChange('typeTraitement', 'curatif')}
+            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-all ${
+              formData.typeTraitement === 'curatif' ? 'bg-border text-primary' : 'text-muted hover:bg-border/50'
+            }`}
+          >
+            <Syringe className="w-4 h-4" /> Curatif
+          </button>
+        </div>
+      </div>
     </div>
+  );
+
+  const step2Content = (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Date prévue *</label>
+        <input 
+          className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground font-mono focus:ring-1 focus:ring-primary outline-none [color-scheme:light]" 
+          type="date" 
+          value={formData.datePrevue}
+          onChange={(e) => handleChange('datePrevue', e.target.value)}
+        />
+      </div>
+      
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Posologie</label>
+        <input 
+          className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none" 
+          placeholder="ex: 1ml dans l'eau" 
+          type="text" 
+          value={formData.posologie}
+          onChange={(e) => handleChange('posologie', e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-muted">Observations</label>
+        <textarea 
+          className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-neutral focus:ring-1 focus:ring-primary outline-none resize-none" 
+          placeholder="Notes complémentaires..." 
+          rows={3}
+          value={formData.observations}
+          onChange={(e) => handleChange('observations', e.target.value)}
+        ></textarea>
+      </div>
+
+      {existingSoin && (
+        <button 
+          type="button"
+          onClick={handleDelete}
+          className="w-full mt-4 bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+        >
+          <Trash2 className="w-5 h-5" /> Supprimer le traitement
+        </button>
+      )}
+    </div>
+  );
+
+  const steps: WizardStep[] = [
+    { title: 'Information', content: step1Content, isValid: isStep1Valid },
+    { title: 'Détails', content: step2Content, isValid: formData.datePrevue.length > 0 }
+  ];
+
+  return (
+    <Wizard 
+      steps={steps} 
+      onComplete={handleComplete} 
+      onCancel={() => navigate(-1)} 
+      completeText={existingSoin ? 'Mettre à jour' : 'Programmer'}
+    />
   );
 };

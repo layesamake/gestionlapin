@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { motion, useAnimation, PanInfo } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 
 interface SwipeableItemProps {

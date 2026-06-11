@@ -45,7 +45,7 @@ export const FAB: React.FC<FABProps> = ({ actions, mainIcon }) => {
       )}
 
       {/* Action items */}
-      <div className={`fixed bottom-20 right-4 z-50 flex flex-col-reverse items-end gap-3 transition-all ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+      <div className={`fixed bottom-20 mb-24 right-4 z-50 flex flex-col-reverse items-end gap-3 transition-all ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         {actions.map((action, i) => (
           <div
             key={i}

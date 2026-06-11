@@ -6,7 +6,8 @@ import Cropper from 'react-easy-crop';
 import getCroppedImg from '../utils/cropImage';
 import { calculateAge } from '../utils/dateUtils';
 import { useToast } from '../components/ui/Toast';
-import { Wizard, WizardStep } from '../components/ui/Wizard';
+import { Wizard } from '../components/ui/Wizard';
+import type { WizardStep } from '../components/ui/Wizard';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();

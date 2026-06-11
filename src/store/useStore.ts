@@ -98,6 +98,8 @@ interface AppState {
   importData: (data: string) => boolean;
   exportData: () => string;
   resetData: () => void;
+  hasOnboarded: boolean;
+  setOnboarded: (value: boolean) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -122,9 +124,12 @@ export const useStore = create<AppState>()(
         { id: 'P-009', status: 'À sevrer', female: 'F-008', effectif: '5 lapereaux vivants', badgeColor: 'warning' }
       ],
       theme: 'nature',
+      hasOnboarded: false,
       races: ['Néo-Zélandais', 'Californien', 'Géant des Flandres', 'Race locale', 'Croisé'],
       expenseCategories: ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre'],
       incomeCategories: ['Vente Lapins de Chair', 'Vente Reproducteurs', 'Vente Fumier', 'Autre'],
+
+      setOnboarded: (value) => set({ hasOnboarded: value }),
 
       addRace: (race) => set((state) => {
         const cleaned = race.trim();
@@ -243,6 +248,7 @@ export const useStore = create<AppState>()(
             saillies: state.saillies,
             portees: state.portees,
             theme: state.theme,
+            hasOnboarded: state.hasOnboarded,
             races: state.races,
             expenseCategories: state.expenseCategories,
             incomeCategories: state.incomeCategories,

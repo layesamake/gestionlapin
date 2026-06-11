@@ -10,6 +10,7 @@ import { useToast } from '../components/ui/Toast';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { animals, removeAnimal } = useStore();
@@ -23,10 +24,27 @@ export const Cheptel: React.FC = () => {
   const filters = ['Tous', 'Mâles', 'Femelles', 'Gestantes', 'Allaitantes', 'Au repos'];
 
   const filteredAnimals = animals.filter((animal: any) => {
-    if (activeFilter === 'Tous') return true;
-    if (activeFilter === 'Mâles') return animal.type.includes('Mâle');
-    if (activeFilter === 'Femelles') return animal.type.includes('Femelle');
-    return animal.status === activeFilter;
+    // Check Filter
+    let passFilter = false;
+    if (activeFilter === 'Tous') passFilter = true;
+    else if (activeFilter === 'Mâles') passFilter = animal.type?.includes('Mâle') || animal.gender === 'M';
+    else if (activeFilter === 'Femelles') passFilter = animal.type?.includes('Femelle') || animal.gender === 'F';
+    else passFilter = animal.status === activeFilter;
+
+    if (!passFilter) return false;
+
+    // Check Search
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    
+    const idMatch = animal.id?.toLowerCase().includes(query);
+    const nameMatch = animal.name?.toLowerCase().includes(query);
+    const raceMatch = animal.race?.toLowerCase().includes(query);
+    const statusMatch = animal.status?.toLowerCase().includes(query);
+    const robeMatch = animal.robe?.toLowerCase().includes(query);
+    const cageMatch = animal.cage?.toLowerCase().includes(query) || animal.location?.toLowerCase().includes(query);
+    
+    return idMatch || nameMatch || raceMatch || statusMatch || robeMatch || cageMatch;
   });
 
   const getStatusBadgeStyle = (status: string) => {
@@ -58,6 +76,8 @@ export const Cheptel: React.FC = () => {
             className="w-full bg-brand-card border border-brand-border rounded-xl py-3 pl-10 pr-4 text-brand-text placeholder:text-brand-muted focus:ring-1 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all" 
             placeholder="Rechercher par code, race ou statut..." 
             type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         

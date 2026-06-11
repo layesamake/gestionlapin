@@ -1,13 +1,19 @@
 import React from 'react';
 import { TopAppBar } from './TopAppBar';
 import { BottomNavBar } from './BottomNavBar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
+import { useStore } from '../../store/useStore';
 import { ToastProvider } from '../ui/Toast';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { WifiOff } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
   const { isOnline } = useNetworkStatus();
+  const hasOnboarded = useStore(state => state.hasOnboarded);
+
+  if (!hasOnboarded) {
+    return <Navigate to="/onboarding" replace />;
+  }
 
   return (
     <ToastProvider>

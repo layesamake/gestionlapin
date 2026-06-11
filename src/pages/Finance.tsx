@@ -96,7 +96,7 @@ export const Finance: React.FC = () => {
               <Tooltip 
                 cursor={{ fill: 'transparent' }}
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number) => [`${value} FCFA`, 'Montant']}
+                formatter={(value: any) => [`${value} FCFA`, 'Montant']}
               />
               <Bar dataKey="amount" radius={[6, 6, 6, 6]} barSize={40}>
                 {[
