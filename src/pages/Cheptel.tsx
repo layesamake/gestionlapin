@@ -4,11 +4,21 @@ import { useStore } from '../store/useStore';
 import { Search, PlusCircle, PawPrint, Tag } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
 import { Avatar } from '../components/ui/Avatar';
+import { SwipeableItem } from '../components/ui/SwipeableItem';
+import { CardSkeleton } from '../components/ui/Skeleton';
+import { useToast } from '../components/ui/Toast';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const animals = useStore(state => state.animals);
+  const { animals, removeAnimal } = useStore();
+  const { showToast } = useToast();
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filters = ['Tous', 'Mâles', 'Femelles', 'Gestantes', 'Allaitantes', 'Au repos'];
 
@@ -69,76 +79,92 @@ export const Cheptel: React.FC = () => {
       </section>
 
       <section className="space-y-3 mt-6">
-        {filteredAnimals.map((animal: any) => {
-          const isFemale = animal.gender === 'F' || animal.type?.toLowerCase().includes('femelle') || animal.id?.startsWith('F-');
-          const displayName = animal.name && animal.name !== 'Sans nom' ? animal.name : animal.id;
-          
-          let breed = animal.race;
-          if (!breed && animal.type) {
-            const parts = animal.type.split('•');
-            if (parts.length > 1) {
-              breed = parts[1].trim();
+        {isLoading ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          filteredAnimals.map((animal: any) => {
+            const isFemale = animal.gender === 'F' || animal.type?.toLowerCase().includes('femelle') || animal.id?.startsWith('F-');
+            const displayName = animal.name && animal.name !== 'Sans nom' ? animal.name : animal.id;
+            
+            let breed = animal.race;
+            if (!breed && animal.type) {
+              const parts = animal.type.split('•');
+              if (parts.length > 1) {
+                breed = parts[1].trim();
+              }
             }
-          }
 
-          return (
-            <div 
-              key={animal.id} 
-              onClick={() => navigate(`/cheptel/${animal.id}`)}
-              className={`cursor-pointer bg-brand-card border rounded-2xl p-4 flex items-start gap-4 shadow-sm transition-all hover:scale-[1.01] ${
-                animal.isWarning 
-                  ? 'border-brand-warning/30 border-l-4 border-l-brand-warning hover:border-brand-warning/50' 
-                  : 'border-brand-border hover:border-brand-primary/30'
-              }`}
-            >
-              {/* Photo / Avatar */}
-              <Avatar 
-                name={displayName} 
-                image={animal.image} 
-                size="md" 
-              />
+            return (
+              <SwipeableItem 
+                key={animal.id}
+                onDelete={() => {
+                  removeAnimal(animal.id);
+                  showToast(`${displayName} a été supprimé du cheptel.`, 'warning');
+                }}
+              >
+                <div 
+                  onClick={() => navigate(`/cheptel/${animal.id}`)}
+                  className={`cursor-pointer bg-brand-card border rounded-2xl p-4 flex items-start gap-4 shadow-sm transition-all hover:scale-[1.01] ${
+                    animal.isWarning 
+                      ? 'border-brand-warning/30 border-l-4 border-l-brand-warning hover:border-brand-warning/50' 
+                      : 'border-brand-border hover:border-brand-primary/30'
+                  }`}
+                >
+                  {/* Photo / Avatar */}
+                  <Avatar 
+                    name={displayName} 
+                    image={animal.image} 
+                    size="md" 
+                  />
 
-              {/* Informations */}
-              <div className="flex-grow min-w-0 flex flex-col gap-1">
-                <div className="flex items-center justify-between gap-2">
-                  {/* Nom ou ID */}
-                  <h3 className="font-display font-bold text-lg text-brand-text truncate leading-tight animate-fade-in">
-                    {displayName}
-                  </h3>
-                  
-                  {/* Statut Badge */}
-                  <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${getStatusBadgeStyle(animal.status)}`}>
-                    {animal.status}
-                  </span>
-                </div>
+                  {/* Informations */}
+                  <div className="flex-grow min-w-0 flex flex-col gap-1">
+                    <div className="flex items-center justify-between gap-2">
+                      {/* Nom ou ID */}
+                      <h3 className="font-display font-bold text-lg text-brand-text truncate leading-tight animate-fade-in">
+                        {displayName}
+                      </h3>
+                      
+                      {/* Statut Badge */}
+                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${getStatusBadgeStyle(animal.status)}`}>
+                        {animal.status}
+                      </span>
+                    </div>
 
-                {/* Sexe et Race / Robe */}
-                <div className="flex items-center gap-1.5 text-sm text-brand-text/90 font-medium">
-                  {isFemale ? (
-                    <span className="text-brand-text/95 font-bold">♀</span>
-                  ) : (
-                    <span className="text-emerald-400 font-bold">♂</span>
-                  )}
-                  <span className="truncate">
-                    {isFemale ? 'Femelle' : 'Mâle'}
-                    {(animal.robe || breed) && ' - '}
-                    {animal.robe}
-                    {animal.robe && breed && ', '}
-                    {breed}
-                  </span>
-                </div>
+                    {/* Sexe et Race / Robe */}
+                    <div className="flex items-center gap-1.5 text-sm text-brand-text/90 font-medium">
+                      {isFemale ? (
+                        <span className="text-brand-text/95 font-bold">♀</span>
+                      ) : (
+                        <span className="text-emerald-400 font-bold">♂</span>
+                      )}
+                      <span className="truncate">
+                        {isFemale ? 'Femelle' : 'Mâle'}
+                        {(animal.robe || breed) && ' - '}
+                        {animal.robe}
+                        {animal.robe && breed && ', '}
+                        {breed}
+                      </span>
+                    </div>
 
-                {/* Emplacement / Cage */}
-                {(animal.cage || animal.location) && (
-                  <div className="flex items-center gap-1.5 text-xs text-brand-muted font-medium mt-0.5">
-                    <Tag className="w-3.5 h-3.5 text-brand-muted" />
-                    <span>{animal.cage || animal.location}</span>
+                    {/* Emplacement / Cage */}
+                    {(animal.cage || animal.location) && (
+                      <div className="flex items-center gap-1.5 text-xs text-brand-muted font-medium mt-0.5">
+                        <Tag className="w-3.5 h-3.5 text-brand-muted" />
+                        <span>{animal.cage || animal.location}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+                </div>
+              </SwipeableItem>
+            );
+          })
+        )}
       </section>
 
       {/* FAB for quick actions */}

@@ -5,6 +5,8 @@ import { History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit, Syr
 import { Modal, ConfirmDialog } from '../components/ui/Modal';
 import { useToast } from '../components/ui/Toast';
 import { FAB } from '../components/ui/FAB';
+import { SwipeableItem } from '../components/ui/SwipeableItem';
+import { CardSkeleton } from '../components/ui/Skeleton';
 
 // Helper to format Date string to YYYY-MM-DD
 const getPlannedDateFromSoin = (soin: any) => {
@@ -30,9 +32,16 @@ const formatToFrenchDate = (dateStr: string) => {
 export const Sante: React.FC = () => {
   const soins = useStore(s => s.soins);
   const updateSoin = useStore(s => s.updateSoin);
+  const removeSoin = useStore(s => s.removeSoin);
   const [activeFilter, setActiveFilter] = useState('Tous');
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { showToast } = useToast();
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Modal states
   const [confirmComplete, setConfirmComplete] = useState<{ isOpen: boolean; soinId: number | null }>({ isOpen: false, soinId: null });
@@ -209,89 +218,105 @@ export const Sante: React.FC = () => {
 
       {/* Soins list */}
       <section className="space-y-3">
-        {filteredSoins.map(soin => (
-          <div key={soin.id} className={`bg-surface rounded-xl border p-4 transition-opacity ${
-            soin.isLate ? 'border-danger/30 border-l-4 border-l-danger bg-danger/5' : 'border-border'
-          } ${soin.status === 'Fait' ? 'opacity-70' : ''}`}>
-            
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <span className={`font-mono text-sm px-2 py-0.5 rounded border ${
-                  soin.statusColor === 'warning' || soin.statusColor === 'danger' ? 'text-secondary bg-secondary/5 border-secondary/20' 
-                  : `text-${soin.statusColor} bg-${soin.statusColor}/5 border-${soin.statusColor}/20`
-                }`}>
-                  {soin.animalId}
-                </span>
-                <h3 className="mt-2 font-bold text-foreground text-base leading-tight">{soin.type}</h3>
-                <p className="text-xs text-muted font-medium">{soin.category}</p>
+        {isLoading ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          filteredSoins.map(soin => (
+            <SwipeableItem 
+              key={soin.id}
+              onDelete={() => {
+                removeSoin(soin.id);
+                showToast('Traitement supprimé', 'warning');
+              }}
+            >
+              <div className={`bg-surface rounded-xl border p-4 transition-opacity ${
+                soin.isLate ? 'border-danger/30 border-l-4 border-l-danger bg-danger/5' : 'border-border'
+              } ${soin.status === 'Fait' ? 'opacity-70' : ''}`}>
+                
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <span className={`font-mono text-sm px-2 py-0.5 rounded border ${
+                      soin.statusColor === 'warning' || soin.statusColor === 'danger' ? 'text-secondary bg-secondary/5 border-secondary/20' 
+                      : `text-${soin.statusColor} bg-${soin.statusColor}/5 border-${soin.statusColor}/20`
+                    }`}>
+                      {soin.animalId}
+                    </span>
+                    <h3 className="mt-2 font-bold text-foreground text-base leading-tight">{soin.type}</h3>
+                    <p className="text-xs text-muted font-medium">{soin.category}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => navigate(`/sante/traitement/modifier/${soin.id}`)}
+                      className="p-2 bg-background border border-border rounded-lg text-muted hover:text-primary active:scale-95 transition-all"
+                      title="Modifier le traitement"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[11px] font-bold px-2 py-1 rounded uppercase`}>
+                      {soin.status}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className={`flex items-center gap-2 text-sm mb-4 ${soin.isLate ? 'text-danger' : 'text-muted'}`}>
+                  {getIcon(soin.status)}
+                  <span className={soin.isLate ? 'font-bold' : ''}>
+                    {soin.date.replace('(Aujourd\'hui)', '')} 
+                    {soin.isToday && <span className="text-warning ml-1">(Aujourd'hui)</span>}
+                  </span>
+                </div>
+
+                {soin.status === 'À faire' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
+                      className="bg-primary/10 text-primary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-primary/20"
+                    >
+                      Marquer fait
+                    </button>
+                    <button 
+                      onClick={() => handlePostponeSoin(soin.id)}
+                      className="bg-background border border-border text-muted font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
+                    >
+                      Reporter
+                    </button>
+                  </div>
+                )}
+
+                {soin.status === 'En cours' && (
+                  <button 
+                    onClick={() => handleRecordDose(soin.id)}
+                    className="w-full bg-secondary/10 text-secondary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-secondary/20"
+                  >
+                    Enregistrer dose
+                  </button>
+                )}
+
+                {soin.status === 'Fait' && (
+                  <button 
+                    onClick={() => navigate(`/sante/traitement/${soin.id}`)}
+                    className="w-full bg-background border border-border text-foreground font-semibold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
+                  >
+                    Voir détails
+                  </button>
+                )}
+
+                {soin.status === 'En retard' && (
+                  <button 
+                    onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
+                    className="w-full bg-danger text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all shadow-lg shadow-danger/20"
+                  >
+                    Marquer comme fait
+                  </button>
+                )}
               </div>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => navigate(`/sante/traitement/modifier/${soin.id}`)}
-                  className="p-2 bg-background border border-border rounded-lg text-muted hover:text-primary active:scale-95 transition-all"
-                  title="Modifier le traitement"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[11px] font-bold px-2 py-1 rounded uppercase`}>
-                  {soin.status}
-                </span>
-              </div>
-            </div>
-            
-            <div className={`flex items-center gap-2 text-sm mb-4 ${soin.isLate ? 'text-danger' : 'text-muted'}`}>
-              {getIcon(soin.status)}
-              <span className={soin.isLate ? 'font-bold' : ''}>
-                {soin.date.replace('(Aujourd\'hui)', '')} 
-                {soin.isToday && <span className="text-warning ml-1">(Aujourd'hui)</span>}
-              </span>
-            </div>
-
-            {soin.status === 'À faire' && (
-              <div className="grid grid-cols-2 gap-3">
-                <button 
-                  onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
-                  className="bg-primary/10 text-primary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-primary/20"
-                >
-                  Marquer fait
-                </button>
-                <button 
-                  onClick={() => handlePostponeSoin(soin.id)}
-                  className="bg-background border border-border text-muted font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
-                >
-                  Reporter
-                </button>
-              </div>
-            )}
-
-            {soin.status === 'En cours' && (
-              <button 
-                onClick={() => handleRecordDose(soin.id)}
-                className="w-full bg-secondary/10 text-secondary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-secondary/20"
-              >
-                Enregistrer dose
-              </button>
-            )}
-
-            {soin.status === 'Fait' && (
-              <button 
-                onClick={() => navigate(`/sante/traitement/${soin.id}`)}
-                className="w-full bg-background border border-border text-foreground font-semibold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
-              >
-                Voir détails
-              </button>
-            )}
-
-            {soin.status === 'En retard' && (
-              <button 
-                onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
-                className="w-full bg-danger text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all shadow-lg shadow-danger/20"
-              >
-                Marquer comme fait
-              </button>
-            )}
-          </div>
-        ))}
+            </SwipeableItem>
+          ))
+        )}
       </section>
 
       {/* FAB */}
