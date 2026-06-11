@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, Plus } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
+import { HelpButton } from '../components/ui/HelpButton';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export const Finance: React.FC = () => {
@@ -29,6 +30,17 @@ export const Finance: React.FC = () => {
 
   return (
     <>
+      <div className="flex justify-end mb-2">
+        <HelpButton title="Gestion Financière">
+          <p className="mb-3">Gardez un œil sur la rentabilité de votre élevage.</p>
+          <ul className="list-disc pl-4 space-y-2">
+            <li><strong>Bilan :</strong> Affiche la différence entre vos revenus et vos dépenses.</li>
+            <li><strong>Graphique :</strong> Représentation visuelle de vos flux financiers pour le mois en cours.</li>
+            <li><strong>Bouton + :</strong> Ajoutez facilement une nouvelle dépense (ex: Achat d'aliments) ou un nouveau revenu (ex: Vente de lapereaux).</li>
+          </ul>
+        </HelpButton>
+      </div>
+
       {/* Top Banner Bilan */}
       <section className="bg-surface border border-border rounded-xl p-5 mb-6 shadow-sm">
         <div className="flex justify-between items-start mb-4">

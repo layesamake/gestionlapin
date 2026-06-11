@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle } from 'lucide-react';
+import { CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle, HelpCircle, ChevronRight, Info } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { generatePDFRegister } from '../utils/pdfGenerator';
 import { ConfirmDialog } from '../components/ui/Modal';
@@ -158,6 +158,42 @@ export const Parametres: React.FC = () => {
               Ferme
             </button>
           </div>
+        </section>
+
+        {/* Support & Aide */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-muted">Support & Aide</h2>
+          <button 
+            onClick={() => navigate('/aide')}
+            className="w-full bg-surface border border-border p-4 rounded-xl flex items-center justify-between active:scale-[0.98] transition-all hover:border-primary/50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                <HelpCircle className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-sm text-foreground">Centre d'Aide & FAQ</h3>
+                <p className="text-xs text-muted mt-0.5">Guide d'utilisation et parcours de l'éleveur</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted" />
+          </button>
+          
+          <button 
+            onClick={() => navigate('/a-propos')}
+            className="w-full bg-surface border border-border p-4 rounded-xl flex items-center justify-between active:scale-[0.98] transition-all hover:border-primary/50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                <Info className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-sm text-foreground">À Propos</h3>
+                <p className="text-xs text-muted mt-0.5">Informations sur l'application et le concepteur</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted" />
+          </button>
         </section>
 
         {/* Sauvegarde Section */}

@@ -3,6 +3,7 @@ import { Calendar, Heart, MonitorSmartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { FAB } from '../components/ui/FAB';
+import { HelpButton } from '../components/ui/HelpButton';
 
 export const Reproduction: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'saillies' | 'portees'>('saillies');
@@ -55,6 +56,17 @@ export const Reproduction: React.FC = () => {
 
   return (
     <>
+      <div className="flex justify-end mb-2">
+        <HelpButton title="Reproduction">
+          <p className="mb-3">Suivez ici le cycle complet de reproduction de votre cheptel.</p>
+          <ul className="list-disc pl-4 space-y-2">
+            <li><strong>Onglet Saillies :</strong> Liste les saillies programmées. Vous pouvez confirmer une gestation ou déclarer un échec après contrôle.</li>
+            <li><strong>Onglet Portées :</strong> Suivez l'évolution des naissances jusqu'au sevrage.</li>
+            <li><strong>Mortalité :</strong> Ajustez le nombre de lapereaux vivants si nécessaire pendant l'allaitement.</li>
+          </ul>
+        </HelpButton>
+      </div>
+
       {/* Tabs Navigation */}
       <div className="flex border-b border-border mb-5">
         <button 

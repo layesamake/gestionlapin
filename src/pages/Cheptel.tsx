@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore';
 import { Search, PlusCircle, PawPrint, Tag } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
 import { Avatar } from '../components/ui/Avatar';
+import { HelpButton } from '../components/ui/HelpButton';
 import { SwipeableItem } from '../components/ui/SwipeableItem';
 import { CardSkeleton } from '../components/ui/Skeleton';
 import { useToast } from '../components/ui/Toast';
@@ -69,6 +70,18 @@ export const Cheptel: React.FC = () => {
 
   return (
     <>
+      <div className="flex justify-end mb-2">
+        <HelpButton title="Gestion du Cheptel">
+          <p className="mb-3">Cet écran vous permet de visualiser et gérer tous vos reproducteurs.</p>
+          <ul className="list-disc pl-4 space-y-2">
+            <li><strong>Recherche :</strong> Trouvez un lapin par son code, race ou statut.</li>
+            <li><strong>Filtres rapides :</strong> Utilisez les boutons en haut pour filtrer par statut (ex: Gestantes, Allaitantes).</li>
+            <li><strong>Bouton + :</strong> Ajoutez un nouveau reproducteur ou créez une nouvelle race.</li>
+            <li><strong>Glisser pour supprimer :</strong> Glissez un lapin vers la gauche pour le supprimer (irréversible).</li>
+          </ul>
+        </HelpButton>
+      </div>
+
       <section className="space-y-4">
         <div className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-muted group-focus-within:text-brand-primary transition-colors" />
