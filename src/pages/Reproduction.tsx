@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, Calendar, PlusSquare, Heart, MonitorSmartphone } from 'lucide-react';
+import { Calendar, Heart, MonitorSmartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { FAB } from '../components/ui/FAB';

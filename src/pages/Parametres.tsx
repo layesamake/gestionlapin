@@ -1,10 +1,20 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle } from 'lucide-react';
+import { CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { generatePDFRegister } from '../utils/pdfGenerator';
 import { ConfirmDialog } from '../components/ui/Modal';
 import { useToast } from '../components/ui/Toast';
+
+// Interface for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +22,29 @@ export const Parametres: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
+  React.useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const handleExport = () => {
     const data = exportData();
@@ -65,17 +98,27 @@ export const Parametres: React.FC = () => {
   return (
     <div className="pb-8">
       <div className="space-y-6">
-        {/* Offline Status Banner */}
-        <div className="bg-surface border border-primary/30 rounded-xl p-4 flex items-start gap-4">
-          <div className="bg-primary/10 p-2 rounded-lg">
-            <CloudOff className="w-6 h-6 text-primary fill-current" />
+        {/* Offline Status & PWA Install Banner */}
+        <div className="bg-surface border border-primary/30 rounded-xl p-4">
+          <div className="flex items-start gap-4 mb-3">
+            <div className="bg-primary/10 p-2 rounded-lg shrink-0">
+              <CloudOff className="w-6 h-6 text-primary fill-current" />
+            </div>
+            <div>
+              <h3 className="text-primary font-bold text-sm">Application Native & Hors-ligne</h3>
+              <p className="text-muted text-xs leading-relaxed mt-1">
+                Vos informations sont stockées directement sur ce téléphone. Le mode hors connexion est géré automatiquement pour une utilisation en élevage sans interruption.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-primary font-bold text-sm">Données Locales</h3>
-            <p className="text-muted text-xs leading-relaxed mt-1">
-              Vos informations sont stockées directement sur ce téléphone. Le mode hors connexion est activé pour garantir une utilisation en élevage sans interruption.
-            </p>
-          </div>
+          {deferredPrompt && (
+            <button 
+              onClick={handleInstallClick}
+              className="w-full bg-primary/10 text-primary py-3 rounded-xl text-sm font-bold active:scale-[0.98] transition-transform flex items-center justify-center gap-2 mt-2"
+            >
+              <CloudDownload className="w-4 h-4" /> Installer l'application sur l'écran d'accueil
+            </button>
+          )}
         </div>
 
         {/* Apparence */}

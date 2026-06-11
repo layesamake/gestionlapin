@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit, Syringe } from 'lucide-react';
+import { History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit, Syringe } from 'lucide-react';
 import { Modal, ConfirmDialog } from '../components/ui/Modal';
 import { useToast } from '../components/ui/Toast';
 import { FAB } from '../components/ui/FAB';

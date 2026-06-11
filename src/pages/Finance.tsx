@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, Plus } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
 
 export const Finance: React.FC = () => {
@@ -129,7 +129,7 @@ export const Finance: React.FC = () => {
             icon: <TrendingDown className="w-5 h-5" />,
             label: 'Nouvelle dépense',
             onClick: () => navigate('/finance/nouvelle'),
-            variant: 'danger'
+            variant: 'warning'
           }
         ]}
         mainIcon={<Plus className="w-6 h-6" />}
