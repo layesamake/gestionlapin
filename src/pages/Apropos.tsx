@@ -26,11 +26,22 @@ export const Apropos: React.FC = () => {
           <Info className="w-10 h-10 text-primary -rotate-3" />
         </div>
         <h2 className="text-xl font-bold font-display text-foreground">Lapin Manager</h2>
-        <p className="text-sm text-muted mt-1">Version 1.0.0</p>
+        <p className="text-sm text-muted mt-1">Version V.6.2026</p>
         <div className="mt-3 px-3 py-1 bg-surface border border-border rounded-full text-xs font-medium flex items-center gap-1.5">
           Fait avec <Heart className="w-3.5 h-3.5 text-danger fill-current" /> au Sénégal
         </div>
       </div>
+
+      <section className="space-y-3 mb-6">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted mb-3 pl-2 border-l-2 border-secondary">L'Application</h3>
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+          <p className="text-sm text-muted leading-relaxed">
+            <strong>Lapin Manager</strong> est une application spécialement conçue pour simplifier la gestion quotidienne de votre élevage cunicole. 
+            <br/><br/>
+            Elle vous permet de suivre vos reproducteurs, planifier les saillies, gérer les traitements sanitaires et garder un œil sur la rentabilité de votre ferme. Pensée pour les éleveurs, l'application fonctionne parfaitement sans connexion internet.
+          </p>
+        </div>
+      </section>
 
       <section className="space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-muted mb-3 pl-2 border-l-2 border-primary">Concepteur de l'application</h3>
