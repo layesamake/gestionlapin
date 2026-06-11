@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit } from 'lucide-react';
+import { PlusCircle, History, Calendar, CalendarRange, CheckCircle, AlertTriangle, Edit, Syringe } from 'lucide-react';
+import { Modal, ConfirmDialog } from '../components/ui/Modal';
+import { useToast } from '../components/ui/Toast';
+import { FAB } from '../components/ui/FAB';
 
 // Helper to format Date string to YYYY-MM-DD
 const getPlannedDateFromSoin = (soin: any) => {
@@ -29,6 +32,13 @@ export const Sante: React.FC = () => {
   const updateSoin = useStore(s => s.updateSoin);
   const [activeFilter, setActiveFilter] = useState('Tous');
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
+  // Modal states
+  const [confirmComplete, setConfirmComplete] = useState<{ isOpen: boolean; soinId: number | null }>({ isOpen: false, soinId: null });
+  const [postponeModal, setPostponeModal] = useState<{ isOpen: boolean; soinId: number | null; date: string }>({ isOpen: false, soinId: null, date: '' });
+  const [doseModal, setDoseModal] = useState<{ isOpen: boolean; soinId: number | null; dose: string }>({ isOpen: false, soinId: null, dose: 'Dose administrée' });
+  const [confirmLastDose, setConfirmLastDose] = useState<{ isOpen: boolean; soinId: number | null; dose: string }>({ isOpen: false, soinId: null, dose: '' });
 
   const aFaireCount = soins.filter(s => s.status === 'À faire').length;
   const enRetardCount = soins.filter(s => s.status === 'En retard').length;
@@ -64,18 +74,22 @@ export const Sante: React.FC = () => {
       isToday: false,
       isLate: false,
     });
+    showToast('Traitement marqué comme fait ✓', 'success');
   };
 
   const handlePostponeSoin = (id: number) => {
     const soin = soins.find(s => s.id === id);
     if (!soin) return;
-    
     const currentPlanned = getPlannedDateFromSoin(soin);
-    const newDate = prompt("Saisir la nouvelle date du traitement (AAAA-MM-JJ) :", currentPlanned);
-    
-    if (!newDate) return;
+    setPostponeModal({ isOpen: true, soinId: id, date: currentPlanned });
+  };
+
+  const confirmPostpone = () => {
+    if (!postponeModal.soinId || !postponeModal.date) return;
+    const newDate = postponeModal.date;
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
-      alert("Format de date invalide. Veuillez utiliser le format AAAA-MM-JJ.");
+      showToast('Format de date invalide', 'error');
       return;
     }
 
@@ -94,7 +108,7 @@ export const Sante: React.FC = () => {
       dateLabel = `Prévu le ${formatToFrenchDate(newDate)}`;
     }
 
-    updateSoin(id, {
+    updateSoin(postponeModal.soinId, {
       plannedDate: newDate,
       status: isLate ? 'En retard' : 'À faire',
       statusColor: isLate ? 'danger' : 'warning',
@@ -102,97 +116,89 @@ export const Sante: React.FC = () => {
       isToday,
       isLate,
     });
+    setPostponeModal({ isOpen: false, soinId: null, date: '' });
+    showToast('Traitement reporté', 'info');
   };
 
   const handleRecordDose = (id: number) => {
-    const soin = soins.find(s => s.id === id);
+    setDoseModal({ isOpen: true, soinId: id, dose: 'Dose administrée' });
+  };
+
+  const confirmDose = () => {
+    if (!doseModal.soinId) return;
+    setConfirmLastDose({ isOpen: true, soinId: doseModal.soinId, dose: doseModal.dose });
+    setDoseModal({ isOpen: false, soinId: null, dose: '' });
+  };
+
+  const finalizeRecordDose = (isLast: boolean) => {
+    if (!confirmLastDose.soinId) return;
+    const soin = soins.find(s => s.id === confirmLastDose.soinId);
     if (!soin) return;
-    const dose = prompt("Saisir la dose ou note d'administration (ex: 2ème dose administrée) :", "Dose administrée");
-    if (!dose) return;
-    
+
     const todayStr = new Date().toISOString().split('T')[0];
     const frenchDate = formatToFrenchDate(todayStr);
     const currentObs = soin.observations ? `${soin.observations}\n` : '';
-    
-    const complete = window.confirm("Est-ce la dernière dose ? (Marquer comme terminé)");
-    
-    if (complete) {
-      updateSoin(id, {
+
+    if (isLast) {
+      updateSoin(confirmLastDose.soinId, {
         status: 'Fait',
         statusColor: 'primary',
         date: `Fait le ${frenchDate} • Terminé`,
-        observations: `${currentObs}[${frenchDate}] ${dose} (Dernière dose)`,
+        observations: `${currentObs}[${frenchDate}] ${confirmLastDose.dose} (Dernière dose)`,
         isToday: false,
         isLate: false
       });
+      showToast('Traitement terminé ✓', 'success');
     } else {
-      updateSoin(id, {
-        observations: `${currentObs}[${frenchDate}] ${dose}`,
+      updateSoin(confirmLastDose.soinId, {
+        observations: `${currentObs}[${frenchDate}] ${confirmLastDose.dose}`,
       });
-      alert("Dose enregistrée dans les observations.");
+      showToast('Dose enregistrée', 'info');
     }
+    setConfirmLastDose({ isOpen: false, soinId: null, dose: '' });
   };
+
+  const fabActions = [
+    {
+      icon: <Syringe className="w-5 h-5" />,
+      label: 'Nouveau traitement',
+      onClick: () => navigate('/sante/traitement/nouveau'),
+      variant: 'primary' as const,
+    },
+    {
+      icon: <History className="w-5 h-5" />,
+      label: 'Traitement fait',
+      onClick: () => navigate('/sante/soin/nouveau'),
+      variant: 'secondary' as const,
+    },
+  ];
 
   return (
     <>
-      <section className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-surface p-4 rounded-xl border border-border">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-muted text-xs font-medium">À faire</span>
-            <span className="bg-warning/10 text-warning text-[10px] font-bold px-2 py-0.5 rounded-full">Auj.</span>
+      {/* Stats */}
+      <section className="grid grid-cols-4 gap-2 mb-5">
+        {[
+          { label: 'À faire', count: aFaireCount, color: 'warning' },
+          { label: 'Retard', count: enRetardCount, color: 'danger' },
+          { label: 'En cours', count: enCoursCount, color: 'secondary' },
+          { label: 'Faits', count: faitsCount, color: 'primary' },
+        ].map(stat => (
+          <div key={stat.label} className="bg-surface p-3 rounded-xl border border-border text-center">
+            <p className="text-2xl font-bold text-foreground">{stat.count}</p>
+            <p className="text-[11px] text-muted font-medium mt-0.5">{stat.label}</p>
           </div>
-          <p className="text-3xl font-extrabold text-foreground">{aFaireCount}</p>
-          <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Action urgente</p>
-        </div>
-        <div className="bg-surface p-4 rounded-xl border border-border">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-muted text-xs font-medium">En retard</span>
-            <span className="bg-danger/10 text-danger text-[10px] font-bold px-2 py-0.5 rounded-full">Retard</span>
-          </div>
-          <p className="text-3xl font-extrabold text-foreground">{enRetardCount}</p>
-          <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">À régulariser</p>
-        </div>
-        <div className="bg-surface p-4 rounded-xl border border-border">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-muted text-xs font-medium">En cours</span>
-            <span className="bg-secondary/10 text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full">Suivi</span>
-          </div>
-          <p className="text-3xl font-extrabold text-foreground">{enCoursCount}</p>
-          <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Traitements</p>
-        </div>
-        <div className="bg-surface p-4 rounded-xl border border-border">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-muted text-xs font-medium">Faits</span>
-            <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">Mois</span>
-          </div>
-          <p className="text-3xl font-extrabold text-foreground">{faitsCount}</p>
-          <p className="text-[10px] text-muted mt-1 uppercase tracking-tighter">Interventions</p>
-        </div>
+        ))}
       </section>
 
-      <section className="space-y-3 mb-6">
-        <button 
-          onClick={() => navigate('/sante/traitement/nouveau')}
-          className="w-full bg-primary text-background font-bold py-4 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
-        >
-          <PlusCircle className="w-5 h-5 fill-current" /> Nouveau traitement prévu
-        </button>
-        <button 
-          onClick={() => navigate('/sante/soin/nouveau')}
-          className="w-full bg-transparent border border-border text-foreground font-semibold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
-        >
-          <History className="w-5 h-5 text-muted" /> Enregistrer un traitement fait
-        </button>
-      </section>
-
-      <section className="no-scrollbar overflow-x-auto flex gap-2 -mx-4 px-4 pb-2 mb-4 hide-scrollbar">
+      {/* Filters */}
+      <section className="overflow-x-auto flex gap-2 -mx-4 px-4 pb-3 mb-4 hide-scrollbar">
         {filters.map(filter => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`whitespace-nowrap px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 ${
               activeFilter === filter
-                ? 'bg-primary text-background font-bold shadow-lg shadow-primary/10'
+                ? 'bg-primary text-background font-bold'
                 : 'bg-surface border border-border text-muted'
             }`}
           >
@@ -201,11 +207,12 @@ export const Sante: React.FC = () => {
         ))}
       </section>
 
-      <section className="space-y-4">
+      {/* Soins list */}
+      <section className="space-y-3">
         {filteredSoins.map(soin => (
-          <div key={soin.id} className={`bg-surface rounded-xl border p-4 shadow-sm transition-opacity ${
-            soin.isLate ? 'border-danger/30 border-l-4 border-l-danger' : 'border-border'
-          } ${soin.status === 'Fait' ? 'opacity-80' : ''}`}>
+          <div key={soin.id} className={`bg-surface rounded-xl border p-4 transition-opacity ${
+            soin.isLate ? 'border-danger/30 border-l-4 border-l-danger bg-danger/5' : 'border-border'
+          } ${soin.status === 'Fait' ? 'opacity-70' : ''}`}>
             
             <div className="flex justify-between items-start mb-3">
               <div>
@@ -215,18 +222,18 @@ export const Sante: React.FC = () => {
                 }`}>
                   {soin.animalId}
                 </span>
-                <h3 className="mt-2 font-bold text-foreground text-lg leading-tight">{soin.type}</h3>
+                <h3 className="mt-2 font-bold text-foreground text-base leading-tight">{soin.type}</h3>
                 <p className="text-xs text-muted font-medium">{soin.category}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => navigate(`/sante/traitement/modifier/${soin.id}`)}
-                  className="p-1.5 bg-background border border-border rounded-lg text-muted hover:text-primary active:scale-95 transition-all"
+                  className="p-2 bg-background border border-border rounded-lg text-muted hover:text-primary active:scale-95 transition-all"
                   title="Modifier le traitement"
                 >
-                  <Edit className="w-3.5 h-3.5" />
+                  <Edit className="w-4 h-4" />
                 </button>
-                <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[10px] font-bold px-2 py-1 rounded uppercase`}>
+                <span className={`bg-${soin.statusColor}/10 text-${soin.statusColor} text-[11px] font-bold px-2 py-1 rounded uppercase`}>
                   {soin.status}
                 </span>
               </div>
@@ -243,14 +250,14 @@ export const Sante: React.FC = () => {
             {soin.status === 'À faire' && (
               <div className="grid grid-cols-2 gap-3">
                 <button 
-                  onClick={() => handleCompleteSoin(soin.id)}
-                  className="bg-primary/10 text-primary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-primary/20"
+                  onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
+                  className="bg-primary/10 text-primary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-primary/20"
                 >
-                  Marquer comme fait
+                  Marquer fait
                 </button>
                 <button 
                   onClick={() => handlePostponeSoin(soin.id)}
-                  className="bg-border text-muted font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-surface"
+                  className="bg-background border border-border text-muted font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
                 >
                   Reporter
                 </button>
@@ -260,7 +267,7 @@ export const Sante: React.FC = () => {
             {soin.status === 'En cours' && (
               <button 
                 onClick={() => handleRecordDose(soin.id)}
-                className="w-full bg-secondary/10 text-secondary font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-secondary/20"
+                className="w-full bg-secondary/10 text-secondary font-bold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-secondary/20"
               >
                 Enregistrer dose
               </button>
@@ -269,7 +276,7 @@ export const Sante: React.FC = () => {
             {soin.status === 'Fait' && (
               <button 
                 onClick={() => navigate(`/sante/traitement/${soin.id}`)}
-                className="w-full bg-border text-foreground font-bold py-2.5 rounded text-xs active:scale-95 transition-all hover:bg-surface"
+                className="w-full bg-background border border-border text-foreground font-semibold py-3 rounded-xl text-sm active:scale-95 transition-all hover:bg-surface"
               >
                 Voir détails
               </button>
@@ -277,8 +284,8 @@ export const Sante: React.FC = () => {
 
             {soin.status === 'En retard' && (
               <button 
-                onClick={() => handleCompleteSoin(soin.id)}
-                className="w-full bg-danger text-white font-bold py-3 rounded text-sm active:scale-95 transition-all shadow-lg shadow-danger/20 hover:bg-danger/90"
+                onClick={() => setConfirmComplete({ isOpen: true, soinId: soin.id })}
+                className="w-full bg-danger text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all shadow-lg shadow-danger/20"
               >
                 Marquer comme fait
               </button>
@@ -286,6 +293,89 @@ export const Sante: React.FC = () => {
           </div>
         ))}
       </section>
+
+      {/* FAB */}
+      <FAB actions={fabActions} />
+
+      {/* ── Modals ── */}
+
+      {/* Confirm complete */}
+      <ConfirmDialog
+        isOpen={confirmComplete.isOpen}
+        onClose={() => setConfirmComplete({ isOpen: false, soinId: null })}
+        onConfirm={() => confirmComplete.soinId && handleCompleteSoin(confirmComplete.soinId)}
+        title="Confirmer le traitement"
+        message="Marquer ce traitement comme effectué ?"
+        confirmText="Oui, c'est fait"
+        variant="primary"
+      />
+
+      {/* Postpone modal */}
+      <Modal isOpen={postponeModal.isOpen} onClose={() => setPostponeModal({ isOpen: false, soinId: null, date: '' })} title="Reporter le traitement">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Nouvelle date</label>
+            <input
+              type="date"
+              value={postponeModal.date}
+              onChange={(e) => setPostponeModal(prev => ({ ...prev, date: e.target.value }))}
+              className="w-full bg-background border border-border rounded-xl py-3 px-4 text-foreground text-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setPostponeModal({ isOpen: false, soinId: null, date: '' })}
+              className="flex-1 py-3 rounded-xl border border-border text-foreground font-semibold text-sm active:scale-95 transition-all"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={confirmPostpone}
+              className="flex-1 py-3 rounded-xl bg-primary text-background font-bold text-sm active:scale-95 transition-all"
+            >
+              Reporter
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Dose modal */}
+      <Modal isOpen={doseModal.isOpen} onClose={() => setDoseModal({ isOpen: false, soinId: null, dose: '' })} title="Enregistrer une dose">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Note d'administration</label>
+            <input
+              type="text"
+              value={doseModal.dose}
+              onChange={(e) => setDoseModal(prev => ({ ...prev, dose: e.target.value }))}
+              placeholder="Ex: 2ème dose administrée"
+              className="w-full bg-background border border-border rounded-xl py-3 px-4 text-foreground text-base placeholder:text-muted focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+            />
+          </div>
+          <button
+            onClick={confirmDose}
+            className="w-full py-3 rounded-xl bg-secondary text-background font-bold text-sm active:scale-95 transition-all"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </Modal>
+
+      {/* Confirm last dose */}
+      <ConfirmDialog
+        isOpen={confirmLastDose.isOpen}
+        onClose={() => {
+          finalizeRecordDose(false);
+        }}
+        onConfirm={() => {
+          finalizeRecordDose(true);
+        }}
+        title="Dernière dose ?"
+        message="Est-ce la dernière dose ? Le traitement sera marqué comme terminé."
+        confirmText="Oui, terminer"
+        cancelText="Non, continuer"
+        variant="primary"
+      />
     </>
   );
 };

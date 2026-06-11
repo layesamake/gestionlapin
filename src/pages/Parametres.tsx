@@ -1,13 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, CloudOff, CloudUpload, CloudDownload, Syringe, FileText, RotateCcw, Save, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { generatePDFRegister } from '../utils/pdfGenerator';
+import { ConfirmDialog } from '../components/ui/Modal';
+import { useToast } from '../components/ui/Toast';
 
 export const Parametres: React.FC = () => {
   const navigate = useNavigate();
   const { exportData, importData, theme, setTheme, resetData } = useStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleExport = () => {
     const data = exportData();
@@ -47,9 +51,9 @@ export const Parametres: React.FC = () => {
         if (typeof event.target?.result === 'string') {
           const success = importData(event.target.result);
           if (success) {
-            alert('Données restaurées avec succès !');
+            showToast('Données restaurées avec succès !', 'success');
           } else {
-            alert('Erreur lors de la restauration du fichier.');
+            showToast('Erreur lors de la restauration du fichier.', 'error');
           }
         }
       };
@@ -59,23 +63,8 @@ export const Parametres: React.FC = () => {
 
 
   return (
-    <div className="pb-24">
-      {/* TopAppBar */}
-      <header className="fixed top-0 w-full bg-background text-primary border-b border-border z-50 flex justify-between items-center px-4 h-16">
-        <button 
-          className="flex items-center gap-2 text-muted active:scale-95 transition-transform" 
-          onClick={() => navigate('/')}
-        >
-          <ChevronLeft className="w-6 h-6" />
-          <span className="font-medium">Accueil</span>
-        </button>
-        <h1 className="text-foreground font-display font-bold tracking-tight text-lg">Paramètres</h1>
-        <button className="bg-primary text-background px-3 py-1.5 rounded-lg text-sm font-bold active:scale-95 transition-transform">
-          Enregistrer
-        </button>
-      </header>
-
-      <main className="mt-20 px-4 space-y-6 max-w-2xl mx-auto">
+    <div className="pb-8">
+      <div className="space-y-6">
         {/* Offline Status Banner */}
         <div className="bg-surface border border-primary/30 rounded-xl p-4 flex items-start gap-4">
           <div className="bg-primary/10 p-2 rounded-lg">
@@ -241,14 +230,8 @@ export const Parametres: React.FC = () => {
               Supprimer toutes les données (animaux, saillies, transactions). Cette action est irréversible.
             </p>
             <button 
-              onClick={() => {
-                if(window.confirm('Êtes-vous sûr de vouloir supprimer TOUTES vos données ? Cette action est définitive !')) {
-                  resetData();
-                  alert('Toutes les données ont été réinitialisées.');
-                  navigate('/');
-                }
-              }}
-              className="mt-2 px-4 py-2 bg-danger text-white rounded-lg text-sm font-bold active:scale-95 transition-transform"
+              onClick={() => setShowResetConfirm(true)}
+              className="mt-2 px-4 py-3 bg-danger text-white rounded-xl text-sm font-bold active:scale-95 transition-transform"
             >
               Réinitialiser les données
             </button>
@@ -260,17 +243,30 @@ export const Parametres: React.FC = () => {
           <button className="w-full bg-primary text-background py-4 rounded-xl font-extrabold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
             <Save className="w-5 h-5 fill-current" /> Enregistrer les paramètres
           </button>
-          <button className="w-full bg-transparent text-muted py-3 rounded-xl font-semibold text-sm active:bg-surface transition-all hover:text-foreground">
+          <button 
+            onClick={() => navigate('/')}
+            className="w-full bg-transparent text-muted py-3 rounded-xl font-semibold text-sm active:bg-surface transition-all hover:text-foreground"
+          >
             Annuler
           </button>
         </div>
-      </main>
-
-      {/* Visual Polish: Soft Ambient Glow */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[40%] bg-primary opacity-5 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-[10%] -left-[10%] w-[50%] h-[40%] bg-secondary opacity-5 blur-[120px] rounded-full"></div>
       </div>
+
+      {/* Confirm Reset Dialog */}
+      <ConfirmDialog
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={() => {
+          resetData();
+          showToast('Toutes les données ont été réinitialisées.', 'warning');
+          navigate('/');
+        }}
+        title="Réinitialiser les données"
+        message="Êtes-vous sûr de vouloir supprimer TOUTES vos données ? Cette action est définitive et irréversible."
+        confirmText="Supprimer tout"
+        cancelText="Annuler"
+        variant="danger"
+      />
     </div>
   );
 };

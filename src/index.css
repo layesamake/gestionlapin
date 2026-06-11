@@ -46,52 +46,52 @@
   :root, [data-theme="nature"] {
     --bg: #F9F6F0;
     --surface: #FFFFFF;
-    --border: #E5E0D8;
+    --border: #DDD8CE;
     --primary: #4C7C59;
     --secondary: #D97757;
-    --warning: #D4A373;
+    --warning: #B8873A;
     --danger: #C15B5B;
-    --neutral: #8C857D;
-    --muted: #A6A098;
+    --neutral: #6D675F;
+    --muted: #6D675F;
     --foreground: #2C2A29;
   }
 
   [data-theme="ferme"] {
     --bg: #F0F4EE;
     --surface: #FFFFFF;
-    --border: #DDE5DA;
+    --border: #D2DCCE;
     --primary: #135F38;
-    --secondary: #E07A07;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --neutral: #6B7C72;
-    --muted: #9CAFA4;
+    --secondary: #C86A00;
+    --warning: #D48A00;
+    --danger: #DC2626;
+    --neutral: #4E6155;
+    --muted: #4E6155;
     --foreground: #1A2D23;
   }
 
   [data-theme="sombre"] {
     --bg: #0B0F19;
     --surface: #161B26;
-    --border: #242B3B;
+    --border: #2A3245;
     --primary: #10B981;
     --secondary: #06B6D4;
     --warning: #F59E0B;
     --danger: #EF4444;
-    --neutral: #6B7280;
-    --muted: #9CA3AF;
+    --neutral: #8B93A1;
+    --muted: #8B93A1;
     --foreground: #F3F4F6;
   }
 
   [data-theme="clair"] {
     --bg: #F3F4F6;
     --surface: #FFFFFF;
-    --border: #E5E7EB;
+    --border: #D8DBE0;
     --primary: #2563EB;
-    --secondary: #8B5CF6;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --neutral: #9CA3AF;
-    --muted: #D1D5DB;
+    --secondary: #7C3AED;
+    --warning: #D48A00;
+    --danger: #DC2626;
+    --neutral: #626B78;
+    --muted: #626B78;
     --foreground: #111827;
   }
 
@@ -102,4 +102,41 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Animations for UI components */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-down {
+  animation: slide-down 0.2s ease-out;
+}
+
+/* Hide scrollbar for filter pills */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

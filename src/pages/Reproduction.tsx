@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { PlusCircle, Calendar, PlusSquare } from 'lucide-react';
+import { PlusCircle, Calendar, PlusSquare, Heart, MonitorSmartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { FAB } from '../components/ui/FAB';
 
 export const Reproduction: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'saillies' | 'portees'>('saillies');
@@ -55,7 +56,7 @@ export const Reproduction: React.FC = () => {
   return (
     <>
       {/* Tabs Navigation */}
-      <div className="flex border-b border-border mb-6">
+      <div className="flex border-b border-border mb-5">
         <button 
           className={`flex-1 py-3 text-sm font-semibold transition-all ${activeTab === 'saillies' ? 'border-b-4 border-primary text-primary' : 'text-muted hover:text-foreground'}`}
           onClick={() => setActiveTab('saillies')}
@@ -72,20 +73,13 @@ export const Reproduction: React.FC = () => {
 
       {/* SAILLIES SECTION */}
       {activeTab === 'saillies' && (
-        <section className="space-y-6">
-          <button 
-            onClick={() => navigate('/reproduction/saillie/nouvelle')}
-            className="w-full bg-primary text-background font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
-          >
-            <PlusCircle className="w-5 h-5" /> Nouvelle Saillie
-          </button>
-
+        <section className="space-y-4">
           <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
             {sailliesFilters.map(f => (
               <button 
                 key={f}
                 onClick={() => setSaillieFilter(f)}
-                className={`px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
+                className={`px-4 py-2.5 rounded-full text-sm whitespace-nowrap transition-all active:scale-95 ${
                   saillieFilter === f 
                     ? 'bg-primary/10 border-primary text-primary font-bold border' 
                     : 'bg-surface border-border text-muted border'
@@ -125,18 +119,18 @@ export const Reproduction: React.FC = () => {
                 <div className="flex gap-2">
                   {s.status === 'Gestation confirmée' && (
                     <>
-                      <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Voir détails</button>
-                      <button onClick={() => handleEnregistrerMiseBas(s.id)} className="flex-1 py-2 rounded-lg bg-primary text-background text-xs font-bold hover:opacity-90 transition-opacity">Enregistrer mise bas</button>
+                      <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="flex-1 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-border transition-colors active:scale-95">Voir détails</button>
+                      <button onClick={() => handleEnregistrerMiseBas(s.id)} className="flex-1 py-3 rounded-xl bg-primary text-background text-sm font-bold hover:opacity-90 transition-opacity active:scale-95">Enregistrer mise bas</button>
                     </>
                   )}
                   {s.status === 'En attente' && (
                     <>
-                      <button onClick={() => handleConfirmerGestation(s.id)} className="flex-1 py-2 rounded-lg bg-secondary text-background text-xs font-bold">Confirmer gestation</button>
-                      <button onClick={() => handleDeclarerEchec(s.id)} className="flex-1 py-2 rounded-lg border border-danger text-danger text-xs font-bold">Déclarer échec</button>
+                      <button onClick={() => handleConfirmerGestation(s.id)} className="flex-1 py-3 rounded-xl bg-secondary text-background text-sm font-bold active:scale-95">Confirmer gestation</button>
+                      <button onClick={() => handleDeclarerEchec(s.id)} className="flex-1 py-3 rounded-xl border border-danger text-danger text-sm font-bold active:scale-95">Déclarer échec</button>
                     </>
                   )}
                   {s.status === 'Échec' && (
-                    <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="w-full py-2 rounded-lg border border-border text-xs font-semibold hover:bg-border transition-colors">Détails de l'échec</button>
+                    <button onClick={() => navigate(`/reproduction/saillie/${s.id}`)} className="w-full py-3 rounded-xl border border-border text-sm font-semibold hover:bg-border transition-colors active:scale-95">Détails de l'échec</button>
                   )}
                 </div>
               </div>
@@ -147,20 +141,13 @@ export const Reproduction: React.FC = () => {
 
       {/* PORTÉES SECTION */}
       {activeTab === 'portees' && (
-        <section className="space-y-6">
-          <button 
-            onClick={() => navigate('/reproduction/portee/nouvelle')}
-            className="w-full border-2 border-dashed border-secondary text-secondary font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
-          >
-            <PlusSquare className="w-5 h-5" /> Nouvelle Portée
-          </button>
-
+        <section className="space-y-4">
           <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
             {porteesFilters.map(f => (
               <button 
                 key={f}
                 onClick={() => setPorteeFilter(f)}
-                className={`px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all ${
+                className={`px-4 py-2.5 rounded-full text-sm whitespace-nowrap transition-all active:scale-95 ${
                   porteeFilter === f 
                     ? 'bg-primary/10 border-primary text-primary font-bold border' 
                     : 'bg-surface border-border text-muted border'
@@ -206,8 +193,8 @@ export const Reproduction: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button onClick={(e) => handleDeclarerSevrage(p.id, e)} className="flex-1 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-surface">Déclarer sevrage</button>
-                      <button onClick={(e) => handleMortalite(p.id, e)} className="flex-1 py-2 rounded-lg border border-danger/30 text-danger text-xs font-semibold hover:bg-danger/10">Mortalité</button>
+                      <button onClick={(e) => handleDeclarerSevrage(p.id, e)} className="flex-1 py-3 rounded-xl border border-border text-sm font-semibold hover:bg-surface active:scale-95">Déclarer sevrage</button>
+                      <button onClick={(e) => handleMortalite(p.id, e)} className="flex-1 py-3 rounded-xl border border-danger/30 text-danger text-sm font-semibold hover:bg-danger/10 active:scale-95">Mortalité</button>
                     </div>
                   </>
                 )}
@@ -215,7 +202,7 @@ export const Reproduction: React.FC = () => {
                 {p.status === 'À sevrer' && (
                   <>
                     <p className="text-sm text-muted mb-4">Mère: <span className="font-mono text-foreground">{p.female}</span> • {p.effectif}</p>
-                    <button onClick={(e) => handleSevrageImmediat(p.id, e)} className="w-full py-3 rounded-lg bg-warning text-background font-bold text-sm">Sevrage immédiat</button>
+                    <button onClick={(e) => handleSevrageImmediat(p.id, e)} className="w-full py-3 rounded-xl bg-warning text-background font-bold text-sm active:scale-95">Sevrage immédiat</button>
                   </>
                 )}
               </div>
@@ -223,6 +210,15 @@ export const Reproduction: React.FC = () => {
           </div>
         </section>
       )}
+
+      {/* FAB for quick actions */}
+      <FAB 
+        actions={
+          activeTab === 'saillies' 
+            ? [{ icon: <Heart className="w-5 h-5 fill-current" />, label: 'Nouvelle saillie', onClick: () => navigate('/reproduction/saillie/nouvelle') }]
+            : [{ icon: <MonitorSmartphone className="w-5 h-5" />, label: 'Nouvelle portée', onClick: () => navigate('/reproduction/portee/nouvelle') }]
+        }
+      />
     </>
   );
 };

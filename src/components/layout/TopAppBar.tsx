@@ -1,23 +1,37 @@
 import React from 'react';
-import { Settings, CloudOff, Bell } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+const pageTitles: Record<string, string> = {
+  '/': 'Lapin Manager',
+  '/cheptel': 'Cheptel',
+  '/reproduction': 'Reproduction',
+  '/sante': 'Santé',
+  '/finance': 'Finance',
+  '/alertes': 'Alertes',
+  '/parametres': 'Paramètres',
+};
 
 export const TopAppBar: React.FC = () => {
+  const location = useLocation();
+  
+  // Find matching title (exact or starts-with for nested routes)
+  const title = pageTitles[location.pathname] 
+    || Object.entries(pageTitles).find(([path]) => path !== '/' && location.pathname.startsWith(path))?.[1]
+    || 'Lapin Manager';
+
+  const isHome = location.pathname === '/';
+
   return (
-    <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-background border-b border-border">
-      <div className="flex items-center gap-2">
-        <CloudOff className="text-primary w-6 h-6" />
-        <h1 className="text-foreground font-sans font-bold tracking-tight text-lg">Lapin Manager</h1>
-      </div>
-      <div className="flex items-center gap-2">
-        <Link to="/alertes" className="relative text-muted active:scale-95 transition-transform p-2 hover:bg-surface rounded-full">
-          <Bell className="w-6 h-6" />
-          <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-background"></div>
-        </Link>
-        <Link to="/parametres" className="text-muted active:scale-95 transition-transform p-2 hover:bg-surface rounded-full">
-          <Settings className="w-6 h-6" />
-        </Link>
-      </div>
+    <header className="fixed top-0 w-full z-50 flex items-center px-4 h-12 bg-background/80 backdrop-blur-lg border-b border-border/50">
+      {isHome ? (
+        <h1 className="text-foreground font-sans font-bold tracking-tight text-base">
+          🐇 Lapin Manager
+        </h1>
+      ) : (
+        <h1 className="text-foreground font-sans font-semibold tracking-tight text-base">
+          {title}
+        </h1>
+      )}
     </header>
   );
 };

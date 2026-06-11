@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Search, PlusCircle, PawPrint, Tag } from 'lucide-react';
+import { FAB } from '../components/ui/FAB';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
@@ -54,7 +55,7 @@ export const Cheptel: React.FC = () => {
             <button 
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm transition-all active:scale-95 ${
+              className={`whitespace-nowrap px-4 py-2.5 rounded-full text-sm transition-all active:scale-95 ${
                 activeFilter === filter 
                   ? 'bg-brand-primary text-brand-bg font-semibold' 
                   : 'bg-brand-card border border-brand-border text-brand-muted font-medium hover:border-brand-primary/50'
@@ -141,21 +142,23 @@ export const Cheptel: React.FC = () => {
         })}
       </section>
 
-
-      <section className="flex flex-col gap-3 pt-6">
-        <button 
-          onClick={() => navigate('/cheptel/nouveau')}
-          className="flex items-center justify-center gap-2 w-full py-4 bg-brand-primary text-brand-bg rounded-xl font-bold active:scale-95 transition-transform"
-        >
-          <PlusCircle className="w-5 h-5" /> Nouveau reproducteur
-        </button>
-        <button 
-          onClick={() => navigate('/cheptel/race/nouvelle')}
-          className="flex items-center justify-center gap-2 w-full py-3 border border-brand-border text-brand-text rounded-xl font-semibold active:scale-95 transition-transform"
-        >
-          <PawPrint className="w-5 h-5" /> Nouvelle race
-        </button>
-      </section>
+      {/* FAB for quick actions */}
+      <FAB 
+        actions={[
+          {
+            icon: <PlusCircle className="w-5 h-5" />,
+            label: 'Nouveau reproducteur',
+            onClick: () => navigate('/cheptel/nouveau'),
+            variant: 'primary',
+          },
+          {
+            icon: <PawPrint className="w-5 h-5" />,
+            label: 'Nouvelle race',
+            onClick: () => navigate('/cheptel/race/nouvelle'),
+            variant: 'secondary',
+          },
+        ]}
+      />
     </>
   );
 };

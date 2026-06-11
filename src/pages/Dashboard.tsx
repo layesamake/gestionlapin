@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PawPrint, Plus, Heart, MonitorSmartphone, Syringe } from 'lucide-react';
+import { PawPrint, Heart, Syringe, MonitorSmartphone, Plus } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { FAB } from '../components/ui/FAB';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -23,10 +24,7 @@ export const Dashboard: React.FC = () => {
   }, 0);
 
   const handleAlertClick = (action: string, id: number) => {
-    // Visually remove the alert
     removeAlerte(id);
-    
-    // Navigate to appropriate section based on action text
     if (action.includes('Confirmer') || action.includes('mise bas')) {
       navigate('/reproduction');
     } else if (action.includes('fait')) {
@@ -34,141 +32,129 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const fabActions = [
+    {
+      icon: <Heart className="w-5 h-5 fill-current" />,
+      label: 'Nouvelle saillie',
+      onClick: () => navigate('/reproduction/saillie/nouvelle'),
+      variant: 'primary' as const,
+    },
+    {
+      icon: <PawPrint className="w-5 h-5" />,
+      label: 'Nouveau reproducteur',
+      onClick: () => navigate('/cheptel/nouveau'),
+      variant: 'secondary' as const,
+    },
+    {
+      icon: <MonitorSmartphone className="w-5 h-5" />,
+      label: 'Nouvelle portée',
+      onClick: () => navigate('/reproduction/portee/nouvelle'),
+      variant: 'primary' as const,
+    },
+    {
+      icon: <Syringe className="w-5 h-5" />,
+      label: 'Nouveau traitement',
+      onClick: () => navigate('/sante/traitement/nouveau'),
+      variant: 'warning' as const,
+    },
+  ];
+
   return (
     <>
-      {/* Key Indicators Grid */}
-      <section className="grid grid-cols-2 gap-3 mb-8">
-        <div className="col-span-2 bg-surface border border-border p-4 rounded-xl flex items-center justify-between">
+      {/* Key Indicators — Simplified: 3 primary + 3 secondary */}
+      <section className="space-y-3 mb-6">
+        {/* Primary KPI */}
+        <div className="bg-surface border border-border p-4 rounded-2xl flex items-center justify-between">
           <div>
             <p className="text-muted text-xs font-medium uppercase tracking-wider">Total Lapins</p>
             <p className="text-4xl font-bold font-sans text-foreground leading-none mt-1">{totalLapins}</p>
           </div>
-          <div className="p-3 bg-white/5 rounded-lg">
-            <PawPrint className="text-primary w-8 h-8" />
+          <div className="p-3 bg-primary/10 rounded-xl">
+            <PawPrint className="text-primary w-7 h-7" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border p-4 rounded-xl">
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Mâles Actifs</p>
-          <p className="text-2xl font-bold text-foreground mt-1">{malesActifs}</p>
-        </div>
-
-        <div className="bg-surface border border-border p-4 rounded-xl">
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Femelles Repr.</p>
-          <p className="text-2xl font-bold text-foreground mt-1">{femellesRepr}</p>
-        </div>
-
-        <div className="bg-surface border border-border p-4 rounded-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 h-full w-1 bg-primary"></div>
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Femelles Gestantes</p>
-          <div className="flex items-baseline gap-2 mt-1">
-            <p className="text-2xl font-bold text-foreground leading-none">{femellesGestantesCount}</p>
-            <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold">STABLE</span>
+        {/* Secondary KPIs */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-surface border border-border p-3 rounded-xl text-center">
+            <p className="text-2xl font-bold text-foreground">{malesActifs}</p>
+            <p className="text-[11px] text-muted font-medium mt-0.5">Mâles</p>
+          </div>
+          <div className="bg-surface border border-border p-3 rounded-xl text-center">
+            <p className="text-2xl font-bold text-foreground">{femellesRepr}</p>
+            <p className="text-[11px] text-muted font-medium mt-0.5">Femelles</p>
+          </div>
+          <div className="bg-surface border border-border p-3 rounded-xl text-center">
+            <p className="text-2xl font-bold text-foreground">{totalLapereaux}</p>
+            <p className="text-[11px] text-muted font-medium mt-0.5">Lapereaux</p>
           </div>
         </div>
 
-        <div className="bg-surface border border-border p-4 rounded-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 h-full w-1 bg-secondary"></div>
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Portées en cours</p>
-          <div className="flex items-baseline gap-2 mt-1">
-            <p className="text-2xl font-bold text-foreground leading-none">{porteesEnCoursCount}</p>
-            <span className="px-1.5 py-0.5 rounded bg-secondary/10 text-secondary text-[10px] font-bold">ACTIF</span>
+        {/* Status indicators */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-surface border border-border p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-[11px] text-muted font-medium">Gestantes</p>
+              <p className="text-xl font-bold text-foreground">{femellesGestantesCount}</p>
+            </div>
+            <div className="w-1.5 h-8 rounded-full bg-primary" />
           </div>
-        </div>
-
-        <div className="bg-surface border border-border p-4 rounded-xl">
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Lapereaux</p>
-          <p className="text-2xl font-bold text-foreground mt-1">{totalLapereaux}</p>
-          <p className="text-[10px] text-muted mt-1">Non sevrés</p>
-        </div>
-
-        <div className="bg-surface border border-danger/30 p-4 rounded-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 h-full w-1 bg-danger"></div>
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">Alertes</p>
-          <div className="flex items-baseline gap-2 mt-1">
-            <p className="text-2xl font-bold text-danger leading-none">{alertes.length}</p>
-            {alertes.length > 0 && <span className="px-1.5 py-0.5 rounded bg-danger/10 text-danger text-[10px] font-bold">URGENT</span>}
+          <div className="bg-surface border border-border p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-[11px] text-muted font-medium">Portées actives</p>
+              <p className="text-xl font-bold text-foreground">{porteesEnCoursCount}</p>
+            </div>
+            <div className="w-1.5 h-8 rounded-full bg-secondary" />
           </div>
-        </div>
-      </section>
-
-      {/* Quick Actions */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-foreground font-bold text-sm uppercase tracking-widest">Actions Rapides</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <button 
-            onClick={() => navigate('/cheptel/nouveau')}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
-          >
-            <Plus className="w-4 h-4" /> Nouveau reproducteur
-          </button>
-          <button 
-            onClick={() => navigate('/reproduction/saillie/nouvelle')}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary text-background text-sm font-bold active:scale-95 transition-all"
-          >
-            <Heart className="w-4 h-4 fill-current" /> Nouvelle saillie
-          </button>
-          <button 
-            onClick={() => navigate('/reproduction/portee/nouvelle')}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
-          >
-            <MonitorSmartphone className="w-4 h-4" /> Nouvelle portée
-          </button>
-          <button 
-            onClick={() => navigate('/sante/traitement/nouveau')}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-surface active:scale-95 transition-all"
-          >
-            <Syringe className="w-4 h-4" /> Nouveau traitement
-          </button>
         </div>
       </section>
 
       {/* Daily Alerts */}
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-foreground font-bold text-sm uppercase tracking-widest">Alertes du Jour</h2>
-          <span className="text-[10px] text-muted font-mono uppercase">Mise à jour 08:45</span>
-        </div>
-        <div className="space-y-3">
-          {alertes.map((alert) => (
-            <div key={alert.id} className={`bg-surface border-l-4 rounded-r-xl p-4 shadow-lg ${
-              alert.type === 'danger' ? 'border-danger' : 'border-warning'
-            }`}>
-              <div className="flex justify-between items-start mb-2">
-                <span className={`${
-                  alert.type === 'danger' ? 'text-danger bg-danger/10' : 'text-warning bg-warning/10'
-                } text-[10px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded`}>
-                  {alert.badge}
-                </span>
-                <span className={`${
-                  alert.type === 'danger' ? 'text-danger' : 'text-muted'
-                } font-mono text-[10px] font-bold`}>{alert.time}</span>
+      {alertes.length > 0 && (
+        <section className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-foreground font-semibold text-xs uppercase tracking-wide">
+              Alertes ({alertes.length})
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {alertes.map((alert) => (
+              <div key={alert.id} className={`bg-surface border-l-4 rounded-r-xl p-4 ${
+                alert.type === 'danger' ? 'border-danger bg-danger/5' : 'border-warning bg-warning/5'
+              }`}>
+                <div className="flex justify-between items-start mb-2">
+                  <span className={`${
+                    alert.type === 'danger' ? 'text-danger' : 'text-warning'
+                  } text-[11px] font-bold uppercase`}>
+                    {alert.badge}
+                  </span>
+                  <span className="text-muted font-mono text-[11px]">{alert.time}</span>
+                </div>
+                <p className="text-foreground text-sm leading-snug mb-3">
+                  {alert.title} <span className={`font-mono ${
+                    alert.type === 'danger' ? 'text-danger' : 'text-warning'
+                  }`}>{alert.subject}</span> {alert.location && `(Cage `}
+                  {alert.location && <span className="font-mono">{alert.location.replace('Cage ', '')}</span>}
+                  {alert.location && `)`}
+                </p>
+                <button
+                  onClick={() => handleAlertClick(alert.action, alert.id)}
+                  className={`w-full py-3 text-sm font-bold rounded-xl transition-all active:scale-[0.97] ${
+                    alert.type === 'danger'
+                      ? 'bg-danger text-white'
+                      : 'bg-warning text-background'
+                  }`}
+                >
+                  {alert.action}
+                </button>
               </div>
-              <p className="text-foreground text-sm leading-tight mb-3">
-                {alert.title} <span className={`font-mono ${
-                  alert.type === 'danger' ? 'text-danger' : 'text-warning'
-                }`}>{alert.subject}</span> {alert.location && `(Cage `}
-                {alert.location && <span className="font-mono">{alert.location.replace('Cage ', '')}</span>}
-                {alert.location && `)`}
-              </p>
-              <button 
-                onClick={() => handleAlertClick(alert.action, alert.id)}
-                className={`w-full py-2.5 text-xs font-bold rounded-lg transition-all active:scale-[0.98] ${
-                  alert.type === 'danger' 
-                    ? 'bg-danger text-foreground hover:bg-danger/90 shadow-lg shadow-danger/10' 
-                    : alert.title === 'Déparasitage'
-                      ? 'border border-border text-muted hover:bg-[#1C2331]'
-                      : 'bg-warning/10 border border-warning/30 text-warning hover:bg-warning/20'
-                }`}
-              >
-                {alert.action}
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FAB — replaces the old "Actions Rapides" section */}
+      <FAB actions={fabActions} mainIcon={<Plus className="w-6 h-6" />} />
     </>
   );
 };
