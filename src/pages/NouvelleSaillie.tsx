@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, Save, ChevronDown } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useToast } from '../components/ui/Toast';
 
 export const NouvelleSaillie: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { animals, addSaillie } = useStore();
+  const { showToast } = useToast();
   
   const femelles = animals.filter(a => a.gender === 'F' || a?.type?.startsWith('Femelle'));
   const males = animals.filter(a => a.gender === 'M' || a?.type?.startsWith('Mâle'));
@@ -99,29 +101,13 @@ export const NouvelleSaillie: React.FC = () => {
       statusBadgeColor: 'bg-warning/20 text-warning'
     });
 
+    showToast('Saillie enregistrée avec succès ✓', 'success');
     navigate('/reproduction');
   };
 
   return (
-    <div className="flex flex-col min-h-screen pb-24">
-      {/* TopAppBar Component */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-background border-b border-border">
-        <button 
-          onClick={() => navigate(-1)}
-          className="text-muted active:scale-95 transition-transform"
-        >
-          Annuler
-        </button>
-        <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">Nouvelle Saillie</h1>
-        <button 
-          onClick={handleSave}
-          className="text-primary font-bold active:scale-95 transition-transform"
-        >
-          Enregistrer
-        </button>
-      </header>
-
-      <main className="flex-grow pt-20 px-4 space-y-6 max-w-lg mx-auto w-full">
+    <div className="pb-8">
+      <div className="space-y-6">
         {/* Offline Indicator */}
         <div className="flex items-center justify-center space-x-2 py-1.5 bg-surface/50 rounded-lg border border-border text-[11px] text-muted">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
@@ -280,7 +266,7 @@ export const NouvelleSaillie: React.FC = () => {
             </button>
           </div>
         </form>
-      </main>
+      </div>
     </div>
   );
 };

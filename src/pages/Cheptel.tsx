@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Search, PlusCircle, PawPrint, Tag } from 'lucide-react';
 import { FAB } from '../components/ui/FAB';
+import { Avatar } from '../components/ui/Avatar';
 
 export const Cheptel: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('Tous');
@@ -90,14 +91,12 @@ export const Cheptel: React.FC = () => {
                   : 'border-brand-border hover:border-brand-primary/30'
               }`}
             >
-              {/* Photo Miniature */}
-              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-brand-border/40 flex items-center justify-center border border-brand-border/50">
-                {animal.image ? (
-                  <img src={animal.image} alt={displayName} className="w-full h-full object-cover" />
-                ) : (
-                  <PawPrint className="w-6 h-6 text-brand-muted/50" />
-                )}
-              </div>
+              {/* Photo / Avatar */}
+              <Avatar 
+                name={displayName} 
+                image={animal.image} 
+                size="md" 
+              />
 
               {/* Informations */}
               <div className="flex-grow min-w-0 flex flex-col gap-1">

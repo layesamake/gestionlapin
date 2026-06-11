@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react';
+import { PlusCircle, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, Plus } from 'lucide-react';
+import { FAB } from '../components/ui/FAB';
 
 export const Finance: React.FC = () => {
   const transactions = useStore(state => state.transactions);
@@ -81,13 +82,7 @@ export const Finance: React.FC = () => {
         </button>
       </div>
 
-      {/* Add Button */}
-      <button 
-        onClick={() => navigate('/finance/nouvelle')}
-        className="w-full bg-primary text-background font-bold py-4 rounded-xl flex items-center justify-center gap-2 mb-6 active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
-      >
-        <PlusCircle className="w-5 h-5 fill-current" /> Enregistrer une transaction
-      </button>
+
 
       {/* Transactions List */}
       <section className="space-y-3">
@@ -120,6 +115,25 @@ export const Finance: React.FC = () => {
           ))
         )}
       </section>
+
+      {/* FAB for quick actions */}
+      <FAB 
+        actions={[
+          {
+            icon: <TrendingUp className="w-5 h-5" />,
+            label: 'Nouveau revenu',
+            onClick: () => navigate('/finance/nouvelle'),
+            variant: 'secondary'
+          },
+          {
+            icon: <TrendingDown className="w-5 h-5" />,
+            label: 'Nouvelle dépense',
+            onClick: () => navigate('/finance/nouvelle'),
+            variant: 'danger'
+          }
+        ]}
+        mainIcon={<Plus className="w-6 h-6" />}
+      />
     </>
   );
 };

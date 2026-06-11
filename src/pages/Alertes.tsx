@@ -60,10 +60,10 @@ export const Alertes: React.FC = () => {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`flex-none px-4 py-2 rounded-full font-medium text-sm transition-all ${
+            className={`flex-none px-4 py-2.5 rounded-full font-medium text-sm transition-all active:scale-95 ${
               activeFilter === filter 
                 ? 'bg-primary text-background' 
-                : 'bg-surface text-muted hover:bg-border'
+                : 'bg-surface text-muted border border-border hover:bg-border/50'
             }`}
           >
             {filter}
@@ -71,27 +71,27 @@ export const Alertes: React.FC = () => {
         ))}
       </section>
 
-      <section className="mb-6 flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4">
+      <section className="mb-6 flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-1">
         <button 
           onClick={() => setActiveCategory(activeCategory === 'Reproduction' ? null : 'Reproduction')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
-            activeCategory === 'Reproduction' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors whitespace-nowrap active:scale-95 ${
+            activeCategory === 'Reproduction' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground hover:bg-surface'
           }`}
         >
           <Leaf className="w-4 h-4" /> Reproduction
         </button>
         <button 
           onClick={() => setActiveCategory(activeCategory === 'Santé' ? null : 'Santé')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
-            activeCategory === 'Santé' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors whitespace-nowrap active:scale-95 ${
+            activeCategory === 'Santé' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground hover:bg-surface'
           }`}
         >
           <Shield className="w-4 h-4" /> Santé
         </button>
         <button 
           onClick={() => setActiveCategory(activeCategory === 'Sauvegarde' ? null : 'Sauvegarde')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors whitespace-nowrap ${
-            activeCategory === 'Sauvegarde' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors whitespace-nowrap active:scale-95 ${
+            activeCategory === 'Sauvegarde' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface/50 text-muted hover:text-foreground hover:bg-surface'
           }`}
         >
           <Database className="w-4 h-4" /> Sauvegarde
@@ -134,9 +134,9 @@ export const Alertes: React.FC = () => {
             <div className={`gap-2 ${alerte.secondaryAction ? 'grid grid-cols-2' : ''}`}>
               <button 
                 onClick={() => handleAction(alerte.primaryAction, alerte.id)}
-                className={`w-full text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 flex items-center justify-center gap-2 ${
+                className={`w-full text-sm font-bold py-3 rounded-xl transition-transform active:scale-95 flex items-center justify-center gap-2 ${
                   alerte.primaryColor === 'surface' 
-                    ? 'bg-border text-foreground border border-gray-700' 
+                    ? 'bg-background text-foreground border border-border' 
                     : `bg-${alerte.primaryColor || 'primary'} text-background`
                 }`}
               >
@@ -147,7 +147,7 @@ export const Alertes: React.FC = () => {
               {alerte.secondaryAction && (
                 <button 
                   onClick={() => handleSecondaryAction(alerte.secondaryAction, alerte.id)}
-                  className="border border-border text-muted text-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95 hover:bg-surface"
+                  className="bg-transparent border border-border text-muted text-sm font-bold py-3 rounded-xl transition-transform active:scale-95 hover:bg-surface"
                 >
                   {alerte.secondaryAction}
                 </button>

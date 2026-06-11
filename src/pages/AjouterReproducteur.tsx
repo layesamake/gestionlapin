@@ -5,12 +5,14 @@ import { useStore } from '../store/useStore';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../utils/cropImage';
 import { calculateAge } from '../utils/dateUtils';
+import { useToast } from '../components/ui/Toast';
 
 export const AjouterReproducteur: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
   const { addAnimal, updateAnimal, animals, races, addRace } = useStore();
+  const { showToast } = useToast();
   const existingAnimal = isEditMode ? animals.find((a) => a.id === id) : null;
 
   const [sexe, setSexe] = useState<'male' | 'female'>(() => {
@@ -118,42 +120,21 @@ export const AjouterReproducteur: React.FC = () => {
 
     if (isEditMode && id) {
       updateAnimal(id, animalData);
+      showToast('Reproducteur modifié ✓', 'success');
       navigate(`/cheptel/${id}`);
     } else {
       addAnimal({
         id: target.code?.value || 'N-001',
         ...animalData
       });
+      showToast('Reproducteur ajouté ✓', 'success');
       navigate('/cheptel');
     }
   };
 
   return (
-    <div className="pb-24">
-      {/* TopAppBar */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-background border-b border-border">
-        <button 
-          onClick={() => navigate(-1)}
-          className="text-muted font-medium text-sm active:scale-95 transition-transform"
-          type="button"
-        >
-          Annuler
-        </button>
-        <h1 className="text-foreground font-display font-bold tracking-tight text-lg">
-          {isEditMode ? 'Modifier le Reproducteur' : 'Ajouter un Reproducteur'}
-        </h1>
-        <button 
-          form="breed-form"
-          type="submit"
-          className="bg-primary text-background px-4 py-1.5 rounded-lg font-bold text-sm active:scale-95 transition-transform"
-        >
-          Enregistrer
-        </button>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="pt-20 px-4 max-w-2xl mx-auto">
-        <form id="breed-form" className="space-y-6" onSubmit={handleSubmit}>
+    <div className="pb-8">
+      <form id="breed-form" className="space-y-6" onSubmit={handleSubmit}>
           {/* Photo du lapin */}
           <div className="flex flex-col items-center justify-center py-4">
             <div 
@@ -366,7 +347,6 @@ export const AjouterReproducteur: React.FC = () => {
             </button>
           </div>
         </form>
-      </main>
 
       {/* Cropper Modal */}
       {isCropping && imageSrc && (

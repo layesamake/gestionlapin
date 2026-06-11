@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, TrendingUp, TrendingDown, Trash2, Plus, X, ChevronDown } from 'lucide-react';
 import { useStore, type Transaction } from '../store/useStore';
+import { useToast } from '../components/ui/Toast';
+import { ConfirmDialog } from '../components/ui/Modal';
 
 export const NouvelleTransaction: React.FC = () => {
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ export const NouvelleTransaction: React.FC = () => {
     addExpenseCategory,
     addIncomeCategory
   } = useStore();
+  const { showToast } = useToast();
 
   const existingTransaction = isEditMode ? transactions.find(t => t.id === id) : null;
 
@@ -30,6 +33,7 @@ export const NouvelleTransaction: React.FC = () => {
   // Add categories modal state
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const categories = type === 'EXPENSE' 
     ? (expenseCategories || ['Alimentation (Granulés/Foin)', 'Pharmacie / Médicaments', 'Matériel / Équipement', 'Achat Animaux', 'Autre']) 
@@ -49,22 +53,23 @@ export const NouvelleTransaction: React.FC = () => {
 
     if (isEditMode && id) {
       updateTransaction(id, transactionData);
+      showToast('Transaction modifiée ✓', 'success');
     } else {
       const newTransaction: Transaction = {
         id: Date.now().toString(),
         ...transactionData
       };
       addTransaction(newTransaction);
+      showToast('Transaction ajoutée ✓', 'success');
     }
     navigate(-1);
   };
 
   const handleDelete = () => {
     if (isEditMode && id) {
-      if (window.confirm("Voulez-vous vraiment supprimer définitivement cette transaction ?")) {
-        removeTransaction(id);
-        navigate('/finance');
-      }
+      removeTransaction(id);
+      showToast('Transaction supprimée', 'warning');
+      navigate('/finance');
     }
   };
 
@@ -90,20 +95,8 @@ export const NouvelleTransaction: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen pb-24">
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-background border-b border-border">
-        <button onClick={() => navigate(-1)} className="text-muted active:scale-95 transition-transform">
-          Annuler
-        </button>
-        <h1 className="text-foreground font-headline font-bold text-lg tracking-tight">
-          {isEditMode ? 'Modifier la Transaction' : 'Nouvelle Transaction'}
-        </h1>
-        <button onClick={handleSubmit} className="text-primary font-bold active:scale-95 transition-transform">
-          Enregistrer
-        </button>
-      </header>
-
-      <main className="flex-grow pt-20 px-4 space-y-6 max-w-lg mx-auto w-full">
+    <div className="pb-8">
+      <div className="space-y-6">
         {/* Type Selector */}
         <div className="grid grid-cols-2 gap-2 p-1 bg-surface border border-border rounded-xl">
           <button 
@@ -216,7 +209,7 @@ export const NouvelleTransaction: React.FC = () => {
             {isEditMode && (
               <button 
                 type="button"
-                onClick={handleDelete}
+                onClick={() => setShowDeleteConfirm(true)}
                 className="w-full border border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger font-bold py-3.5 rounded-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2"
               >
                 <Trash2 className="w-5 h-5" /> Supprimer la transaction
@@ -224,7 +217,7 @@ export const NouvelleTransaction: React.FC = () => {
             )}
           </div>
         </form>
-      </main>
+      </div>
 
       {/* Modal d'ajout de catégorie */}
       {isAddingCategory && (
@@ -285,6 +278,18 @@ export const NouvelleTransaction: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Supprimer la transaction"
+        message="Voulez-vous vraiment supprimer définitivement cette transaction ?"
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        variant="danger"
+      />
     </div>
   );
 };

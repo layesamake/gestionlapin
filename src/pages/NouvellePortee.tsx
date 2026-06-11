@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CloudOff, CalendarClock, Link as LinkIcon, Save, ChevronDown } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useToast } from '../components/ui/Toast';
 
 export const NouvellePortee: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
   const { animals, portees, addPortee, updatePortee } = useStore();
+  const { showToast } = useToast();
 
   const existingPortee = isEditMode ? portees.find((p) => p.id === id) : null;
 
@@ -70,6 +72,7 @@ export const NouvellePortee: React.FC = () => {
 
     if (isEditMode && id) {
       updatePortee(id, porteeData);
+      showToast('Portée modifiée ✓', 'success');
       navigate(`/reproduction/portee/${id}`);
     } else {
       const newId = `P-${String(portees.length + 15).padStart(3, '0')}`; // Avoid collision
@@ -77,33 +80,14 @@ export const NouvellePortee: React.FC = () => {
         id: newId,
         ...porteeData
       });
+      showToast('Portée ajoutée ✓', 'success');
       navigate('/reproduction');
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen pb-20">
-      {/* TopAppBar */}
-      <header className="fixed top-0 w-full bg-background text-primary font-headline font-bold text-lg border-b border-border flex justify-between items-center px-4 h-16 z-50">
-        <button 
-          onClick={() => navigate(-1)}
-          className="text-muted font-medium text-base active:scale-95 transition-transform"
-        >
-          Annuler
-        </button>
-        <span className="text-foreground font-display font-bold tracking-tight">
-          {isEditMode ? 'Modifier la Portée' : 'Nouvelle Portée'}
-        </span>
-        <button 
-          onClick={handleSave}
-          className="text-primary font-bold text-base active:scale-95 transition-transform"
-        >
-          Enregistrer
-        </button>
-      </header>
-
-      {/* Main Content Canvas */}
-      <main className="flex-grow pt-20 px-4 py-6 space-y-6 max-w-lg mx-auto w-full">
+    <div className="pb-8">
+      <div className="space-y-6">
         {/* Connection Status Banner */}
         <div className="bg-surface/50 border border-border rounded-lg px-3 py-2 flex items-center justify-center gap-2">
           <CloudOff className="w-4 h-4 text-muted" />
@@ -287,7 +271,7 @@ export const NouvellePortee: React.FC = () => {
             </button>
           </div>
         </form>
-      </main>
+      </div>
     </div>
   );
 };
